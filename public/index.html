@@ -7,10 +7,13 @@
   <title>شجرة العائلة</title>
 
   <script src="/theme.js"></script>
+  <link rel="stylesheet" href="/styles.css" />
 
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500;700;900&family=Amiri:wght@400;700&family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries,line-clamp"></script>
 
   <script>
     tailwind.config = {
@@ -18,40 +21,34 @@
       theme: {
         extend: {
           colors: {
-            "primary": "#1f637a",
-            "background-light": "#f8f8f6",
-            "background-dark": "#131c1f",
-            "accent-gold": "#E3C56F",
-            "text-dark": "#272522",
-            "text-muted": "#677c83",
-            "wood": "#8B5E3C",
-            "leaf-green": "#4CAF50",
-
-            "bg-charcoal": "#0F1115",
-            "bg-card": "#16191E",
-            "text-cream": "#FDFBF7",
-            "muted-slate": "#94A3B8",
-            "accent-gold-dark": "#D4AF37",
+            primary: "#005A2B",
+            primaryDark: "#003D1D",
+            accent: "#E5B869",
+            "accent-gold": "#E5B869",
+            "background-light": "#F8F8F6",
+            "background-dark": "#050505",
+            "bg-charcoal": "#050505",
+            "bg-card": "#0A0A0A",
+            "text-cream": "#FAFAFA",
+            "text-dark": "#111827",
+            "text-muted": "#71717A",
+            "muted-slate": "#71717A",
+            "accent-gold-dark": "#E5B869",
+            wood: "#7A542F",
+            "leaf-green": "#4CAF50"
           },
           fontFamily: {
-            "display": ["Cairo", "sans-serif"],
-            "amiri": ["Amiri", "serif"]
-          },
-          borderRadius: {
-            "DEFAULT": "0.25rem",
-            "lg": "0.5rem",
-            "xl": "0.75rem",
-            "2xl": "1rem",
-            "full": "9999px"
+            display: ["'Aref Ruqaa'", "serif"],
+            sans: ["Tajawal", "sans-serif"],
+            amiri: ["Amiri", "serif"],
+            cairo: ["Cairo", "sans-serif"]
           },
           backgroundImage: {
-            "islamic-pattern":
-              "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23E3C56F' fill-opacity='0.15' fill-rule='evenodd'%3E%3Cpath d='M0 20L20 0H0v20zM20 40L40 20H20v20zM20 0l20 20V0H20zM0 20l20 20H0V20z'/%3E%3C/g%3E%3C/svg%3E\")",
-            "islamic-pattern-dark":
-              "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23D4AF37' fill-opacity='0.03' fill-rule='evenodd'%3E%3Cpath d='M0 20L20 0H0v20zM20 40L40 20H20v20zM20 0l20 20V0H20zM0 20l20 20H0V20z'/%3E%3C/g%3E%3C/svg%3E\")",
+            "islamic-pattern": "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23E5B869' fill-opacity='0.035'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+            "islamic-pattern-dark": "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23E5B869' fill-opacity='0.025'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")"
           }
-        },
-      },
+        }
+      }
     };
   </script>
 
@@ -63,157 +60,131 @@
   </style>
 
   <style>
-    :root { --gold-glow: rgba(212, 175, 55, 0.4); }
+    :root { --gold-glow: rgba(229, 184, 105, 0.38); }
 
-    /* Tree container styles */
-    .tree-container { 
-      position: relative; 
-      width: 100%; 
-      height: 100%; 
-      margin: 0 auto; 
-    }
-    
-    .branch-svg { 
-      position: absolute; 
-      top: 0; 
-      left: 0; 
-      width: 100%; 
-      height: 100%; 
-      pointer-events: none; 
-      z-index: 5; 
-    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #E5B869; border-radius: 999px; }
 
-    /* Node styles matching your original design */
-    .node-portrait {
-      width: 100px;
-      height: 100px;
-      border-radius: 8px;
-      border: 2px solid #8B5E3C;
+    /* ===== Original Tree Engine Classes Kept ===== */
+    .tree-container { position: relative; width: 100%; height: 100%; margin: 0 auto; }
+    .branch-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
+
+    /* ========================================================
+       تصميم كروت الشخصيات البريميوم (داخل الشجرة)
+       ======================================================== */
+    .premium-node-card {
+      width: 130px;
+      height: 160px;
+      border-radius: 20px;
       background: white;
-      overflow: hidden;
       position: relative;
-      z-index: 10;
-      transition: all 0.2s ease;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      border: 1px solid rgba(229,184,105,0.1);
     }
-    
-    .node-portrait:hover {
-      transform: scale(1.02);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    .premium-node-card.male {
+      box-shadow: 0 10px 30px rgba(0, 90, 43, 0.05), 0 0 0 2px rgba(0, 90, 43, 0.03);
     }
-    
-    .node-portrait.male {
-      border-color: #1f637a;
+    .premium-node-card.female {
+      box-shadow: 0 10px 30px rgba(229, 184, 105, 0.05), 0 0 0 2px rgba(229, 184, 105, 0.03);
     }
-    
-    .node-portrait.female {
-      border-color: #E3C56F;
+    .person-node-group:hover .premium-node-card {
+      transform: translateY(-5px) scale(1.03);
     }
-    
-    .node-portrait img {
+    .person-node-group:hover .premium-node-card.male {
+      box-shadow: 0 15px 40px rgba(0, 90, 43, 0.15), 0 0 0 3px rgba(0, 90, 43, 0.1);
+    }
+    .person-node-group:hover .premium-node-card.female {
+      box-shadow: 0 15px 40px rgba(229, 184, 105, 0.15), 0 0 0 3px rgba(229, 184, 105, 0.1);
+    }
+    .node-photo-area {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+    .node-photo-area img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transition: transform 0.6s ease;
     }
-    
-    .name-box {
-      background-color: #ffffff;
-      border: 1.5px solid #e5e7eb;
-      padding: 4px 16px;
-      border-radius: 6px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-      margin-top: -12px;
-      position: relative;
-      z-index: 20;
-      min-width: 120px;
+    .person-node-group:hover .node-photo-area img {
+      transform: scale(1.1);
+    }
+    .node-name-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 12px 8px;
+      background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
+      backdrop-filter: blur(2px);
+      z-index: 2;
       text-align: center;
-      transition: all 0.2s ease;
     }
-    
-    .name-box:hover {
-      border-color: #1f637a;
-      box-shadow: 0 4px 8px rgba(31, 99, 122, 0.1);
+    .node-label-text {
+      font-family: 'Cairo', sans-serif;
+      color: white;
+      font-weight: 700;
+      font-size: 13px;
+      line-height: 1.2;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     }
-    
-    .node-label-text { 
-      font-family: 'Amiri', serif; 
-      color: #272522;
-      font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    
-    .leaf { 
-      fill: #4CAF50; 
-      filter: drop-shadow(0 1px 1px rgba(0,0,0,0.1)); 
+    .deceased-ribbon {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: linear-gradient(135deg, #C7A24B, #E3C46A);
+      color: #030406;
+      font-family: 'Tajawal', sans-serif;
+      font-weight: 800;
+      font-size: 10px;
+      padding: 4px 8px;
+      border-bottom-right-radius: 12px;
+      z-index: 3;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 3px;
     }
 
-    /* Dark mode overrides */
-    html.dark .node-portrait {
-      width: 90px;
-      height: 90px;
-      border-radius: 4px;
-      border: 2px solid #D4AF37;
-      background: #16191E;
-      box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+    html.dark .premium-node-card {
+      background: #0A0B0E;
+      border-color: rgba(255,255,255,0.05);
     }
-    
-    html.dark .node-portrait.male {
-      border-color: #1f637a;
+    html.dark .premium-node-card.male {
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 90, 43, 0.2);
     }
-    
-    html.dark .node-portrait.female {
-      border-color: #E3C56F;
+    html.dark .premium-node-card.female {
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(229, 184, 105, 0.2);
     }
-    
-    html.dark .name-box {
-      font-family: 'Amiri', serif;
-      margin-top: 4px;
-      text-align: center;
-      background-color: #16191E;
-      border: 1px solid #D4AF37;
-      padding: 6px 16px;
-      min-width: 140px;
-      border-radius: 2px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    html.dark .person-node-group:hover .premium-node-card.male {
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(0, 90, 43, 0.4);
     }
-    
-    html.dark .name-box:hover {
-      border-color: #E3C56F;
-      box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+    html.dark .person-node-group:hover .premium-node-card.female {
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(229, 184, 105, 0.4);
     }
-    
-    html.dark .node-label-text { 
-      color: #FDFBF7; 
+    html.dark .node-name-overlay {
+      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 70%, transparent 100%);
     }
-    
-    html.dark .leaf { 
-      fill: #D4AF37; 
-      opacity: 0.6; 
-      filter: none; 
-    }
-    
+
+    .leaf { fill: #4CAF50; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.1)); }
+    html.dark .leaf { fill: #E5B869; opacity: .6; filter: none; }
     html.dark .glowing-branch {
-      stroke: #D4AF37;
-      stroke-opacity: 0.6;
-      filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.3));
+      stroke: #E5B869;
+      stroke-opacity: .6;
+      filter: drop-shadow(0 0 2px rgba(229,184,105,.3));
     }
-    
-    .square-frame { border-radius: 4px !important; }
 
-    /* family-chart specific overrides */
-    .family-chart-container {
-      width: 100%;
-      height: 100%;
-    }
-    
-    .family-chart-container svg {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-    
-    /* Ensure foreignObject content inherits styles */
+    .square-frame { border-radius: 8px !important; }
+
+    .family-chart-container { width: 100%; height: 100%; }
+    .family-chart-container svg { display: block; width: 100%; height: 100%; transform: translateZ(0); backface-visibility: hidden; will-change: transform; }
+
     foreignObject div {
       all: initial;
       display: flex;
@@ -221,108 +192,188 @@
       align-items: center;
       justify-content: center;
     }
-    
-    foreignObject .node-portrait,
-    foreignObject .name-box {
-      all: revert;
-    }
-    
-    /* Performance optimization */
-    .family-chart-container svg {
-      transform: translateZ(0);
-      backface-visibility: hidden;
-      will-change: transform;
-    }
+    foreignObject .premium-node-card { all: revert; }
 
-    /* ===== Mobile Nav (Premium Capsule + Frosted Drawer) ===== */
-    #mobileNavOverlay.hidden { display: none; }
-    #mobileNavOverlay { display: block; }
-
-    #mobileNavDrawer {
-      transform: translateX(-110%);
-      transition: transform .26s cubic-bezier(.2,.9,.2,1);
-      will-change: transform;
-    }
-    #mobileNavDrawer.isOpen { transform: translateX(0); }
-
-    #mobileNavBtn[data-open="true"] .ico-open { display: none; }
-    #mobileNavBtn[data-open="true"] .ico-close { display: inline; }
-    #mobileNavBtn[data-open="false"] .ico-open { display: inline; }
-    #mobileNavBtn[data-open="false"] .ico-close { display: none; }
-
-    /* =========================
-       Tree Responsive Hardening
-       ========================= */
-
-    /* دعم dvh + fallback */
     @supports (height: 100dvh) {
-      .tree-viewport {
-        height: clamp(520px, 70dvh, 860px);
-      }
+      .tree-viewport { height: clamp(620px, 78dvh, 940px); }
     }
     @supports not (height: 100dvh) {
-      .tree-viewport {
-        height: clamp(520px, 70vh, 860px);
-      }
+      .tree-viewport { height: clamp(620px, 78vh, 940px); }
     }
 
-    /* امنع مشاكل اللمس/الزووم على الموبايل داخل الشجرة */
     .tree-stage {
       touch-action: none;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
       -webkit-user-select: none;
-    }
-
-    /* خلي منطقة الشجرة ثابتة وبدون سكرول أفقي (السكرول يعمل مشاكل مع الـ fit/zoom) */
-    .tree-stage {
       width: 100%;
       height: 100%;
       overflow: hidden;
       position: relative;
     }
 
-    /* خلي الـ #tree ياخد كامل مساحة المرحلة */
-    #tree {
-      width: 100%;
-      height: 100%;
-      min-height: 520px;
-    }
+    #tree { width: 100%; height: 100%; min-height: 620px; }
 
-    /* Loading spinner */
-    .tree-loading {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      width: 100%;
-    }
-    
+    .tree-loading { display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; }
+
     .tree-loading-spinner {
       width: 50px;
       height: 50px;
-      border: 3px solid rgba(31, 99, 122, 0.1);
+      border: 3px solid rgba(0,90,43,.12);
       border-radius: 50%;
-      border-top-color: #1f637a;
+      border-top-color: #005A2B;
       animation: spin 1s ease-in-out infinite;
     }
-    
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
     html.dark .tree-loading-spinner {
-      border: 3px solid rgba(212, 175, 55, 0.1);
-      border-top-color: #D4AF37;
+      border: 3px solid rgba(229,184,105,.12);
+      border-top-color: #E5B869;
     }
 
-    /* Search highlight */
-    .family-chart-highlight {
-      filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.8));
+    .family-chart-highlight { filter: drop-shadow(0 0 8px rgba(229,184,105,.8)); }
+
+    /* ===== Reference Page Look Applied Fully ===== */
+    .family-hero {
+      position: relative;
+      overflow: hidden;
     }
+
+    .family-hero-watermark {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(620px, 80vw);
+      transform: translate(-50%, -50%);
+      opacity: .035;
+      pointer-events: none;
+    }
+
+    html.dark .family-hero-watermark { opacity: .045; }
+
+    .royal-control-panel {
+      position: relative;
+      border-radius: 28px;
+      border: 1px solid rgba(229,184,105,.22);
+      background: rgba(255,255,255,.82);
+      box-shadow: 0 24px 70px rgba(0,0,0,.10);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    html.dark .royal-control-panel {
+      background: rgba(5,5,5,.82);
+      border-color: rgba(255,255,255,.10);
+      box-shadow: 0 28px 85px rgba(0,0,0,.62);
+    }
+
+    .royal-control-panel::before {
+      content: "";
+      position: absolute;
+      inset: 10px;
+      border-radius: 22px;
+      border: 1px solid rgba(229,184,105,.14);
+      pointer-events: none;
+    }
+
+    .royal-search {
+      background: transparent !important;
+      border: 0 !important;
+      border-bottom: 2px solid rgba(156,163,175,.50) !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      font-family: "Tajawal", sans-serif;
+      font-weight: 800;
+    }
+
+    .royal-search:focus {
+      border-bottom-color: #E5B869 !important;
+      box-shadow: none !important;
+    }
+
+    .royal-action {
+      transition: transform .22s ease, border-color .22s ease, background-color .22s ease, color .22s ease, opacity .22s ease, box-shadow .22s ease;
+    }
+
+    .royal-action:hover { transform: translateY(-2px); }
+    .royal-action:active { transform: translateY(0) scale(.98); }
+
+    .tree-royal-frame {
+      position: relative;
+      overflow: hidden;
+      border-radius: 32px;
+      border: 1px solid rgba(229,184,105,.24);
+      background:
+        radial-gradient(circle at top, rgba(229,184,105,.10), transparent 34%),
+        linear-gradient(135deg, rgba(255,255,255,.96), rgba(248,248,246,.76));
+      box-shadow: 0 30px 100px rgba(0,0,0,.13);
+    }
+
+    html.dark .tree-royal-frame {
+      background:
+        radial-gradient(circle at top, rgba(229,184,105,.08), transparent 34%),
+        linear-gradient(135deg, rgba(10,10,10,.96), rgba(5,5,5,.82));
+      border-color: rgba(255,255,255,.10);
+      box-shadow: 0 34px 110px rgba(0,0,0,.76);
+    }
+
+    .tree-royal-frame::before {
+      content: "";
+      position: absolute;
+      inset: 14px;
+      border: 1px solid rgba(229,184,105,.20);
+      border-radius: 24px;
+      pointer-events: none;
+      z-index: 8;
+    }
+
+    .tree-royal-frame::after {
+      content: "";
+      position: absolute;
+      inset: auto 10% -110px 10%;
+      height: 210px;
+      background: radial-gradient(circle, rgba(229,184,105,.22), transparent 70%);
+      filter: blur(20px);
+      pointer-events: none;
+    }
+
+    .tree-hint-strip {
+      position: relative;
+      z-index: 10;
+      border-top: 1px solid rgba(229,184,105,.16);
+      background: rgba(255,255,255,.62);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    html.dark .tree-hint-strip {
+      background: rgba(0,0,0,.25);
+      border-top-color: rgba(255,255,255,.08);
+    }
+
+    .drawer-royal {
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(248,248,246,.98));
+    }
+
+    html.dark .drawer-royal {
+      background: linear-gradient(180deg, rgba(10,10,10,.98), rgba(5,5,5,.98));
+    }
+
+    /* Mobile Nav */
+    #mobileNavOverlay.hidden { display: none; }
+    #mobileNavOverlay { display: block; }
+    #mobileNavDrawer {
+      transform: translateX(-110%);
+      transition: transform .3s cubic-bezier(.2,.9,.2,1);
+      will-change: transform;
+    }
+    #mobileNavDrawer.isOpen { transform: translateX(0); }
+    #mobileNavBtn[data-open="true"] .ico-open { display: none; }
+    #mobileNavBtn[data-open="true"] .ico-close { display: inline; }
+    #mobileNavBtn[data-open="false"] .ico-open { display: inline; }
+    #mobileNavBtn[data-open="false"] .ico-close { display: none; }
   </style>
-
-  <link rel="stylesheet" href="/styles.css" />
 
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
   <script src="https://cdn.jsdelivr.net/npm/family-chart@0.9.0/dist/family-chart.min.js"></script>
@@ -340,278 +391,444 @@
       obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
     })();
   </script>
+
+  <style id="family-tree-final-fixes">
+    /* ===== Final fixes: stats, details drawer, theme consistency ===== */
+    html, body {
+      background-color: var(--bg, #050505);
+    }
+
+    html.dark body,
+    html[data-theme="dark"] body {
+      color: #FAFAFA;
+      background:
+        radial-gradient(1200px 600px at 70% 0%, rgba(229,184,105,.10), transparent 55%),
+        radial-gradient(900px 600px at 15% 25%, rgba(0,90,43,.10), transparent 55%),
+        #050505;
+    }
+
+    html:not(.dark) body,
+    html[data-theme="light"] body {
+      color: #111827;
+      background:
+        radial-gradient(1200px 600px at 70% 0%, rgba(229,184,105,.12), transparent 55%),
+        radial-gradient(900px 600px at 15% 25%, rgba(0,90,43,.06), transparent 55%),
+        #F8F8F6;
+    }
+
+    /* One generated stats section only */
+    #publicStats {
+      margin: 0 auto 44px !important;
+      width: calc(100% - 2rem) !important;
+      max-width: 100rem !important;
+      padding: 26px !important;
+      border-radius: 30px !important;
+      border: 1px solid rgba(229,184,105,.22) !important;
+      box-shadow: 0 30px 90px rgba(0,0,0,.12) !important;
+      clear: both !important;
+      position: relative !important;
+      overflow: hidden !important;
+      font-family: "Tajawal", sans-serif !important;
+    }
+
+    html[data-theme="light"] #publicStats,
+    html:not(.dark) #publicStats {
+      background:
+        radial-gradient(circle at 15% 20%, rgba(229,184,105,.13), transparent 36%),
+        rgba(255,255,255,.82) !important;
+      color: #111827 !important;
+      border-color: rgba(229,184,105,.22) !important;
+    }
+
+    html[data-theme="dark"] #publicStats,
+    html.dark #publicStats {
+      background:
+        radial-gradient(circle at 15% 20%, rgba(229,184,105,.10), transparent 36%),
+        rgba(5,5,5,.76) !important;
+      color: #FAFAFA !important;
+      border-color: rgba(255,255,255,.10) !important;
+      box-shadow: 0 30px 100px rgba(0,0,0,.70) !important;
+    }
+
+    #publicStats::before {
+      content: "";
+      position: absolute;
+      inset: 14px;
+      border-radius: 24px;
+      border: 1px solid rgba(229,184,105,.16);
+      pointer-events: none;
+    }
+
+    #publicStats .stats-title-row {
+      position: relative;
+      z-index: 2;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 12px !important;
+      flex-wrap: wrap !important;
+      margin-bottom: 18px !important;
+    }
+
+    #publicStats .stats-heading {
+      font-family: "Aref Ruqaa", serif !important;
+      font-weight: 700 !important;
+      font-size: clamp(28px, 3vw, 40px) !important;
+      color: #005A2B !important;
+      line-height: 1.1 !important;
+    }
+
+    html.dark #publicStats .stats-heading,
+    html[data-theme="dark"] #publicStats .stats-heading {
+      color: #E5B869 !important;
+    }
+
+    #publicStats .stats-subtitle {
+      font-size: 13px !important;
+      font-weight: 800 !important;
+      color: #71717A !important;
+    }
+
+    #publicStats .stats-grid {
+      position: relative;
+      z-index: 2;
+      display: grid !important;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important;
+      gap: 14px !important;
+    }
+
+    #publicStats .stats-card {
+      padding: 18px !important;
+      border-radius: 18px !important;
+      border: 1px solid rgba(229,184,105,.18) !important;
+      background: rgba(255,255,255,.72) !important;
+      box-shadow: 0 12px 30px rgba(0,0,0,.055) !important;
+    }
+
+    html.dark #publicStats .stats-card,
+    html[data-theme="dark"] #publicStats .stats-card {
+      background: rgba(255,255,255,.045) !important;
+      border-color: rgba(255,255,255,.10) !important;
+      box-shadow: none !important;
+    }
+
+    #publicStats .stats-card-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px !important;
+      font-weight: 900 !important;
+      color: #71717A !important;
+      margin-bottom: 10px !important;
+    }
+
+    #publicStats .stats-card-value {
+      font-size: 30px !important;
+      font-weight: 900 !important;
+      color: #111827 !important;
+      line-height: 1 !important;
+    }
+
+    html.dark #publicStats .stats-card-value,
+    html[data-theme="dark"] #publicStats .stats-card-value {
+      color: #FAFAFA !important;
+    }
+
+    /* Details button redesigned */
+    #toggleDetails {
+      background: rgba(255,255,255,.86) !important;
+      color: #005A2B !important;
+      border: 1px solid rgba(229,184,105,.45) !important;
+      border-radius: 999px !important;
+      font-weight: 900 !important;
+      box-shadow: 0 10px 28px rgba(0,0,0,.06) !important;
+    }
+
+    html.dark #toggleDetails,
+    html[data-theme="dark"] #toggleDetails {
+      background: rgba(255,255,255,.055) !important;
+      color: #E5B869 !important;
+      border-color: rgba(229,184,105,.35) !important;
+      box-shadow: none !important;
+    }
+
+    #toggleDetails:hover {
+      transform: translateY(-2px);
+      background: rgba(229,184,105,.12) !important;
+    }
+
+    /* Details drawer redesign */
+    #drawer {
+      top: 0 !important;
+      right: 0 !important;
+      height: 100vh !important;
+      max-height: 100vh !important;
+      width: min(440px, 92vw) !important;
+      border-left: 1px solid rgba(229,184,105,.24) !important;
+      box-shadow: -34px 0 90px rgba(0,0,0,.28) !important;
+      border-radius: 0 !important;
+      overflow: hidden !important;
+      z-index: 90 !important;
+    }
+
+    html[data-theme="light"] #drawer,
+    html:not(.dark) #drawer {
+      background:
+        radial-gradient(circle at 20% 0%, rgba(229,184,105,.14), transparent 35%),
+        rgba(255,255,255,.97) !important;
+      color: #111827 !important;
+    }
+
+    html[data-theme="dark"] #drawer,
+    html.dark #drawer {
+      background:
+        radial-gradient(circle at 20% 0%, rgba(229,184,105,.10), transparent 35%),
+        rgba(5,5,5,.98) !important;
+      color: #FAFAFA !important;
+      border-left-color: rgba(255,255,255,.10) !important;
+      box-shadow: -34px 0 100px rgba(0,0,0,.74) !important;
+    }
+
+    #drawer > div:first-child,
+    #drawer .drawerHeader {
+      background: transparent !important;
+      border-bottom: 1px solid rgba(229,184,105,.18) !important;
+      padding: 22px !important;
+    }
+
+    #drawer .font-black,
+    #drawer .drawerTitle {
+      font-family: "Aref Ruqaa", serif !important;
+      font-size: 28px !important;
+      color: #005A2B !important;
+    }
+
+    html.dark #drawer .font-black,
+    html[data-theme="dark"] #drawer .font-black,
+    html.dark #drawer .drawerTitle,
+    html[data-theme="dark"] #drawer .drawerTitle {
+      color: #E5B869 !important;
+    }
+
+    #details {
+      padding: 22px !important;
+      max-height: calc(100vh - 95px) !important;
+      overflow-y: auto !important;
+      font-family: "Tajawal", sans-serif !important;
+      color: inherit !important;
+    }
+
+    #closeDrawer {
+      border: 1px solid rgba(229,184,105,.25) !important;
+      background: rgba(255,255,255,.65) !important;
+    }
+
+    html.dark #closeDrawer,
+    html[data-theme="dark"] #closeDrawer {
+      background: rgba(255,255,255,.055) !important;
+      color: #E5B869 !important;
+      border-color: rgba(255,255,255,.10) !important;
+    }
+
+    #uiThemeBtn {
+      cursor: pointer !important;
+    }
+  </style>
+
 </head>
 
-<body class="bg-background-light dark:bg-bg-charcoal text-text-dark dark:text-text-cream font-display min-h-screen flex flex-col relative overflow-x-hidden selection:bg-accent-gold selection:text-white dark:selection:text-bg-charcoal">
 
-  <div id="mobileNavOverlay" class="fixed inset-0 bg-black/40 z-[80] hidden" aria-hidden="true"></div>
+<body class="bg-background-light dark:bg-bg-charcoal text-gray-900 dark:text-text-cream font-sans min-h-screen flex flex-col relative overflow-x-hidden selection:bg-accent-gold selection:text-bg-charcoal transition-colors duration-300">
 
-  <aside id="mobileNavDrawer"
-         class="fixed top-0 left-0 h-full w-[320px] max-w-[86vw]
-                bg-white/95 dark:bg-bg-card/95 backdrop-blur-xl
-                border-r border-gray-200 dark:border-accent-gold/20
-                shadow-2xl z-[90]">
+  <div id="mobileNavOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[80] hidden" aria-hidden="true"></div>
 
-    <div class="h-1.5 w-full bg-gradient-to-r from-primary via-accent-gold to-primary dark:from-accent-gold-dark dark:via-white/10 dark:to-accent-gold-dark"></div>
+  <aside id="mobileNavDrawer" class="fixed top-0 left-0 h-full w-[320px] max-w-[85vw] bg-white dark:bg-bg-charcoal border-r border-gray-200 dark:border-white/10 shadow-2xl z-[90] flex flex-col">
+    <div class="h-1.5 w-full bg-gradient-to-r from-gray-300 via-accent-gold to-gray-300 dark:from-gray-800 dark:via-accent-gold dark:to-gray-800"></div>
 
-    <div class="flex items-center justify-between p-4 border-b border-gray-100 dark:border-accent-gold/10">
-      <div class="flex items-center gap-3">
-        <img class="h-9 w-auto hidden dark:block" src="/assets/logo-dark.svg" alt="شعار العائلة" />
-        <img class="h-9 w-auto block dark:hidden" src="/assets/logo-light.svg" alt="شعار العائلة" />
-      </div>
-      <button id="mobileNavClose"
-              class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
-              type="button"
-              aria-label="إغلاق القائمة">
-        <span class="material-symbols-outlined">close</span>
+    <div class="flex items-center justify-between p-6 border-b border-gray-100 dark:border-white/5">
+      <img class="h-10 w-auto hidden dark:block" src="/assets/logo-dark.svg" alt="شعار العائلة" />
+      <img class="h-10 w-auto block dark:hidden" src="/assets/logo-light.svg" alt="شعار العائلة" />
+      <button id="mobileNavClose" class="text-gray-500 hover:text-accent-gold transition-colors" type="button" aria-label="إغلاق القائمة">
+        <span class="material-symbols-outlined text-[28px]">close</span>
       </button>
     </div>
 
-    <nav class="p-4 flex flex-col gap-2" aria-label="قائمة الجوال">
-      <a class="group px-4 py-3 rounded-2xl dark:square-frame font-extrabold
-                border border-gray-200/80 dark:border-accent-gold/20
-                hover:bg-gray-50 dark:hover:bg-white/5 transition-colors
-                flex items-center justify-between"
-         href="/">
-        <span class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-[20px] opacity-80">account_tree</span>
-          الشجرة
-        </span>
-        <span class="material-symbols-outlined text-[18px] opacity-40 group-hover:opacity-80">chevron_left</span>
-      </a>
-
-      <a class="group px-4 py-3 rounded-2xl dark:square-frame font-extrabold
-                border border-gray-200/80 dark:border-accent-gold/20
-                hover:bg-gray-50 dark:hover:bg-white/5 transition-colors
-                flex items-center justify-between"
-         href="/about">
-        <span class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-[20px] opacity-80">info</span>
-          نبذة
-        </span>
-        <span class="material-symbols-outlined text-[18px] opacity-40 group-hover:opacity-80">chevron_left</span>
-      </a>
-
-      <a class="group px-4 py-3 rounded-2xl dark:square-frame font-extrabold
-                border border-gray-200/80 dark:border-accent-gold/20
-                hover:bg-gray-50 dark:hover:bg-white/5 transition-colors
-                flex items-center justify-between"
-         href="/honor">
-        <span class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-[20px] opacity-80">library_books</span>
-          قائمة السير الذاتية
-        </span>
-        <span class="material-symbols-outlined text-[18px] opacity-40 group-hover:opacity-80">chevron_left</span>
-      </a>
-
-      <a class="group px-4 py-3 rounded-2xl dark:square-frame font-extrabold
-                border border-gray-200/80 dark:border-accent-gold/20
-                hover:bg-gray-50 dark:hover:bg-white/5 transition-colors
-                flex items-center justify-between"
-         href="/news">
-        <span class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-[20px] opacity-80">newspaper</span>
-          أخبار العائلة
-        </span>
-        <span class="material-symbols-outlined text-[18px] opacity-40 group-hover:opacity-80">chevron_left</span>
-      </a>
-
-      <a class="group px-4 py-3 rounded-2xl dark:square-frame font-extrabold
-                border border-gray-200/80 dark:border-accent-gold/20
-                hover:bg-gray-50 dark:hover:bg-white/5 transition-colors
-                flex items-center justify-between"
-         href="/tree-pdf">
-        <span class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-[20px] opacity-80">picture_as_pdf</span>
-          شجرة PDF
-        </span>
-        <span class="material-symbols-outlined text-[18px] opacity-40 group-hover:opacity-80">chevron_left</span>
-      </a>
-
-      <a class="group px-4 py-3 rounded-2xl dark:square-frame font-extrabold
-                border border-gray-200/80 dark:border-accent-gold/20
-                hover:bg-gray-50 dark:hover:bg-white/5 transition-colors
-                flex items-center justify-between"
-         href="/support">
-        <span class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-[20px] opacity-80">support_agent</span>
-          الدعم
-        </span>
-        <span class="material-symbols-outlined text-[18px] opacity-40 group-hover:opacity-80">chevron_left</span>
-      </a>
-
-      <div class="mt-3 pt-3 border-t border-gray-100 dark:border-accent-gold/10">
-        <a href="/admin/login"
-           class="w-full flex items-center justify-center gap-2
-                  bg-primary dark:bg-accent-gold-dark text-white dark:text-bg-charcoal
-                  px-4 py-3 rounded-2xl dark:square-frame font-extrabold
-                  hover:bg-[#185366] dark:hover:bg-white transition-colors
-                  shadow-md shadow-primary/20 dark:shadow-accent-gold/10"
-           title="تسجيل الدخول">
-          <span class="material-symbols-outlined text-[22px]">login</span>
-          <span>تسجيل الدخول</span>
-        </a>
-      </div>
-
-      <div class="mt-3 text-[11px] leading-relaxed text-text-muted dark:text-muted-slate font-amiri opacity-90">
-        © ٢٠٢٦ وقف عائلة خاشقجي. جميع الحقوق محفوظة. حفظ الأنساب والاحتفاء بالتراث.
-      </div>
+    <nav class="p-6 flex flex-col gap-4 font-bold text-lg flex-grow text-gray-700 dark:text-gray-300" aria-label="قائمة الجوال">
+      <a class="px-4 py-3 rounded-lg text-accent-gold bg-accent-gold/5 border-r-2 border-accent-gold" href="/">الشجرة</a>
+      <a class="px-4 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors" href="/about">نبذة</a>
+      <a class="px-4 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors" href="/honor">قائمة السير الذاتية</a>
+      <a class="px-4 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors" href="/news">أخبار العائلة</a>
+      <a class="px-4 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors" href="/tree-pdf">مشجرة العائلة</a>
+      <a class="px-4 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors" href="/support">الدعم</a>
     </nav>
+
+    <div class="p-6 border-t border-gray-100 dark:border-white/5">
+      <a href="/admin/login" class="flex items-center justify-center gap-2 py-3 bg-primary text-white dark:bg-white dark:text-primary rounded-lg hover:opacity-90 transition-colors font-bold" title="تسجيل الدخول">
+        <span class="material-symbols-outlined">login</span>
+      </a>
+    </div>
   </aside>
 
-  <header class="bg-white dark:bg-bg-charcoal/95 dark:backdrop-blur-md border-b border-gray-100 dark:border-accent-gold/20 sticky top-0 z-50 shadow-sm/50 dark:shadow-2xl">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-20 gap-3">
-        <div class="flex items-center gap-4 min-w-0">
-          <div class="flex items-center gap-3 shrink-0">
-            <img class="h-10 w-auto hidden dark:block" src="/assets/logo-dark.svg" alt="شعار العائلة" />
-            <img class="h-10 w-auto block dark:hidden" src="/assets/logo-light.svg" alt="شعار العائلة" />
-          </div>
+  <header class="sticky top-0 z-50 w-full bg-white/95 dark:bg-[#050505]/95 backdrop-blur-md border-b border-gray-200 dark:border-white/10">
+    <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center h-20 md:h-24">
 
-          <div class="hidden sm:flex flex-col items-start min-w-0">
-            <h1 class="text-xl font-extrabold text-primary dark:text-accent-gold-dark leading-none tracking-tight truncate">شجرة العائلة</h1>
-            <span class="text-[10px] font-bold text-accent-gold dark:text-accent-gold/70 uppercase tracking-[0.2em] truncate">
-              اضغط على أي شخص لتفعيل وضع التركيز
-            </span>
-          </div>
+      <div class="flex items-center gap-4 min-w-0">
+        <a href="/" class="block shrink-0">
+          <img class="h-14 md:h-20 w-auto hidden dark:block" src="/assets/logo-dark.svg" alt="شعار العائلة" />
+          <img class="h-14 md:h-20 w-auto block dark:hidden" src="/assets/logo-light.svg" alt="شعار العائلة" />
+        </a>
+
+        <div class="h-10 w-px bg-gray-300 dark:bg-white/20"></div>
+
+        <div class="flex flex-col justify-center min-w-0">
+          <h1 class="text-2xl md:text-3xl font-display text-primary dark:text-accent-gold font-bold leading-none tracking-wide pt-1 truncate">شجرة العائلة</h1>
+          <span class="hidden sm:block text-[10px] font-bold text-gray-500 dark:text-gray-500 uppercase tracking-[0.25em] mt-2">استكشاف الأنساب والروابط العائلية</span>
         </div>
+      </div>
 
-        <div class="flex items-center gap-2 md:gap-4 lg:gap-8 shrink-0">
-          <nav class="hidden md:flex gap-6 lg:gap-8" aria-label="التنقل الرئيسي">
-            <a class="text-sm font-semibold text-text-dark dark:text-text-cream hover:text-primary dark:hover:text-accent-gold-dark transition-colors border-b-2 border-transparent hover:border-accent-gold pb-1" href="/">الشجرة</a>
-            <a class="text-sm font-semibold text-text-dark dark:text-muted-slate hover:text-primary dark:hover:text-accent-gold-dark transition-colors border-b-2 border-transparent hover:border-accent-gold pb-1" href="/about">نبذة</a>
-            <a class="text-sm font-semibold text-text-dark dark:text-muted-slate hover:text-primary dark:hover:text-accent-gold-dark transition-colors border-b-2 border-transparent hover:border-accent-gold pb-1" href="/honor">قائمة السير الذاتية</a>
-            <a class="text-sm font-semibold text-text-dark dark:text-muted-slate hover:text-primary dark:hover:text-accent-gold-dark transition-colors border-b-2 border-transparent hover:border-accent-gold pb-1" href="/news">أخبار العائلة</a>
-            <a class="text-sm font-semibold text-text-dark dark:text-muted-slate hover:text-primary dark:hover:text-accent-gold-dark transition-colors border-b-2 border-transparent hover:border-accent-gold pb-1" href="/tree-pdf">شجرة PDF</a>
-            <a class="text-sm font-semibold text-text-dark dark:text-muted-slate hover:text-primary dark:hover:text-accent-gold-dark transition-colors border-b-2 border-transparent hover:border-accent-gold pb-1" href="/support">الدعم</a>
-          </nav>
+      <nav class="hidden lg:flex gap-6 xl:gap-8 items-center font-sans font-bold text-sm tracking-wide uppercase text-gray-600 dark:text-gray-400" aria-label="التنقل الرئيسي">
+        <a class="text-primary dark:text-white border-b-2 border-accent-gold pb-1" href="/">الشجرة</a>
+        <a class="hover:text-accent-gold transition-colors" href="/about">نبذة</a>
+        <a class="hover:text-accent-gold transition-colors" href="/honor">قائمة السير الذاتية</a>
+        <a class="hover:text-accent-gold transition-colors" href="/news">أخبار العائلة</a>
+        <a class="hover:text-accent-gold transition-colors" href="/tree-pdf">مشجرة العائلة</a>
+        <a class="hover:text-accent-gold transition-colors" href="/support">الدعم</a>
+      </nav>
 
-          <button id="mobileNavBtn"
-                  data-open="false"
-                  class="md:hidden inline-flex items-center gap-2 px-3 py-2 rounded-full
-                         bg-white/90 dark:bg-bg-card/90 backdrop-blur
-                         border border-gray-200 dark:border-accent-gold/30
-                         shadow-sm dark:shadow-[0_10px_30px_rgba(0,0,0,0.45)]
-                         text-text-dark dark:text-accent-gold-dark
-                         hover:bg-white dark:hover:bg-white/5 transition-colors"
-                  type="button"
-                  aria-label="فتح القائمة"
-                  aria-expanded="false">
-            <span class="material-symbols-outlined text-[20px] ico-open">apps</span>
-            <span class="material-symbols-outlined text-[20px] ico-close hidden">close</span>
-            <span class="text-[12px] font-extrabold tracking-wide">القائمة</span>
-          </button>
+      <div class="flex items-center gap-3 shrink-0">
+        <button id="uiThemeBtn" aria-label="تبديل المظهر" class="flex items-center justify-center w-10 h-10 rounded-full border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-400 hover:text-accent-gold dark:hover:text-accent-gold hover:bg-gray-50 dark:hover:bg-white/5 transition-all" type="button" title="تبديل المظهر">
+          <span class="material-symbols-outlined text-[22px] dark:hidden">dark_mode</span>
+          <span class="material-symbols-outlined text-[20px] hidden dark:inline">light_mode</span>
+        </button>
 
-          <div class="flex items-center gap-2 dark:border-r dark:border-accent-gold/20 dark:pr-4 md:dark:pr-8">
-            <button id="uiThemeBtn"
-                    class="p-2.5 rounded-full text-text-dark dark:text-accent-gold-dark hover:bg-gray-100 dark:hover:bg-accent-gold/10 transition-colors flex items-center justify-center border border-transparent hover:border-gray-200 dark:border-accent-gold/30 dark:hover:border-accent-gold/50"
-                    type="button"
-                    title="تبديل المظهر">
-              <span class="material-symbols-outlined text-[22px] dark:hidden">dark_mode</span>
-              <span class="material-symbols-outlined text-[20px] hidden dark:inline">light_mode</span>
-            </button>
+        <a href="/admin/login" class="hidden sm:flex p-2.5 rounded-full bg-primary text-white dark:bg-white dark:text-black hover:opacity-90 transition-all shadow-md flex items-center justify-center" title="تسجيل الدخول">
+          <span class="material-symbols-outlined text-[22px]">login</span>
+        </a>
 
-            <a href="/admin/login"
-               class="p-2.5 rounded-full bg-primary text-white hover:bg-[#185366] transition-all shadow-md shadow-primary/20 active:scale-[0.98]
-                      dark:bg-accent-gold-dark dark:text-bg-charcoal dark:hover:bg-white dark:shadow-accent-gold/10
-                      flex items-center justify-center"
-               title="تسجيل الدخول">
-              <span class="material-symbols-outlined text-[22px]">login</span>
-            </a>
-          </div>
-
-        </div>
+        <button id="mobileNavBtn" data-open="false" class="lg:hidden flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-primary dark:text-accent-gold hover:bg-gray-200 dark:hover:bg-white/10 transition-colors" type="button" aria-label="فتح القائمة" aria-expanded="false">
+          <span class="material-symbols-outlined text-[24px] ico-open">menu</span>
+          <span class="material-symbols-outlined text-[24px] ico-close hidden">close</span>
+        </button>
       </div>
     </div>
   </header>
 
-  <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 dark:py-10 flex flex-col gap-8">
+  <main class="flex-grow relative">
 
-    <div class="flex flex-col md:flex-row gap-4 justify-between items-center bg-white dark:bg-bg-card p-2 rounded-2xl dark:square-frame shadow-sm dark:shadow-lg border border-gray-100/80 dark:border-accent-gold/10">
-      <label class="flex-grow w-full md:w-auto relative group">
-        <div class="absolute inset-y-0 start-0 ps-4 flex items-center pointer-events-none">
-          <span class="material-symbols-outlined text-text-muted dark:text-muted-slate group-focus-within:text-primary dark:group-focus-within:text-accent-gold-dark transition-colors">search</span>
-        </div>
+    <section class="family-hero pt-20 pb-14 px-6 max-w-[90rem] mx-auto text-center">
+      <div class="absolute inset-0 bg-islamic-pattern opacity-100 dark:opacity-30 pointer-events-none"></div>
 
-        <input id="search"
-               class="block w-full ps-12 pe-4 py-3.5 bg-background-light dark:bg-bg-charcoal border-transparent dark:border-accent-gold/10 text-text-dark dark:text-text-cream placeholder-text-muted dark:placeholder-text-muted focus:border-primary/20 dark:focus:border-accent-gold-dark focus:bg-white dark:focus:bg-bg-charcoal focus:ring-0 rounded-xl dark:square-frame transition-all font-medium"
-               placeholder="ابحث عن أحد أفراد العائلة..."
-               type="text" />
-      </label>
+      <img src="/assets/logo-dark.svg" class="family-hero-watermark hidden dark:block" alt="">
+      <img src="/assets/logo-light.svg" class="family-hero-watermark block dark:hidden" alt="">
 
-      <button id="resetView"
-              class="w-full md:w-auto flex items-center justify-center gap-2 bg-primary dark:bg-accent-gold-dark text-white dark:text-bg-charcoal px-8 py-3.5 rounded-xl dark:square-frame font-bold hover:bg-[#185366] dark:hover:bg-white transition-all shadow-md shadow-primary/20 dark:shadow-accent-gold/10 hover:shadow-lg hover:shadow-primary/30 dark:hover:shadow-accent-gold/20 active:scale-[0.98]"
-              type="button">
-        <span class="material-symbols-outlined">account_tree</span>
-        <span class="dark:hidden">عرض الشجرة الكاملة</span>
-        <span class="hidden dark:inline">استكشاف الشجرة</span>
-      </button>
-    </div>
+      <div class="w-px h-12 bg-accent-gold mx-auto mb-6 relative z-10"></div>
 
-    <div class="flex flex-wrap gap-2 justify-center md:justify-end">
-      <button id="zoomOut" type="button"
-              class="p-2.5 rounded-full border border-gray-200 dark:border-accent-gold/30 text-text-dark dark:text-accent-gold-dark hover:bg-white dark:hover:bg-accent-gold/10 transition-colors"
-              title="تصغير">
-        <span class="material-symbols-outlined text-[20px]">zoom_out</span>
-      </button>
-      <button id="zoomIn" type="button"
-              class="p-2.5 rounded-full border border-gray-200 dark:border-accent-gold/30 text-text-dark dark:text-accent-gold-dark hover:bg-white dark:hover:bg-accent-gold/10 transition-colors"
-              title="تكبير">
-        <span class="material-symbols-outlined text-[20px]">zoom_in</span>
-      </button>
-      <button id="fit" type="button"
-              class="px-4 py-2 rounded-xl dark:square-frame font-bold border border-gray-200 dark:border-accent-gold/30 text-text-dark dark:text-accent-gold-dark hover:bg-white dark:hover:bg-accent-gold/10 transition-colors"
-              title="ملاءمة">
-        ملاءمة
-      </button>
-      <button id="focusMode" type="button"
-              class="px-4 py-2 rounded-xl dark:square-frame font-bold border border-gray-200 dark:border-accent-gold/30 text-text-dark dark:text-accent-gold-dark hover:bg-white dark:hover:bg-accent-gold/10 transition-colors"
-              title="وضع التركيز">
-        وضع التركيز
-      </button>
-      <button id="toggleDetails" type="button"
-              class="px-4 py-2 rounded-xl dark:square-frame font-bold bg-primary dark:bg-accent-gold-dark text-white dark:text-bg-charcoal hover:bg-[#185366] dark:hover:bg-white transition-colors shadow-md dark:shadow-accent-gold/10 active:scale-[0.98]"
-              title="التفاصيل">
-        التفاصيل
-      </button>
-    </div>
+      <h2 class="text-5xl md:text-7xl font-display leading-tight mb-4 relative z-10 font-bold drop-shadow-sm dark:drop-shadow-none">
+        <span class="text-primary dark:text-white transition-colors duration-300">شجرة</span>
+        <span class="text-accent-gold">العائلة</span>
+      </h2>
 
-    <section class="relative w-full bg-white dark:bg-bg-card rounded-3xl dark:square-frame shadow-xl dark:shadow-2xl shadow-gray-200/50 overflow-hidden border border-accent-gold/20 dark:border-accent-gold/10 flex flex-col tree-viewport">
-      <div class="absolute inset-0 bg-islamic-pattern dark:bg-islamic-pattern-dark opacity-40 pointer-events-none"></div>
-      <div class="absolute inset-0 bg-gradient-to-b from-white/80 via-transparent to-white/80 dark:from-bg-charcoal/40 dark:to-bg-charcoal/40 pointer-events-none"></div>
+      <p class="text-base md:text-lg font-sans text-gray-500 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed relative z-10">
+        استكشف روابط العائلة بطريقة تفاعلية، وابحث عن الأفراد، وكبّر أو صغّر الشجرة للوصول للتفاصيل بسهولة.
+      </p>
+    </section>
 
-      <div class="relative z-10 flex-grow flex items-center justify-center p-4 sm:p-6 lg:p-8 tree-stage">
-        <div id="tree" class="family-chart-container">
-          <div class="tree-loading">
-            <div class="tree-loading-spinner"></div>
+    <section class="px-4 sm:px-6 lg:px-8 pb-6 max-w-[100rem] mx-auto relative z-20">
+      <div class="royal-control-panel p-4 md:p-5">
+        <div class="relative z-10 grid grid-cols-1 xl:grid-cols-[1fr_auto] gap-4 items-center">
+
+          <label class="relative group">
+            <div class="absolute inset-y-0 start-0 ps-4 flex items-center pointer-events-none">
+              <span class="material-symbols-outlined text-gray-400 group-focus-within:text-accent-gold transition-colors">search</span>
+            </div>
+
+            <input id="search"
+                   class="royal-search block w-full ps-12 pe-4 py-3.5 text-gray-900 dark:text-text-cream placeholder-gray-400 dark:placeholder-gray-500 text-base"
+                   placeholder="ابحث عن أحد أفراد العائلة..."
+                   type="text" />
+          </label>
+
+          <div class="flex flex-wrap gap-2 justify-center xl:justify-end">
+            <button id="resetView"
+                    class="royal-action flex items-center justify-center gap-2 bg-primary dark:bg-accent-gold text-white dark:text-black px-5 py-3 rounded-full font-black hover:opacity-95 shadow-md shadow-primary/15 dark:shadow-accent-gold/10"
+                    type="button">
+              <span class="material-symbols-outlined">account_tree</span>
+              <span>عرض الشجرة الكاملة</span>
+            </button>
+
+            <button id="zoomOut" type="button"
+                    class="royal-action w-12 h-12 rounded-full border border-gray-200 dark:border-white/10 text-gray-700 dark:text-accent-gold hover:border-accent-gold hover:bg-accent-gold/5 flex items-center justify-center"
+                    title="تصغير">
+              <span class="material-symbols-outlined text-[21px]">zoom_out</span>
+            </button>
+
+            <button id="zoomIn" type="button"
+                    class="royal-action w-12 h-12 rounded-full border border-gray-200 dark:border-white/10 text-gray-700 dark:text-accent-gold hover:border-accent-gold hover:bg-accent-gold/5 flex items-center justify-center"
+                    title="تكبير">
+              <span class="material-symbols-outlined text-[21px]">zoom_in</span>
+            </button>
+
+            <button id="fit" type="button"
+                    class="royal-action px-5 py-3 rounded-full font-black border border-gray-200 dark:border-white/10 text-gray-700 dark:text-white hover:border-accent-gold hover:text-primary dark:hover:text-accent-gold transition-colors"
+                    title="ملاءمة">
+              ملاءمة
+            </button>
+
+            <button id="focusMode" type="button"
+                    class="royal-action px-5 py-3 rounded-full font-black border border-gray-200 dark:border-white/10 text-gray-700 dark:text-white hover:border-accent-gold hover:text-primary dark:hover:text-accent-gold transition-colors"
+                    title="وضع التركيز">
+              وضع التركيز
+            </button>
+
+            <button id="toggleDetails" type="button"
+                    class="royal-action px-5 py-3 rounded-full font-black bg-white dark:bg-white/5 border border-accent-gold/40 text-primary dark:text-accent-gold hover:bg-accent-gold/10 transition-colors shadow-sm"
+                    title="التفاصيل">
+              التفاصيل
+            </button>
           </div>
         </div>
       </div>
+    </section>
 
-      <div class="px-6 pb-6 text-xs text-text-muted dark:text-muted-slate font-amiri">
-        تلميح: عجلة الماوس للتكبير/التصغير، واضغط خارج الأشخاص للعودة للشجرة كاملة.
+    <section class="px-4 sm:px-6 lg:px-8 pb-16 max-w-[100rem] mx-auto relative z-10">
+      <div class="tree-royal-frame tree-viewport">
+        <div class="absolute inset-0 bg-islamic-pattern opacity-80 dark:opacity-25 pointer-events-none"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-white/75 via-transparent to-white/75 dark:from-black/35 dark:to-black/45 pointer-events-none"></div>
+
+        <div class="relative z-10 flex-grow flex items-center justify-center p-4 sm:p-6 lg:p-8 tree-stage h-full">
+          <div id="tree" class="family-chart-container">
+            <div class="tree-loading">
+              <div class="tree-loading-spinner"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tree-hint-strip px-6 py-4 text-xs text-gray-500 dark:text-gray-400 font-bold">
+          تلميح: عجلة الماوس للتكبير/التصغير، واضغط خارج الأشخاص للعودة للشجرة كاملة.
+        </div>
       </div>
     </section>
 
   </main>
 
-  <footer class="bg-white dark:bg-bg-charcoal border-t border-gray-200 dark:border-accent-gold/20 mt-auto">
-    <div class="max-w-7xl mx-auto px-4 py-6 md:flex md:items-center md:justify-between dark:py-8">
-      <div class="w-full text-center md:text-end dark:text-right">
-        <p class="text-xs text-gray-500 dark:text-muted-slate font-amiri tracking-wide opacity-95">
-          © ٢٠٢٦ وقف عائلة خاشقجي. جميع الحقوق محفوظة. حفظ الأنساب والاحتفاء بالتراث.
-        </p>
-      </div>
+  <footer class="bg-background-light dark:bg-bg-charcoal border-t border-gray-200 dark:border-white/10 mt-auto py-8 relative z-10">
+    <div class="max-w-[90rem] mx-auto px-6 text-center flex flex-col items-center gap-3">
+      <p class="text-[11px] font-sans font-bold text-gray-500 uppercase tracking-[0.1em]">
+        © ٢٠٢٦ وقف عائلة خاشقجي. جميع الحقوق محفوظة. حفظ الأنساب والاحتفاء بالتراث.
+      </p>
     </div>
   </footer>
 
   <aside id="drawer"
-         class="fixed top-0 right-0 h-full w-full sm:w-[420px] bg-white dark:bg-bg-card border-l border-gray-200 dark:border-accent-gold/20 shadow-2xl z-[60] translate-x-full transition-transform duration-300"
+         class="drawer-royal fixed top-0 right-0 h-full w-full sm:w-[420px] border-l border-gray-200 dark:border-white/10 shadow-2xl z-[60] translate-x-full transition-transform duration-300"
          aria-label="تفاصيل الشخص">
-    <div class="flex items-center justify-between p-4 border-b border-gray-100 dark:border-accent-gold/10">
+    <div class="h-1.5 w-full bg-gradient-to-r from-gray-300 via-accent-gold to-gray-300 dark:from-gray-800 dark:via-accent-gold dark:to-gray-800"></div>
+
+    <div class="flex items-center justify-between p-5 border-b border-gray-100 dark:border-white/10">
       <div>
-        <div class="font-extrabold text-primary dark:text-accent-gold-dark">بيانات الشخص</div>
-        <div class="text-xs text-text-muted dark:text-muted-slate font-amiri">تظهر عند اختيار أي شخص من الشجرة</div>
+        <div class="font-black text-primary dark:text-accent-gold text-lg">بيانات الشخص</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 font-bold mt-1">تظهر عند اختيار أي شخص من الشجرة</div>
       </div>
       <button id="closeDrawer"
               class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
@@ -621,21 +838,21 @@
       </button>
     </div>
 
-    <div id="details" class="p-4 text-sm text-text-muted dark:text-muted-slate font-amiri">
+    <div id="details" class="p-5 text-sm text-gray-600 dark:text-gray-300 font-sans">
       اختر شخصاً من الشجرة.
     </div>
   </aside>
 
   <div id="modal" class="fixed inset-0 z-[70] hidden" role="dialog" aria-modal="true">
-    <div class="absolute inset-0 bg-black/40" id="modalBackdrop"></div>
-    <div class="relative max-w-2xl mx-auto mt-10 sm:mt-16 bg-white dark:bg-bg-card border border-gray-200 dark:border-accent-gold/20 rounded-2xl dark:square-frame shadow-2xl p-4 sm:p-6">
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="modalBackdrop"></div>
+    <div class="relative max-w-2xl mx-auto mt-10 sm:mt-16 bg-white dark:bg-[#050505] border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl p-4 sm:p-6">
       <button id="closeModal"
               class="absolute top-3 left-3 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
               aria-label="إغلاق"
               type="button">
         <span class="material-symbols-outlined">close</span>
       </button>
-      <div id="modalBody" class="text-text-dark dark:text-text-cream font-amiri"></div>
+      <div id="modalBody" class="text-gray-900 dark:text-text-cream font-sans"></div>
     </div>
   </div>
 
@@ -667,8 +884,8 @@
             container: '#tree',
             data: familyData,
             options: {
-              nodeWidth: 100,
-              nodeHeight: 100,
+              nodeWidth: 130, // Updated node width for premium card
+              nodeHeight: 160, // Updated node height for premium card
               rtl: true,
               orientation: 'horizontal',
               generationsGap: 150,
@@ -680,34 +897,40 @@
             },
             card: {
               darkMode: isDark,
-              template: (person) => `
-                <g transform="translate(0,0)" class="person-node-group" data-id="${person.id}">
-                  <foreignObject width="100" height="100">
-                    <div xmlns="http://www.w3.org/1999/xhtml" 
-                         class="node-portrait ${person.gender === 'M' ? 'male' : 'female'} person-node"
-                         data-id="${person.id}"
-                         style="width:100px; height:100px; overflow:hidden;">
-                      ${person.image 
-                        ? `<img src="${person.image}" style="width:100%; height:100%; object-fit:cover;">`
-                        : `<div style="width:100%; height:100%; background:${person.gender === 'M' ? '#1f637a20' : '#E3C56F20'}; display:flex; align-items:center; justify-content:center;">
-                             <span class="material-symbols-outlined" style="font-size:40px; color:${person.gender === 'M' ? '#1f637a' : '#E3C56F'}">person</span>
-                           </div>`
-                      }
-                    </div>
-                  </foreignObject>
-                  
-                  <foreignObject y="90" width="100" height="50">
-                    <div xmlns="http://www.w3.org/1999/xhtml" 
-                         class="name-box person-node"
-                         data-id="${person.id}"
-                         style="width:100%;">
-                      <div class="node-label-text" style="font-family:'Amiri',serif;">
-                        ${person.firstName} ${person.lastName}
+              template: (person) => {
+                const isMale = person.gender === 'M';
+                const isDeceased = !!person.deathDate;
+                const getYear = (d) => d ? d.split('-')[0] : '?';
+                
+                return `
+                  <g transform="translate(0,0)" class="person-node-group" data-id="${person.id}">
+                    <foreignObject width="130" height="160">
+                      <div xmlns="http://www.w3.org/1999/xhtml" class="premium-node-card ${isMale ? 'male' : 'female'}">
+                        
+                        ${isDeceased ? `
+                          <div class="deceased-ribbon">
+                            <span class="material-symbols-outlined" style="font-size:12px;">psychiatry</span>
+                            <span>${getYear(person.birthDate)} - ${getYear(person.deathDate)}</span>
+                          </div>
+                        ` : ''}
+
+                        <div class="node-photo-area">
+                          ${person.image 
+                            ? `<img src="${person.image}">`
+                            : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:${isMale ? 'rgba(0,90,43,0.05)' : 'rgba(229,184,105,0.05)'}; color:${isMale ? '#005A2B' : '#E5B869'};">
+                                 <span class="material-symbols-outlined" style="font-size:60px;">person</span>
+                               </div>`
+                          }
+                        </div>
+
+                        <div class="node-name-overlay">
+                          <div class="node-label-text">${person.firstName} ${person.lastName}</div>
+                        </div>
                       </div>
-                    </div>
-                  </foreignObject>
-                </g>
-              `,
+                    </foreignObject>
+                  </g>
+                `;
+              },
               onClick: (person) => {
                 openPersonDrawer(person.originalData);
               }
@@ -849,34 +1072,36 @@
               window.familyChart.updateOptions({
                 card: {
                   darkMode: isDark,
-                  template: (person) => `
-                    <g transform="translate(0,0)" class="person-node-group" data-id="${person.id}">
-                      <foreignObject width="100" height="100">
-                        <div xmlns="http://www.w3.org/1999/xhtml" 
-                             class="node-portrait ${person.gender === 'M' ? 'male' : 'female'} person-node"
-                             data-id="${person.id}"
-                             style="width:100px; height:100px; overflow:hidden;">
-                          ${person.image 
-                            ? `<img src="${person.image}" style="width:100%; height:100%; object-fit:cover;">`
-                            : `<div style="width:100%; height:100%; background:${person.gender === 'M' ? '#1f637a20' : '#E3C56F20'}; display:flex; align-items:center; justify-content:center;">
-                                 <span class="material-symbols-outlined" style="font-size:40px; color:${person.gender === 'M' ? '#1f637a' : '#E3C56F'}">person</span>
-                               </div>`
-                          }
-                        </div>
-                      </foreignObject>
-                      
-                      <foreignObject y="90" width="100" height="50">
-                        <div xmlns="http://www.w3.org/1999/xhtml" 
-                             class="name-box person-node"
-                             data-id="${person.id}"
-                             style="width:100%;">
-                          <div class="node-label-text" style="font-family:'Amiri',serif;">
-                            ${person.firstName} ${person.lastName}
+                  template: (person) => {
+                    const isMale = person.gender === 'M';
+                    const isDeceased = !!person.deathDate;
+                    const getYear = (d) => d ? d.split('-')[0] : '?';
+                    return `
+                      <g transform="translate(0,0)" class="person-node-group" data-id="${person.id}">
+                        <foreignObject width="130" height="160">
+                          <div xmlns="http://www.w3.org/1999/xhtml" class="premium-node-card ${isMale ? 'male' : 'female'}">
+                            ${isDeceased ? `
+                              <div class="deceased-ribbon">
+                                <span class="material-symbols-outlined" style="font-size:12px;">psychiatry</span>
+                                <span>${getYear(person.birthDate)} - ${getYear(person.deathDate)}</span>
+                              </div>
+                            ` : ''}
+                            <div class="node-photo-area">
+                              ${person.image 
+                                ? `<img src="${person.image}">`
+                                : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:${isMale ? 'rgba(0,90,43,0.05)' : 'rgba(229,184,105,0.05)'}; color:${isMale ? '#005A2B' : '#E5B869'};">
+                                     <span class="material-symbols-outlined" style="font-size:60px;">person</span>
+                                   </div>`
+                              }
+                            </div>
+                            <div class="node-name-overlay">
+                              <div class="node-label-text">${person.firstName} ${person.lastName}</div>
+                            </div>
                           </div>
-                        </div>
-                      </foreignObject>
-                    </g>
-                  `
+                        </foreignObject>
+                      </g>
+                    `;
+                  }
                 }
               });
             }
@@ -884,7 +1109,7 @@
         });
       }
       
-      // Drawer functions
+      // Drawer functions (Updated for Premium Details)
       window.openPersonDrawer = function(personData) {
         const drawer = document.getElementById('drawer');
         const detailsDiv = document.getElementById('details');
@@ -892,39 +1117,47 @@
         // Store selected person ID for focus mode
         window.selectedPersonId = personData.id;
         
+        function createDataBlock(icon, label, value, extraClass = "") {
+          return `
+            <div class="bg-white dark:bg-background-dark p-4 rounded-xl border border-gray-100 dark:border-white/5 shadow-sm flex items-start gap-3 ${extraClass}">
+              <span class="material-symbols-outlined text-accent-gold mt-0.5">${icon}</span>
+              <div>
+                <div class="text-xs text-gray-400 font-bold mb-1">${label}</div>
+                <div class="text-base font-bold text-gray-900 dark:text-white leading-snug">${value}</div>
+              </div>
+            </div>
+          `;
+        }
+
         // Populate drawer
         detailsDiv.innerHTML = `
-          <div class="space-y-4">
-            ${personData.photo_url ? `
-              <div class="flex justify-center">
-                <img src="${personData.photo_url}" 
-                     class="w-32 h-32 object-cover rounded-lg border-2 border-accent-gold">
+          <div class="space-y-8 flex flex-col items-center">
+            <div class="text-center w-full flex flex-col items-center">
+              ${personData.photo_url ? `
+                <img src="${personData.photo_url}" alt="${personData.name}" class="w-40 h-40 rounded-3xl object-cover shadow-lg border-4 border-white dark:border-card-dark mb-5"/>
+              ` : `
+                <div class="w-40 h-40 rounded-3xl bg-gray-100 dark:bg-background-dark/50 flex items-center justify-center text-gray-300 dark:text-white/10 mb-5 border border-gray-200 dark:border-white/5">
+                  <span class="material-symbols-outlined text-[80px]">person</span>
+                </div>
+              `}
+              <h3 class="text-3xl font-display text-primary dark:text-accent-gold font-bold leading-tight">${personData.name}</h3>
+              ${personData.job ? `<p class="text-sm font-bold text-gray-500 mt-2 px-4 py-1 bg-gray-100 dark:bg-white/5 rounded-full inline-block">${personData.job}</p>` : ''}
+            </div>
+            <div class="w-full h-px bg-gray-100 dark:bg-white/5"></div>
+            <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm" style="direction: rtl;">
+              ${createDataBlock("monitoring", "الحالة", personData.death_date ? "متوفى (رحمه الله)" : "حي (حفظه الله)", "col-span-1 sm:col-span-2")}
+              ${createDataBlock("cake", "تاريخ الميلاد", personData.birth_date || "غير مسجل")}
+              ${personData.death_date ? createDataBlock("psychiatry", "تاريخ الوفاة", personData.death_date) : ''}
+              ${createDataBlock("account_tree", "النسب", personData.lineage || "غير مسجل", "col-span-1 sm:col-span-2")}
+            </div>
+            ${personData.notes ? `
+              <div class="w-full bg-gray-50 dark:bg-background-dark/50 p-5 rounded-2xl border border-gray-100 dark:border-white/5 shadow-inner">
+                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[16px]">history_edu</span> نبذة تاريخية
+                </h4>
+                <p class="text-base text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">${personData.notes}</p>
               </div>
             ` : ''}
-            
-            <div class="text-center">
-              <h2 class="text-xl font-extrabold text-primary dark:text-accent-gold-dark">
-                ${personData.name}
-              </h2>
-              ${personData.job ? `
-                <p class="text-sm text-text-muted dark:text-muted-slate">${personData.job}</p>
-              ` : ''}
-            </div>
-            
-            <div class="border-t border-gray-200 dark:border-accent-gold/20 pt-4">
-              ${personData.birth_date ? `
-                <p><span class="font-bold">الميلاد:</span> ${personData.birth_date}</p>
-              ` : ''}
-              ${personData.death_date ? `
-                <p><span class="font-bold">الوفاة:</span> ${personData.death_date}</p>
-              ` : ''}
-              ${personData.lineage ? `
-                <p><span class="font-bold">النسب:</span> ${personData.lineage}</p>
-              ` : ''}
-              ${personData.notes ? `
-                <p class="mt-2 text-sm">${personData.notes}</p>
-              ` : ''}
-            </div>
           </div>
         `;
         
@@ -985,6 +1218,137 @@
         backdrop?.addEventListener("click", () => modal?.classList.add("hidden"));
       })();
       
+    })();
+  </script>
+
+
+  <script id="family-tree-final-fixes-js">
+    (function familyTreeFinalFixes(){
+      function setTheme(next){
+        document.documentElement.setAttribute("data-theme", next);
+        document.documentElement.classList.toggle("dark", next === "dark");
+        localStorage.setItem("theme", next);
+        updateThemeButton();
+      }
+
+      function getTheme(){
+        return document.documentElement.getAttribute("data-theme")
+          || (document.documentElement.classList.contains("dark") ? "dark" : "light");
+      }
+
+      function updateThemeButton(){
+        const btn = document.getElementById("uiThemeBtn");
+        if (!btn) return;
+        const isDark = getTheme() === "dark";
+        btn.setAttribute("aria-pressed", String(isDark));
+        btn.title = isDark ? "تبديل إلى الوضع الفاتح" : "تبديل إلى الوضع الداكن";
+      }
+
+      const btn = document.getElementById("uiThemeBtn");
+      if (btn && !btn.dataset.finalThemeBound) {
+        btn.dataset.finalThemeBound = "1";
+        btn.addEventListener("click", function(e){
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          const current = getTheme();
+          setTheme(current === "dark" ? "light" : "dark");
+          window.dispatchEvent(new CustomEvent("family-theme-changed", { detail: { theme: getTheme() }}));
+        }, true);
+      }
+
+      setTheme(localStorage.getItem("theme") || getTheme() || "dark");
+
+      function normalizePublicStats(){
+        const boxes = Array.from(document.querySelectorAll("#publicStats"));
+        if (boxes.length > 1) {
+          boxes.slice(1).forEach(el => el.remove());
+        }
+
+        const box = document.getElementById("publicStats");
+        if (!box) return;
+
+        box.removeAttribute("style");
+
+        const titleRow = box.children[0];
+        if (titleRow) {
+          titleRow.removeAttribute("style");
+          titleRow.classList.add("stats-title-row");
+
+          const children = Array.from(titleRow.children);
+          if (children[0]) {
+            children[0].removeAttribute("style");
+            children[0].classList.add("stats-heading");
+          }
+          if (children[1]) {
+            children[1].removeAttribute("style");
+            children[1].classList.add("stats-subtitle");
+          }
+        }
+
+        const grid = box.children[1];
+        if (grid) {
+          grid.removeAttribute("style");
+          grid.classList.add("stats-grid");
+
+          Array.from(grid.children).forEach((card, index) => {
+            card.removeAttribute("style");
+            card.classList.add("stats-card");
+            const label = card.children[0];
+            const value = card.children[1];
+            if (label) {
+              label.removeAttribute("style");
+              label.classList.add("stats-card-label");
+
+              if (!label.querySelector(".material-symbols-outlined")) {
+                const icon = document.createElement("span");
+                icon.className = "material-symbols-outlined";
+                icon.style.fontSize = "18px";
+                icon.style.color = "#005A2B";
+                icon.textContent = index === 0 ? "male" : index === 1 ? "female" : "groups";
+                label.prepend(icon);
+              }
+            }
+            if (value) {
+              value.removeAttribute("style");
+              value.classList.add("stats-card-value");
+            }
+          });
+        }
+
+        // Remove accidental legacy/stat duplicate sections that do not have #publicStats
+        Array.from(document.querySelectorAll("main section")).forEach(sec => {
+          if (sec.id === "publicStats") return;
+          if (sec.dataset.keepStats === "1") return;
+          const txt = (sec.textContent || "").replace(/\s+/g, " ").trim();
+          const looksLikeDuplicate =
+            txt.includes("إحصائيات العائلة") &&
+            txt.includes("عدد الرجال") &&
+            txt.includes("عدد النساء") &&
+            txt.includes("إجمالي الأفراد");
+          if (looksLikeDuplicate) sec.remove();
+        });
+      }
+
+      function normalizeDetailsDrawer(){
+        const drawer = document.getElementById("drawer");
+        const details = document.getElementById("details");
+        if (drawer) {
+          drawer.classList.add("drawer-royal-final");
+        }
+        if (details) {
+          details.classList.add("details-royal-final");
+        }
+      }
+
+      normalizePublicStats();
+      normalizeDetailsDrawer();
+
+      const observer = new MutationObserver(() => {
+        normalizePublicStats();
+        normalizeDetailsDrawer();
+      });
+
+      observer.observe(document.body, { childList: true, subtree: true });
     })();
   </script>
 
