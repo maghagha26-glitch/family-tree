@@ -1,0 +1,992 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>شجرة العائلة</title>
+
+  <script src="/theme.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#1f637a",
+            "background-light": "#f8f8f6",
+            "background-dark": "#131c1f",
+            "accent-gold": "#E3C56F",
+            "text-dark": "#272522",
+            "text-muted": "#677c83",
+            "wood": "#8B5E3C",
+            "leaf-green": "#4CAF50",
+
+            "bg-charcoal": "#0F1115",
+            "bg-card": "#16191E",
+            "text-cream": "#FDFBF7",
+            "muted-slate": "#94A3B8",
+            "accent-gold-dark": "#D4AF37",
+          },
+          fontFamily: {
+            "display": ["Cairo", "sans-serif"],
+            "amiri": ["Amiri", "serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "2xl": "1rem",
+            "full": "9999px"
+          },
+          backgroundImage: {
+            "islamic-pattern":
+              "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23E3C56F' fill-opacity='0.15' fill-rule='evenodd'%3E%3Cpath d='M0 20L20 0H0v20zM20 40L40 20H20v20zM20 0l20 20V0H20zM0 20l20 20H0V20z'/%3E%3C/g%3E%3C/svg%3E\")",
+            "islamic-pattern-dark":
+              "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23D4AF37' fill-opacity='0.03' fill-rule='evenodd'%3E%3Cpath d='M0 20L20 0H0v20zM20 40L40 20H20v20zM20 0l20 20V0H20zM0 20l20 20H0V20z'/%3E%3C/g%3E%3C/svg%3E\")",
+          }
+        },
+      },
+    };
+  </script>
+
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .scrollbar-hide::-webkit-scrollbar { display: none; }
+      .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    }
+  </style>
+
+  <style>
+    :root { --gold-glow: rgba(212, 175, 55, 0.4); }
+
+    /* Tree container styles */
+    .tree-container { 
+      position: relative; 
+      width: 100%; 
+      height: 100%; 
+      margin: 0 auto; 
+    }
+    
+    .branch-svg { 
+      position: absolute; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      pointer-events: none; 
+      z-index: 5; 
+    }
+
+    /* Node styles matching your original design */
+    .node-portrait {
+      width: 100px;
+      height: 100px;
+      border-radius: 8px;
+      border: 2px solid #8B5E3C;
+      background: white;
+      overflow: hidden;
+      position: relative;
+      z-index: 10;
+      transition: all 0.2s ease;
+    }
+    
+    .node-portrait:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .node-portrait.male {
+      border-color: #1f637a;
+    }
+    
+    .node-portrait.female {
+      border-color: #E3C56F;
+    }
+    
+    .node-portrait img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .name-box {
+      background-color: #ffffff;
+      border: 1.5px solid #e5e7eb;
+      padding: 4px 16px;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+      margin-top: -12px;
+      position: relative;
+      z-index: 20;
+      min-width: 120px;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+    
+    .name-box:hover {
+      border-color: #1f637a;
+      box-shadow: 0 4px 8px rgba(31, 99, 122, 0.1);
+    }
+    
+    .node-label-text { 
+      font-family: 'Amiri', serif; 
+      color: #272522;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .leaf { 
+      fill: #4CAF50; 
+      filter: drop-shadow(0 1px 1px rgba(0,0,0,0.1)); 
+    }
+
+    /* Dark mode overrides */
+    html.dark .node-portrait {
+      width: 90px;
+      height: 90px;
+      border-radius: 4px;
+      border: 2px solid #D4AF37;
+      background: #16191E;
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+    }
+    
+    html.dark .node-portrait.male {
+      border-color: #1f637a;
+    }
+    
+    html.dark .node-portrait.female {
+      border-color: #E3C56F;
+    }
+    
+    html.dark .name-box {
+      font-family: 'Amiri', serif;
+      margin-top: 4px;
+      text-align: center;
+      background-color: #16191E;
+      border: 1px solid #D4AF37;
+      padding: 6px 16px;
+      min-width: 140px;
+      border-radius: 2px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+    
+    html.dark .name-box:hover {
+      border-color: #E3C56F;
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+    }
+    
+    html.dark .node-label-text { 
+      color: #FDFBF7; 
+    }
+    
+    html.dark .leaf { 
+      fill: #D4AF37; 
+      opacity: 0.6; 
+      filter: none; 
+    }
+    
+    html.dark .glowing-branch {
+      stroke: #D4AF37;
+      stroke-opacity: 0.6;
+      filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.3));
+    }
+    
+    .square-frame { border-radius: 4px !important; }
+
+    /* family-chart specific overrides */
+    .family-chart-container {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .family-chart-container svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    
+    /* Ensure foreignObject content inherits styles */
+    foreignObject div {
+      all: initial;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    foreignObject .node-portrait,
+    foreignObject .name-box {
+      all: revert;
+    }
+    
+    /* Performance optimization */
+    .family-chart-container svg {
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      will-change: transform;
+    }
+
+    /* ===== Mobile Nav (Premium Capsule + Frosted Drawer) ===== */
+    #mobileNavOverlay.hidden { display: none; }
+    #mobileNavOverlay { display: block; }
+
+    #mobileNavDrawer {
+      transform: translateX(-110%);
+      transition: transform .26s cubic-bezier(.2,.9,.2,1);
+      will-change: transform;
+    }
+    #mobileNavDrawer.isOpen { transform: translateX(0); }
+
+    #mobileNavBtn[data-open="true"] .ico-open { display: none; }
+    #mobileNavBtn[data-open="true"] .ico-close { display: inline; }
+    #mobileNavBtn[data-open="false"] .ico-open { display: inline; }
+    #mobileNavBtn[data-open="false"] .ico-close { display: none; }
+
+    /* =========================
+       Tree Responsive Hardening
+       ========================= */
+
+    /* دعم dvh + fallback */
+    @supports (height: 100dvh) {
+      .tree-viewport {
+        height: clamp(520px, 70dvh, 860px);
+      }
+    }
+    @supports not (height: 100dvh) {
+      .tree-viewport {
+        height: clamp(520px, 70vh, 860px);
+      }
+    }
+
+    /* امنع مشاكل اللمس/الزووم على الموبايل داخل الشجرة */
+    .tree-stage {
+      touch-action: none;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* خلي منطقة الشجرة ثابتة وبدون سكرول أفقي (السكرول يعمل مشاكل مع الـ fit/zoom) */
+    .tree-stage {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* خلي الـ #tree ياخد كامل مساحة المرحلة */
+    #tree {
+      width: 100%;
+      height: 100%;
+      min-height: 520px;
+    }
+
+    /* Loading spinner */
+    .tree-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      width: 100%;
+    }
+    
+    .tree-loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(31, 99, 122, 0.1);
+      border-radius: 50%;
+      border-top-color: #1f637a;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    html.dark .tree-loading-spinner {
+      border: 3px solid rgba(212, 175, 55, 0.1);
+      border-top-color: #D4AF37;
+    }
+
+    /* Search highlight */
+    .family-chart-highlight {
+      filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.8));
+    }
+  </style>
+
+  <link rel="stylesheet" href="/styles.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script src="https://cdn.jsdelivr.net/npm/family-chart@0.9.0/dist/family-chart.min.js"></script>
+
+  <script>
+    (function syncThemeBeforePaint() {
+      const saved = localStorage.getItem("theme") || "dark";
+      document.documentElement.setAttribute("data-theme", saved);
+      document.documentElement.classList.toggle("dark", saved === "dark");
+
+      const obs = new MutationObserver(() => {
+        const t = document.documentElement.getAttribute("data-theme") || "dark";
+        document.documentElement.classList.toggle("dark", t === "dark");
+      });
+      obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    })();
+  </script>
+</head>
+
+<body class="bg-background-light dark:bg-bg-charcoal text-text-dark dark:text-text-cream font-display min-h-screen flex flex-col relative overflow-x-hidden selection:bg-accent-gold selection:text-white dark:selection:text-bg-charcoal">
+
+  <div id="mobileNavOverlay" class="fixed inset-0 bg-black/40 z-[80] hidden" aria-hidden="true"></div>
+
+  <aside id="mobileNavDrawer"
+         class="fixed top-0 left-0 h-full w-[320px] max-w-[86vw]
+                bg-white/95 dark:bg-bg-card/95 backdrop-blur-xl
+                border-r border-gray-200 dark:border-accent-gold/20
+                shadow-2xl z-[90]">
+
+    <div class="h-1.5 w-full bg-gradient-to-r from-primary via-accent-gold to-primary dark:from-accent-gold-dark dark:via-white/10 dark:to-accent-gold-dark"></div>
+
+    <div class="flex items-center justify-between p-4 border-b border-gray-100 dark:border-accent-gold/10">
+      <div class="flex items-center gap-3">
+        <img class="h-9 w-auto hidden dark:block" src="/assets/logo-dark.svg" alt="شعار العائلة" />
+        <img class="h-9 w-auto block dark:hidden" src="/assets/logo-light.svg" alt="شعار العائلة" />
+      </div>
+      <button id="mobileNavClose"
+              class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+              type="button"
+              aria-label="إغلاق القائمة">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <nav class="p-4 flex flex-col gap-2" aria-label="قائمة الجوال">
+      <a class="group px-4 py-3 rounded-2xl dark:square-frame font-extrabold
+                border border-gray-200/80 dark:border-accent-gold/20
+                hover:bg-gray-50 dark:hover:bg-white/5 transition-colors
+                flex items-center justify-between"
+         href="/">
+        <span class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px] opacity-80">account_tree</span>
+          الشجرة
+        </span>
+        <span class="material-symbols-outlined text-[18px] opacity-40 group-hover:opacity-80">chevron_left</span>
+      </a>
+
+      <a class="group px-4 py-3 rounded-2xl dark:square-frame font-extrabold
+                border border-gray-200/80 dark:border-accent-gold/20
+                hover:bg-gray-50 dark:hover:bg-white/5 transition-colors
+                flex items-center justify-between"
+         href="/about">
+        <span class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px] opacity-80">info</span>
+          نبذة
+        </span>
+        <span class="material-symbols-outlined text-[18px] opacity-40 group-hover:opacity-80">chevron_left</span>
+      </a>
+
+      <a class="group px-4 py-3 rounded-2xl dark:square-frame font-extrabold
+                border border-gray-200/80 dark:border-accent-gold/20
+                hover:bg-gray-50 dark:hover:bg-white/5 transition-colors
+                flex items-center justify-between"
+         href="/honor">
+        <span class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px] opacity-80">library_books</span>
+          قائمة السير الذاتية
+        </span>
+        <span class="material-symbols-outlined text-[18px] opacity-40 group-hover:opacity-80">chevron_left</span>
+      </a>
+
+      <a class="group px-4 py-3 rounded-2xl dark:square-frame font-extrabold
+                border border-gray-200/80 dark:border-accent-gold/20
+                hover:bg-gray-50 dark:hover:bg-white/5 transition-colors
+                flex items-center justify-between"
+         href="/news">
+        <span class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px] opacity-80">newspaper</span>
+          أخبار العائلة
+        </span>
+        <span class="material-symbols-outlined text-[18px] opacity-40 group-hover:opacity-80">chevron_left</span>
+      </a>
+
+      <a class="group px-4 py-3 rounded-2xl dark:square-frame font-extrabold
+                border border-gray-200/80 dark:border-accent-gold/20
+                hover:bg-gray-50 dark:hover:bg-white/5 transition-colors
+                flex items-center justify-between"
+         href="/tree-pdf">
+        <span class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px] opacity-80">picture_as_pdf</span>
+          شجرة PDF
+        </span>
+        <span class="material-symbols-outlined text-[18px] opacity-40 group-hover:opacity-80">chevron_left</span>
+      </a>
+
+      <a class="group px-4 py-3 rounded-2xl dark:square-frame font-extrabold
+                border border-gray-200/80 dark:border-accent-gold/20
+                hover:bg-gray-50 dark:hover:bg-white/5 transition-colors
+                flex items-center justify-between"
+         href="/support">
+        <span class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px] opacity-80">support_agent</span>
+          الدعم
+        </span>
+        <span class="material-symbols-outlined text-[18px] opacity-40 group-hover:opacity-80">chevron_left</span>
+      </a>
+
+      <div class="mt-3 pt-3 border-t border-gray-100 dark:border-accent-gold/10">
+        <a href="/admin/login"
+           class="w-full flex items-center justify-center gap-2
+                  bg-primary dark:bg-accent-gold-dark text-white dark:text-bg-charcoal
+                  px-4 py-3 rounded-2xl dark:square-frame font-extrabold
+                  hover:bg-[#185366] dark:hover:bg-white transition-colors
+                  shadow-md shadow-primary/20 dark:shadow-accent-gold/10"
+           title="تسجيل الدخول">
+          <span class="material-symbols-outlined text-[22px]">login</span>
+          <span>تسجيل الدخول</span>
+        </a>
+      </div>
+
+      <div class="mt-3 text-[11px] leading-relaxed text-text-muted dark:text-muted-slate font-amiri opacity-90">
+        © ٢٠٢٦ وقف عائلة خاشقجي. جميع الحقوق محفوظة. حفظ الأنساب والاحتفاء بالتراث.
+      </div>
+    </nav>
+  </aside>
+
+  <header class="bg-white dark:bg-bg-charcoal/95 dark:backdrop-blur-md border-b border-gray-100 dark:border-accent-gold/20 sticky top-0 z-50 shadow-sm/50 dark:shadow-2xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-20 gap-3">
+        <div class="flex items-center gap-4 min-w-0">
+          <div class="flex items-center gap-3 shrink-0">
+            <img class="h-10 w-auto hidden dark:block" src="/assets/logo-dark.svg" alt="شعار العائلة" />
+            <img class="h-10 w-auto block dark:hidden" src="/assets/logo-light.svg" alt="شعار العائلة" />
+          </div>
+
+          <div class="hidden sm:flex flex-col items-start min-w-0">
+            <h1 class="text-xl font-extrabold text-primary dark:text-accent-gold-dark leading-none tracking-tight truncate">شجرة العائلة</h1>
+            <span class="text-[10px] font-bold text-accent-gold dark:text-accent-gold/70 uppercase tracking-[0.2em] truncate">
+              اضغط على أي شخص لتفعيل وضع التركيز
+            </span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 md:gap-4 lg:gap-8 shrink-0">
+          <nav class="hidden md:flex gap-6 lg:gap-8" aria-label="التنقل الرئيسي">
+            <a class="text-sm font-semibold text-text-dark dark:text-text-cream hover:text-primary dark:hover:text-accent-gold-dark transition-colors border-b-2 border-transparent hover:border-accent-gold pb-1" href="/">الشجرة</a>
+            <a class="text-sm font-semibold text-text-dark dark:text-muted-slate hover:text-primary dark:hover:text-accent-gold-dark transition-colors border-b-2 border-transparent hover:border-accent-gold pb-1" href="/about">نبذة</a>
+            <a class="text-sm font-semibold text-text-dark dark:text-muted-slate hover:text-primary dark:hover:text-accent-gold-dark transition-colors border-b-2 border-transparent hover:border-accent-gold pb-1" href="/honor">قائمة السير الذاتية</a>
+            <a class="text-sm font-semibold text-text-dark dark:text-muted-slate hover:text-primary dark:hover:text-accent-gold-dark transition-colors border-b-2 border-transparent hover:border-accent-gold pb-1" href="/news">أخبار العائلة</a>
+            <a class="text-sm font-semibold text-text-dark dark:text-muted-slate hover:text-primary dark:hover:text-accent-gold-dark transition-colors border-b-2 border-transparent hover:border-accent-gold pb-1" href="/tree-pdf">شجرة PDF</a>
+            <a class="text-sm font-semibold text-text-dark dark:text-muted-slate hover:text-primary dark:hover:text-accent-gold-dark transition-colors border-b-2 border-transparent hover:border-accent-gold pb-1" href="/support">الدعم</a>
+          </nav>
+
+          <button id="mobileNavBtn"
+                  data-open="false"
+                  class="md:hidden inline-flex items-center gap-2 px-3 py-2 rounded-full
+                         bg-white/90 dark:bg-bg-card/90 backdrop-blur
+                         border border-gray-200 dark:border-accent-gold/30
+                         shadow-sm dark:shadow-[0_10px_30px_rgba(0,0,0,0.45)]
+                         text-text-dark dark:text-accent-gold-dark
+                         hover:bg-white dark:hover:bg-white/5 transition-colors"
+                  type="button"
+                  aria-label="فتح القائمة"
+                  aria-expanded="false">
+            <span class="material-symbols-outlined text-[20px] ico-open">apps</span>
+            <span class="material-symbols-outlined text-[20px] ico-close hidden">close</span>
+            <span class="text-[12px] font-extrabold tracking-wide">القائمة</span>
+          </button>
+
+          <div class="flex items-center gap-2 dark:border-r dark:border-accent-gold/20 dark:pr-4 md:dark:pr-8">
+            <button id="uiThemeBtn"
+                    class="p-2.5 rounded-full text-text-dark dark:text-accent-gold-dark hover:bg-gray-100 dark:hover:bg-accent-gold/10 transition-colors flex items-center justify-center border border-transparent hover:border-gray-200 dark:border-accent-gold/30 dark:hover:border-accent-gold/50"
+                    type="button"
+                    title="تبديل المظهر">
+              <span class="material-symbols-outlined text-[22px] dark:hidden">dark_mode</span>
+              <span class="material-symbols-outlined text-[20px] hidden dark:inline">light_mode</span>
+            </button>
+
+            <a href="/admin/login"
+               class="p-2.5 rounded-full bg-primary text-white hover:bg-[#185366] transition-all shadow-md shadow-primary/20 active:scale-[0.98]
+                      dark:bg-accent-gold-dark dark:text-bg-charcoal dark:hover:bg-white dark:shadow-accent-gold/10
+                      flex items-center justify-center"
+               title="تسجيل الدخول">
+              <span class="material-symbols-outlined text-[22px]">login</span>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 dark:py-10 flex flex-col gap-8">
+
+    <div class="flex flex-col md:flex-row gap-4 justify-between items-center bg-white dark:bg-bg-card p-2 rounded-2xl dark:square-frame shadow-sm dark:shadow-lg border border-gray-100/80 dark:border-accent-gold/10">
+      <label class="flex-grow w-full md:w-auto relative group">
+        <div class="absolute inset-y-0 start-0 ps-4 flex items-center pointer-events-none">
+          <span class="material-symbols-outlined text-text-muted dark:text-muted-slate group-focus-within:text-primary dark:group-focus-within:text-accent-gold-dark transition-colors">search</span>
+        </div>
+
+        <input id="search"
+               class="block w-full ps-12 pe-4 py-3.5 bg-background-light dark:bg-bg-charcoal border-transparent dark:border-accent-gold/10 text-text-dark dark:text-text-cream placeholder-text-muted dark:placeholder-text-muted focus:border-primary/20 dark:focus:border-accent-gold-dark focus:bg-white dark:focus:bg-bg-charcoal focus:ring-0 rounded-xl dark:square-frame transition-all font-medium"
+               placeholder="ابحث عن أحد أفراد العائلة..."
+               type="text" />
+      </label>
+
+      <button id="resetView"
+              class="w-full md:w-auto flex items-center justify-center gap-2 bg-primary dark:bg-accent-gold-dark text-white dark:text-bg-charcoal px-8 py-3.5 rounded-xl dark:square-frame font-bold hover:bg-[#185366] dark:hover:bg-white transition-all shadow-md shadow-primary/20 dark:shadow-accent-gold/10 hover:shadow-lg hover:shadow-primary/30 dark:hover:shadow-accent-gold/20 active:scale-[0.98]"
+              type="button">
+        <span class="material-symbols-outlined">account_tree</span>
+        <span class="dark:hidden">عرض الشجرة الكاملة</span>
+        <span class="hidden dark:inline">استكشاف الشجرة</span>
+      </button>
+    </div>
+
+    <div class="flex flex-wrap gap-2 justify-center md:justify-end">
+      <button id="zoomOut" type="button"
+              class="p-2.5 rounded-full border border-gray-200 dark:border-accent-gold/30 text-text-dark dark:text-accent-gold-dark hover:bg-white dark:hover:bg-accent-gold/10 transition-colors"
+              title="تصغير">
+        <span class="material-symbols-outlined text-[20px]">zoom_out</span>
+      </button>
+      <button id="zoomIn" type="button"
+              class="p-2.5 rounded-full border border-gray-200 dark:border-accent-gold/30 text-text-dark dark:text-accent-gold-dark hover:bg-white dark:hover:bg-accent-gold/10 transition-colors"
+              title="تكبير">
+        <span class="material-symbols-outlined text-[20px]">zoom_in</span>
+      </button>
+      <button id="fit" type="button"
+              class="px-4 py-2 rounded-xl dark:square-frame font-bold border border-gray-200 dark:border-accent-gold/30 text-text-dark dark:text-accent-gold-dark hover:bg-white dark:hover:bg-accent-gold/10 transition-colors"
+              title="ملاءمة">
+        ملاءمة
+      </button>
+      <button id="focusMode" type="button"
+              class="px-4 py-2 rounded-xl dark:square-frame font-bold border border-gray-200 dark:border-accent-gold/30 text-text-dark dark:text-accent-gold-dark hover:bg-white dark:hover:bg-accent-gold/10 transition-colors"
+              title="وضع التركيز">
+        وضع التركيز
+      </button>
+      <button id="toggleDetails" type="button"
+              class="px-4 py-2 rounded-xl dark:square-frame font-bold bg-primary dark:bg-accent-gold-dark text-white dark:text-bg-charcoal hover:bg-[#185366] dark:hover:bg-white transition-colors shadow-md dark:shadow-accent-gold/10 active:scale-[0.98]"
+              title="التفاصيل">
+        التفاصيل
+      </button>
+    </div>
+
+    <section class="relative w-full bg-white dark:bg-bg-card rounded-3xl dark:square-frame shadow-xl dark:shadow-2xl shadow-gray-200/50 overflow-hidden border border-accent-gold/20 dark:border-accent-gold/10 flex flex-col tree-viewport">
+      <div class="absolute inset-0 bg-islamic-pattern dark:bg-islamic-pattern-dark opacity-40 pointer-events-none"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-white/80 via-transparent to-white/80 dark:from-bg-charcoal/40 dark:to-bg-charcoal/40 pointer-events-none"></div>
+
+      <div class="relative z-10 flex-grow flex items-center justify-center p-4 sm:p-6 lg:p-8 tree-stage">
+        <div id="tree" class="family-chart-container">
+          <div class="tree-loading">
+            <div class="tree-loading-spinner"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 pb-6 text-xs text-text-muted dark:text-muted-slate font-amiri">
+        تلميح: عجلة الماوس للتكبير/التصغير، واضغط خارج الأشخاص للعودة للشجرة كاملة.
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-white dark:bg-bg-charcoal border-t border-gray-200 dark:border-accent-gold/20 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 py-6 md:flex md:items-center md:justify-between dark:py-8">
+      <div class="w-full text-center md:text-end dark:text-right">
+        <p class="text-xs text-gray-500 dark:text-muted-slate font-amiri tracking-wide opacity-95">
+          © ٢٠٢٦ وقف عائلة خاشقجي. جميع الحقوق محفوظة. حفظ الأنساب والاحتفاء بالتراث.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <aside id="drawer"
+         class="fixed top-0 right-0 h-full w-full sm:w-[420px] bg-white dark:bg-bg-card border-l border-gray-200 dark:border-accent-gold/20 shadow-2xl z-[60] translate-x-full transition-transform duration-300"
+         aria-label="تفاصيل الشخص">
+    <div class="flex items-center justify-between p-4 border-b border-gray-100 dark:border-accent-gold/10">
+      <div>
+        <div class="font-extrabold text-primary dark:text-accent-gold-dark">بيانات الشخص</div>
+        <div class="text-xs text-text-muted dark:text-muted-slate font-amiri">تظهر عند اختيار أي شخص من الشجرة</div>
+      </div>
+      <button id="closeDrawer"
+              class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+              type="button"
+              aria-label="إغلاق">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div id="details" class="p-4 text-sm text-text-muted dark:text-muted-slate font-amiri">
+      اختر شخصاً من الشجرة.
+    </div>
+  </aside>
+
+  <div id="modal" class="fixed inset-0 z-[70] hidden" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 bg-black/40" id="modalBackdrop"></div>
+    <div class="relative max-w-2xl mx-auto mt-10 sm:mt-16 bg-white dark:bg-bg-card border border-gray-200 dark:border-accent-gold/20 rounded-2xl dark:square-frame shadow-2xl p-4 sm:p-6">
+      <button id="closeModal"
+              class="absolute top-3 left-3 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+              aria-label="إغلاق"
+              type="button">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      <div id="modalBody" class="text-text-dark dark:text-text-cream font-amiri"></div>
+    </div>
+  </div>
+
+  <style>
+    #drawer.isOpen { transform: translateX(0); }
+    #modal.hidden { display: none; }
+    #modal:not(.hidden) { display: block; }
+  </style>
+
+  <script src="/app.js"></script>
+  
+  <script>
+    (function initializeFamilyChart() {
+      // Wait for DOM and data
+      document.addEventListener('DOMContentLoaded', async function() {
+        try {
+          // Fetch your family data from API
+          const response = await fetch('/api/family-data');
+          const data = await response.json();
+          
+          // Transform data to family-chart format
+          const familyData = transformFamilyData(data.persons, data.spouses);
+          
+          // Check if dark mode is active
+          const isDark = document.documentElement.classList.contains('dark');
+          
+          // Initialize chart
+          const chart = new FamilyChart.Chart({
+            container: '#tree',
+            data: familyData,
+            options: {
+              nodeWidth: 100,
+              nodeHeight: 100,
+              rtl: true,
+              orientation: 'horizontal',
+              generationsGap: 150,
+              siblingsGap: 30,
+              zoom: true,
+              pan: true,
+              fitToScreen: true,
+              duration: 750 // Animation duration in ms
+            },
+            card: {
+              darkMode: isDark,
+              template: (person) => `
+                <g transform="translate(0,0)" class="person-node-group" data-id="${person.id}">
+                  <foreignObject width="100" height="100">
+                    <div xmlns="http://www.w3.org/1999/xhtml" 
+                         class="node-portrait ${person.gender === 'M' ? 'male' : 'female'} person-node"
+                         data-id="${person.id}"
+                         style="width:100px; height:100px; overflow:hidden;">
+                      ${person.image 
+                        ? `<img src="${person.image}" style="width:100%; height:100%; object-fit:cover;">`
+                        : `<div style="width:100%; height:100%; background:${person.gender === 'M' ? '#1f637a20' : '#E3C56F20'}; display:flex; align-items:center; justify-content:center;">
+                             <span class="material-symbols-outlined" style="font-size:40px; color:${person.gender === 'M' ? '#1f637a' : '#E3C56F'}">person</span>
+                           </div>`
+                      }
+                    </div>
+                  </foreignObject>
+                  
+                  <foreignObject y="90" width="100" height="50">
+                    <div xmlns="http://www.w3.org/1999/xhtml" 
+                         class="name-box person-node"
+                         data-id="${person.id}"
+                         style="width:100%;">
+                      <div class="node-label-text" style="font-family:'Amiri',serif;">
+                        ${person.firstName} ${person.lastName}
+                      </div>
+                    </div>
+                  </foreignObject>
+                </g>
+              `,
+              onClick: (person) => {
+                openPersonDrawer(person.originalData);
+              }
+            }
+          });
+          
+          // Render the chart
+          chart.render();
+          
+          // Store chart instance globally for controls
+          window.familyChart = chart;
+          
+          // Remove loading spinner
+          const loadingSpinner = document.querySelector('.tree-loading');
+          if (loadingSpinner) {
+            loadingSpinner.style.display = 'none';
+          }
+          
+          // Initialize controls
+          initializeChartControls();
+          
+        } catch (error) {
+          console.error('Failed to initialize family chart:', error);
+          document.querySelector('.tree-loading').innerHTML = 
+            '<div class="text-red-500">فشل تحميل الشجرة. يرجى المحاولة مرة أخرى.</div>';
+        }
+      });
+      
+      // Data transformation function
+      function transformFamilyData(persons, spouses) {
+        const familyData = {
+          persons: {},
+          relations: []
+        };
+
+        // Add all persons
+        persons.forEach(person => {
+          familyData.persons[person.id] = {
+            id: person.id,
+            firstName: person.name.split(' ')[0] || '',
+            lastName: person.name.split(' ').slice(1).join(' ') || '',
+            gender: person.gender || 'other',
+            birthDate: person.birth_date,
+            deathDate: person.death_date,
+            image: person.photo_url,
+            originalData: person
+          };
+        });
+
+        // Add spouse relationships
+        spouses.forEach(spouse => {
+          familyData.relations.push({
+            from: spouse.person1_id,
+            to: spouse.person2_id,
+            type: 'married'
+          });
+        });
+
+        // Add parent-child relationships (if you have this data)
+        if (window.childRelationships) {
+          window.childRelationships.forEach(child => {
+            if (child.father_id) {
+              familyData.relations.push({
+                from: child.father_id,
+                to: child.child_id,
+                type: 'parent'
+              });
+            }
+            if (child.mother_id) {
+              familyData.relations.push({
+                from: child.mother_id,
+                to: child.child_id,
+                type: 'parent'
+              });
+            }
+          });
+        }
+
+        return familyData;
+      }
+      
+      // Chart controls initialization
+      function initializeChartControls() {
+        // Zoom in
+        document.getElementById('zoomIn')?.addEventListener('click', () => {
+          if (window.familyChart) {
+            window.familyChart.zoom(1.2);
+          }
+        });
+        
+        // Zoom out
+        document.getElementById('zoomOut')?.addEventListener('click', () => {
+          if (window.familyChart) {
+            window.familyChart.zoom(0.8);
+          }
+        });
+        
+        // Fit to screen
+        document.getElementById('fit')?.addEventListener('click', () => {
+          if (window.familyChart) {
+            window.familyChart.fitToScreen();
+          }
+        });
+        
+        // Reset view (same as fit)
+        document.getElementById('resetView')?.addEventListener('click', () => {
+          if (window.familyChart) {
+            window.familyChart.fitToScreen();
+          }
+        });
+        
+        // Focus mode - center on selected person
+        document.getElementById('focusMode')?.addEventListener('click', () => {
+          if (window.familyChart && window.selectedPersonId) {
+            window.familyChart.focusOn(window.selectedPersonId);
+          }
+        });
+        
+        // Search functionality
+        document.getElementById('search')?.addEventListener('input', (e) => {
+          const searchTerm = e.target.value.toLowerCase().trim();
+          if (window.familyChart) {
+            if (searchTerm.length > 1) {
+              window.familyChart.search(searchTerm, (person) => {
+                return person.firstName.toLowerCase().includes(searchTerm) ||
+                       person.lastName.toLowerCase().includes(searchTerm);
+              });
+            } else {
+              window.familyChart.clearSearch();
+            }
+          }
+        });
+        
+        // Theme sync
+        document.getElementById('uiThemeBtn')?.addEventListener('click', () => {
+          setTimeout(() => {
+            if (window.familyChart) {
+              const isDark = document.documentElement.classList.contains('dark');
+              window.familyChart.updateOptions({
+                card: {
+                  darkMode: isDark,
+                  template: (person) => `
+                    <g transform="translate(0,0)" class="person-node-group" data-id="${person.id}">
+                      <foreignObject width="100" height="100">
+                        <div xmlns="http://www.w3.org/1999/xhtml" 
+                             class="node-portrait ${person.gender === 'M' ? 'male' : 'female'} person-node"
+                             data-id="${person.id}"
+                             style="width:100px; height:100px; overflow:hidden;">
+                          ${person.image 
+                            ? `<img src="${person.image}" style="width:100%; height:100%; object-fit:cover;">`
+                            : `<div style="width:100%; height:100%; background:${person.gender === 'M' ? '#1f637a20' : '#E3C56F20'}; display:flex; align-items:center; justify-content:center;">
+                                 <span class="material-symbols-outlined" style="font-size:40px; color:${person.gender === 'M' ? '#1f637a' : '#E3C56F'}">person</span>
+                               </div>`
+                          }
+                        </div>
+                      </foreignObject>
+                      
+                      <foreignObject y="90" width="100" height="50">
+                        <div xmlns="http://www.w3.org/1999/xhtml" 
+                             class="name-box person-node"
+                             data-id="${person.id}"
+                             style="width:100%;">
+                          <div class="node-label-text" style="font-family:'Amiri',serif;">
+                            ${person.firstName} ${person.lastName}
+                          </div>
+                        </div>
+                      </foreignObject>
+                    </g>
+                  `
+                }
+              });
+            }
+          }, 50);
+        });
+      }
+      
+      // Drawer functions
+      window.openPersonDrawer = function(personData) {
+        const drawer = document.getElementById('drawer');
+        const detailsDiv = document.getElementById('details');
+        
+        // Store selected person ID for focus mode
+        window.selectedPersonId = personData.id;
+        
+        // Populate drawer
+        detailsDiv.innerHTML = `
+          <div class="space-y-4">
+            ${personData.photo_url ? `
+              <div class="flex justify-center">
+                <img src="${personData.photo_url}" 
+                     class="w-32 h-32 object-cover rounded-lg border-2 border-accent-gold">
+              </div>
+            ` : ''}
+            
+            <div class="text-center">
+              <h2 class="text-xl font-extrabold text-primary dark:text-accent-gold-dark">
+                ${personData.name}
+              </h2>
+              ${personData.job ? `
+                <p class="text-sm text-text-muted dark:text-muted-slate">${personData.job}</p>
+              ` : ''}
+            </div>
+            
+            <div class="border-t border-gray-200 dark:border-accent-gold/20 pt-4">
+              ${personData.birth_date ? `
+                <p><span class="font-bold">الميلاد:</span> ${personData.birth_date}</p>
+              ` : ''}
+              ${personData.death_date ? `
+                <p><span class="font-bold">الوفاة:</span> ${personData.death_date}</p>
+              ` : ''}
+              ${personData.lineage ? `
+                <p><span class="font-bold">النسب:</span> ${personData.lineage}</p>
+              ` : ''}
+              ${personData.notes ? `
+                <p class="mt-2 text-sm">${personData.notes}</p>
+              ` : ''}
+            </div>
+          </div>
+        `;
+        
+        // Open drawer
+        drawer.classList.add('isOpen');
+      };
+      
+      // Close drawer handler
+      document.getElementById('closeDrawer')?.addEventListener('click', () => {
+        document.getElementById('drawer').classList.remove('isOpen');
+      });
+      
+      // Mobile navigation handlers
+      (function mobileNavInit(){
+        const btn = document.getElementById("mobileNavBtn");
+        const navDrawer = document.getElementById("mobileNavDrawer");
+        const overlay = document.getElementById("mobileNavOverlay");
+        const closeBtn = document.getElementById("mobileNavClose");
+
+        function setOpenState(isOpen){
+          btn?.setAttribute("data-open", isOpen ? "true" : "false");
+          btn?.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        }
+
+        function openNav(){
+          overlay?.classList.remove("hidden");
+          navDrawer?.classList.add("isOpen");
+          setOpenState(true);
+        }
+        
+        function closeNav(){
+          navDrawer?.classList.remove("isOpen");
+          overlay?.classList.add("hidden");
+          setOpenState(false);
+        }
+
+        btn?.addEventListener("click", () => {
+          const open = btn.getAttribute("data-open") === "true";
+          open ? closeNav() : openNav();
+        });
+
+        closeBtn?.addEventListener("click", closeNav);
+        overlay?.addEventListener("click", closeNav);
+
+        navDrawer?.querySelectorAll("a").forEach(a => a.addEventListener("click", closeNav));
+
+        window.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") closeNav();
+        });
+
+        setOpenState(false);
+      })();
+      
+      // Modal backdrop click
+      (function modalBackdropClickFix() {
+        const modal = document.getElementById("modal");
+        const backdrop = document.getElementById("modalBackdrop");
+        backdrop?.addEventListener("click", () => modal?.classList.add("hidden"));
+      })();
+      
+    })();
+  </script>
+
+</body>
+</html>

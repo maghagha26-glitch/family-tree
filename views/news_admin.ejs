@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>إدارة الأخبار والمناسبات</title>
+
+  <script src="/theme.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries,line-clamp"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#1f637a",
+            accent: "#E3C56F",
+            "background-light": "#FBF9F6",
+            "background-dark": "#0F1115",
+            "surface-dark": "#1A1D21",
+            "border-dark": "#2D3139",
+            "primary-dark": "#C5A854"
+          },
+          fontFamily: { display: ["Cairo", "sans-serif"] }
+        }
+      }
+    };
+  </script>
+</head>
+
+<body class="font-display bg-background-light text-slate-800 dark:bg-background-dark dark:text-slate-300 min-h-screen">
+
+  <main class="max-w-7xl mx-auto p-4 sm:p-8">
+
+    <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+      <div>
+        <h1 class="text-2xl font-black text-primary dark:text-accent">إدارة الأخبار والمناسبات</h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          أضف أخبار العائلة والمناسبات، وثبّت الأخبار المهمة، وتابع المشاهدات والإشعارات.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap gap-2">
+        <a href="/admin"
+           class="px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold hover:bg-slate-50 dark:bg-surface-dark dark:border-border-dark dark:text-slate-200 dark:hover:bg-white/5">
+          رجوع
+        </a>
+
+        <a href="/admin/news/stats"
+           class="px-4 py-2 rounded-xl bg-primary text-white font-bold hover:bg-primary/90 dark:bg-accent dark:text-black dark:hover:bg-primary-dark transition-colors">
+           إحصائيات الأخبار
+        </a>
+
+        <a href="/admin/news/subscribers"
+           class="px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold hover:bg-slate-50 dark:bg-surface-dark dark:border-border-dark dark:text-slate-200 dark:hover:bg-white/5">
+          المشتركين
+        </a>
+
+        <a href="/admin/news/comments"
+           class="px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold hover:bg-slate-50 dark:bg-surface-dark dark:border-border-dark dark:text-slate-200 dark:hover:bg-white/5">
+          التعليقات
+        </a>
+
+        <a href="/admin/news/new"
+           class="px-4 py-2 rounded-xl bg-primary text-white font-bold hover:bg-primary/90 dark:bg-accent dark:text-black dark:hover:bg-primary-dark">
+          إضافة خبر
+        </a>
+      </div>
+    </header>
+
+    <% if (saved) { %>
+      <div class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 px-4 py-3 font-bold dark:bg-emerald-500/10 dark:border-emerald-500/20 dark:text-emerald-300">
+        تم الحفظ بنجاح.
+      </div>
+    <% } %>
+
+    <% if (deleted) { %>
+      <div class="mb-4 rounded-xl border border-red-200 bg-red-50 text-red-700 px-4 py-3 font-bold dark:bg-red-500/10 dark:border-red-500/20 dark:text-red-300">
+        تم حذف الخبر بنجاح.
+      </div>
+    <% } %>
+
+    <section class="rounded-2xl border bg-white border-slate-100 shadow-sm overflow-hidden dark:bg-surface-dark dark:border-border-dark">
+      <div class="p-4 border-b border-slate-100 dark:border-border-dark">
+        <div class="relative max-w-md">
+          <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+          <input id="searchInput"
+                 type="text"
+                 placeholder="بحث في الأخبار..."
+                 class="w-full pr-11 pl-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 font-medium focus:ring-0 focus:border-primary dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent">
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[1280px]">
+          <thead class="bg-slate-50 border-b border-slate-100 dark:bg-[#14171B] dark:border-border-dark">
+            <tr>
+              <th class="py-4 px-5 text-right text-xs font-black text-slate-500">ID</th>
+              <th class="py-4 px-5 text-right text-xs font-black text-slate-500">الصورة</th>
+              <th class="py-4 px-5 text-right text-xs font-black text-slate-500">العنوان</th>
+              <th class="py-4 px-5 text-right text-xs font-black text-slate-500">الشخص المرتبط</th>
+              <th class="py-4 px-5 text-right text-xs font-black text-slate-500">التاريخ</th>
+              <th class="py-4 px-5 text-right text-xs font-black text-slate-500">المشاهدات</th>
+              <th class="py-4 px-5 text-right text-xs font-black text-slate-500">الإعجابات</th>
+              <th class="py-4 px-5 text-right text-xs font-black text-slate-500">الحالة</th>
+              <th class="py-4 px-5 text-right text-xs font-black text-slate-500">التثبيت</th>
+              <th class="py-4 px-5 text-right text-xs font-black text-slate-500">الإشعار</th>
+              <th class="py-4 px-5 text-left text-xs font-black text-slate-500">إجراءات</th>
+            </tr>
+          </thead>
+
+          <tbody id="newsTbody" class="divide-y divide-slate-100 dark:divide-border-dark">
+            <% if (!posts || posts.length === 0) { %>
+              <tr>
+                <td colspan="11" class="py-10 px-5 text-center text-slate-500 dark:text-slate-400">
+                  لا توجد أخبار بعد.
+                </td>
+              </tr>
+            <% } %>
+
+            <% (posts || []).forEach(function(p) {
+              const img = p.image_url || p.person_photo_url || "/images/default.png";
+              const isActive = Number(p.is_active || 0) === 1;
+              const isPinned = Number(p.is_pinned || 0) === 1;
+              const notifyEnabled = Number(p.notify_enabled || 0) === 1;
+            %>
+              <tr class="group hover:bg-primary/5 dark:hover:bg-accent/5 transition-colors news-row">
+                <td class="py-4 px-5 text-sm text-slate-500 news-id"><%= p.id %></td>
+
+                <td class="py-4 px-5">
+                  <div class="w-16 h-16 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 dark:border-border-dark dark:bg-background-dark/40">
+                    <img src="<%= img %>" alt="<%= p.title || '' %>" class="w-full h-full object-cover" onerror="this.src='/images/default.png'">
+                  </div>
+                </td>
+
+                <td class="py-4 px-5">
+                  <div class="flex items-center gap-2">
+                    <% if (isPinned) { %>
+                      <span class="material-symbols-outlined text-[18px] text-amber-500" title="خبر مثبت">push_pin</span>
+                    <% } %>
+                    <div class="font-extrabold text-slate-900 dark:text-white news-title"><%= p.title %></div>
+                  </div>
+
+                  <div class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 news-summary">
+                    <%= p.summary || p.content || '' %>
+                  </div>
+                </td>
+
+                <td class="py-4 px-5 text-sm text-slate-600 dark:text-slate-300 news-person">
+                  <% if (p.person_id) { %>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-black dark:bg-emerald-500/10 dark:text-emerald-300">
+                      <span class="material-symbols-outlined text-[15px]">link</span>
+                      <%= p.person_name || ('#' + p.person_id) %>
+                    </span>
+                  <% } else { %>
+                    -
+                  <% } %>
+                </td>
+
+                <td class="py-4 px-5 text-sm text-slate-600 dark:text-slate-300 news-date">
+                  <%= p.event_date || p.published_at || '-' %>
+                </td>
+
+                <td class="py-4 px-5 text-sm news-views">
+                  <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-sky-100 text-sky-700 text-xs font-black dark:bg-sky-500/10 dark:text-sky-300">
+                    <span class="material-symbols-outlined text-[15px]">visibility</span>
+                    <%= Number(p.views_count || 0) %>
+                  </span>
+                </td>
+
+                <td class="py-4 px-5 text-sm news-likes">
+                  <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-100 text-red-700 text-xs font-black dark:bg-red-500/10 dark:text-red-300">
+                    <span class="material-symbols-outlined text-[15px]">favorite</span>
+                    <%= Number(p.likes_count || 0) %>
+                  </span>
+                </td>
+
+                <td class="py-4 px-5 news-status">
+                  <% if (isActive) { %>
+                    <span class="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-black dark:bg-accent/10 dark:text-accent">منشور</span>
+                  <% } else { %>
+                    <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 text-xs font-black dark:bg-white/5 dark:text-slate-400">مخفي</span>
+                  <% } %>
+                </td>
+
+                <td class="py-4 px-5 news-pinned">
+                  <% if (isPinned) { %>
+                    <span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-black dark:bg-accent/10 dark:text-accent">مثبت</span>
+                  <% } else { %>
+                    <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 text-xs font-black dark:bg-white/5 dark:text-slate-400">غير مثبت</span>
+                  <% } %>
+                </td>
+
+                <td class="py-4 px-5 news-notify">
+                  <% if (notifyEnabled) { %>
+                    <span class="px-2.5 py-1 rounded-full bg-violet-100 text-violet-700 text-xs font-black dark:bg-violet-500/10 dark:text-violet-300">مفعل</span>
+                  <% } else { %>
+                    <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 text-xs font-black dark:bg-white/5 dark:text-slate-400">غير مفعل</span>
+                  <% } %>
+                </td>
+
+                <td class="py-4 px-5">
+                  <div class="flex justify-end gap-2 flex-wrap opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+
+                    <a href="/news/<%= p.id %>"
+                       target="_blank"
+                       class="p-2 rounded-lg text-emerald-600 hover:bg-emerald-50 dark:text-emerald-300 dark:hover:bg-emerald-500/10"
+                       title="عرض الخبر">
+                      <span class="material-symbols-outlined text-[20px]">visibility</span>
+                    </a>
+
+                    <form method="post" action="/admin/news/<%= p.id %>/pin" style="margin:0">
+                      <button type="submit"
+                              class="p-2 rounded-lg <%= isPinned ? 'text-amber-600 bg-amber-50 dark:bg-accent/10 dark:text-accent' : 'text-slate-500 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-white/5' %>"
+                              title="<%= isPinned ? 'إلغاء التثبيت' : 'تثبيت الخبر' %>">
+                        <span class="material-symbols-outlined text-[20px]">push_pin</span>
+                      </button>
+                    </form>
+
+                    <form method="post" action="/admin/news/<%= p.id %>/notify" style="margin:0" onsubmit="return confirm('إرسال إشعار لهذا الخبر؟');">
+                      <button type="submit"
+                              class="p-2 rounded-lg text-violet-600 hover:bg-violet-50 dark:text-violet-300 dark:hover:bg-violet-500/10"
+                              title="إرسال إشعار">
+                        <span class="material-symbols-outlined text-[20px]">notifications_active</span>
+                      </button>
+                    </form>
+
+                    <a href="/admin/news/<%= p.id %>/edit"
+                       class="p-2 rounded-lg text-primary hover:bg-primary/10 dark:text-accent dark:hover:bg-accent/10"
+                       title="تعديل">
+                      <span class="material-symbols-outlined text-[20px]">edit_square</span>
+                    </a>
+
+                    <form method="post" action="/admin/news/<%= p.id %>/delete" style="margin:0" onsubmit="return confirm('حذف الخبر؟');">
+                      <button type="submit"
+                              class="p-2 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10"
+                              title="حذف">
+                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                      </button>
+                    </form>
+
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    (function(){
+      const input = document.getElementById("searchInput");
+      const rows = Array.from(document.querySelectorAll(".news-row"));
+
+      input?.addEventListener("input", () => {
+        const q = input.value.trim().toLowerCase();
+
+        rows.forEach(row => {
+          const text = [
+            row.querySelector(".news-id")?.textContent,
+            row.querySelector(".news-title")?.textContent,
+            row.querySelector(".news-summary")?.textContent,
+            row.querySelector(".news-person")?.textContent,
+            row.querySelector(".news-date")?.textContent,
+            row.querySelector(".news-views")?.textContent,
+            row.querySelector(".news-likes")?.textContent, 
+            row.querySelector(".news-status")?.textContent,
+            row.querySelector(".news-pinned")?.textContent,
+            row.querySelector(".news-notify")?.textContent
+          ].join(" ").toLowerCase();
+
+          row.style.display = !q || text.includes(q) ? "" : "none";
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

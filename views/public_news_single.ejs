@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= post.title %> - أخبار العائلة</title>
+
+  <script src="/theme.js"></script>
+  <link rel="stylesheet" href="/styles.css"/>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries,line-clamp"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#1f637a",
+            accent: "#cfae61",
+            "background-light": "#f8f8f6",
+            "background-dark": "#0F1115",
+            "bg-card": "#16191E",
+            "text-cream": "#FDFBF7",
+            "muted-slate": "#94A3B8",
+            gold: "#cfae61"
+          },
+          fontFamily: {
+            display: ["Cairo", "sans-serif"],
+            amiri: ["Amiri", "serif"]
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    body { font-family: "Cairo", sans-serif; }
+
+    #mobileNavOverlay.hidden { display: none; }
+
+    #mobileNavDrawer {
+      transform: translateX(-110%);
+      transition: transform .26s cubic-bezier(.2,.9,.2,1);
+      will-change: transform;
+    }
+
+    #mobileNavDrawer.isOpen { transform: translateX(0); }
+
+    #mobileNavBtn[data-open="true"] .ico-open { display: none; }
+    #mobileNavBtn[data-open="true"] .ico-close { display: inline; }
+    #mobileNavBtn[data-open="false"] .ico-open { display: inline; }
+    #mobileNavBtn[data-open="false"] .ico-close { display: none; }
+
+    .article-image-shell {
+      position: relative;
+      overflow: hidden;
+      background: #f3f4f6;
+    }
+
+    html.dark .article-image-shell {
+      background: rgba(0,0,0,.24);
+    }
+
+    .article-image-blur {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: blur(28px);
+      transform: scale(1.16);
+      opacity: .34;
+    }
+
+    .article-image-main {
+      position: relative;
+      z-index: 2;
+      width: auto;
+      max-width: 100%;
+      max-height: 76vh;
+      object-fit: contain;
+    }
+
+    @media (max-width: 640px) {
+      .article-image-main {
+        max-height: 58vh;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-[#272522] dark:text-text-cream min-h-screen flex flex-col overflow-x-hidden">
+
+<div id="mobileNavOverlay" class="fixed inset-0 bg-black/40 z-[80] hidden"></div>
+
+<aside id="mobileNavDrawer"
+       class="fixed top-0 left-0 h-full w-[320px] max-w-[86vw] bg-white/95 dark:bg-bg-card/95 backdrop-blur-xl border-r border-gray-200 dark:border-white/10 shadow-2xl z-[90]">
+
+  <div class="h-1.5 w-full bg-gradient-to-r from-primary via-gold to-primary"></div>
+
+  <div class="flex items-center justify-between p-4 border-b border-gray-100 dark:border-white/10">
+    <div class="flex items-center gap-3">
+      <img class="h-9 w-auto hidden dark:block" src="/assets/logo-dark.svg" alt="شعار العائلة"/>
+      <img class="h-9 w-auto block dark:hidden" src="/assets/logo-light.svg" alt="شعار العائلة"/>
+    </div>
+
+    <button id="mobileNavClose" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5" type="button" aria-label="إغلاق القائمة">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+
+  <nav class="p-4 flex flex-col gap-2">
+    <a href="/" class="px-4 py-3 rounded-2xl font-extrabold border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5">الشجرة</a>
+    <a href="/about" class="px-4 py-3 rounded-2xl font-extrabold border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5">نبذة</a>
+    <a href="/honor" class="px-4 py-3 rounded-2xl font-extrabold border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5">قائمة السير الذاتية</a>
+    <a href="/news" class="px-4 py-3 rounded-2xl font-extrabold bg-primary text-white dark:bg-gold dark:text-black">أخبار العائلة</a>
+    <a href="/tree-pdf" class="px-4 py-3 rounded-2xl font-extrabold border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5">شجرة PDF</a>
+    <a href="/support" class="px-4 py-3 rounded-2xl font-extrabold border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5">الدعم</a>
+    <a href="/admin/login" class="mt-3 px-4 py-3 rounded-2xl font-extrabold bg-primary text-white dark:bg-gold dark:text-black text-center">تسجيل الدخول</a>
+  </nav>
+</aside>
+
+<header class="sticky top-0 z-50 w-full bg-white/90 dark:bg-[#0F1115]/95 backdrop-blur-md border-b border-gray-200 dark:border-white/5">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-20 gap-3">
+
+      <div class="flex items-center gap-4 min-w-0">
+        <img class="h-10 w-auto hidden dark:block" src="/assets/logo-dark.svg" alt="شعار العائلة"/>
+        <img class="h-10 w-auto block dark:hidden" src="/assets/logo-light.svg" alt="شعار العائلة"/>
+
+        <div class="hidden sm:block">
+          <h1 class="text-xl font-extrabold text-primary dark:text-gold leading-none">شجرة العائلة</h1>
+          <span class="text-[10px] font-bold text-accent uppercase tracking-[0.2em]">أخبار العائلة</span>
+        </div>
+      </div>
+
+      <nav class="hidden md:flex gap-6 lg:gap-8 items-center">
+        <a class="text-sm font-medium text-primary dark:text-gray-400 hover:text-accent" href="/">الشجرة</a>
+        <a class="text-sm font-medium text-primary dark:text-gray-400 hover:text-accent" href="/about">نبذة</a>
+        <a class="text-sm font-medium text-primary dark:text-gray-400 hover:text-accent" href="/honor">قائمة السير الذاتية</a>
+        <a class="text-sm font-bold text-accent dark:text-gold underline underline-offset-8" href="/news">أخبار العائلة</a>
+        <a class="text-sm font-medium text-primary dark:text-gray-400 hover:text-accent" href="/tree-pdf">شجرة PDF</a>
+        <a class="text-sm font-medium text-primary dark:text-gray-400 hover:text-accent" href="/support">الدعم</a>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <a href="/admin/login"
+           class="hidden md:flex items-center justify-center p-2.5 rounded-full bg-primary text-white hover:bg-[#185366] transition-all shadow-md shadow-primary/20 dark:bg-gold dark:text-black dark:hover:bg-white dark:shadow-gold/10"
+           title="تسجيل الدخول">
+          <span class="material-symbols-outlined text-[22px]">login</span>
+        </a>
+
+        <button id="mobileNavBtn"
+                data-open="false"
+                class="md:hidden inline-flex items-center gap-2 px-3 py-2 rounded-full bg-white dark:bg-bg-card border border-gray-200 dark:border-white/10"
+                type="button"
+                aria-label="فتح القائمة"
+                aria-expanded="false">
+          <span class="material-symbols-outlined ico-open">apps</span>
+          <span class="material-symbols-outlined ico-close hidden">close</span>
+          <span class="text-xs font-extrabold">القائمة</span>
+        </button>
+
+        <button id="themeBtn"
+                type="button"
+                class="w-10 h-10 rounded-full border border-gray-200 dark:border-gold/30 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gold/10 transition-all"
+                title="تبديل المظهر">
+          <span class="material-symbols-outlined dark:hidden">dark_mode</span>
+          <span class="material-symbols-outlined hidden dark:inline text-gold">light_mode</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</header>
+
+<main class="flex-grow">
+
+  <section class="relative pt-8 sm:pt-12 pb-6 px-4">
+    <div class="max-w-5xl mx-auto">
+
+      <a href="/news" class="inline-flex items-center gap-2 text-sm font-extrabold text-primary dark:text-gold hover:underline mb-5">
+        <span class="material-symbols-outlined text-[18px] rotate-180">arrow_forward</span>
+        العودة إلى أخبار العائلة
+      </a>
+
+      <%
+        const img = post.image_url || post.person_photo_url || "/images/default.png";
+        const currentShareUrl = typeof shareUrl !== "undefined" && shareUrl ? shareUrl : "";
+        const encodedShareUrl = encodeURIComponent(currentShareUrl);
+        const encodedTitle = encodeURIComponent(post.title || "");
+        const likeCount = typeof likes !== "undefined" ? Number(likes || 0) : 0;
+        const commentList = typeof comments !== "undefined" && comments ? comments : [];
+      %>
+
+      <article class="bg-white dark:bg-bg-card border border-gray-200 dark:border-white/10 rounded-3xl overflow-hidden shadow-sm">
+
+        <div class="article-image-shell w-full min-h-[260px] sm:min-h-[340px] flex items-center justify-center">
+          <img src="<%= img %>" alt="" class="article-image-blur" loading="lazy" decoding="async" onerror="this.style.display='none'"/>
+          <img src="<%= img %>" alt="<%= post.title || 'خبر' %>" class="article-image-main" loading="eager" decoding="async" onerror="this.src='/images/default.png'"/>
+        </div>
+
+        <div class="p-5 sm:p-8 lg:p-10">
+
+          <div class="flex flex-wrap items-center gap-3 mb-5 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+            <span class="inline-flex items-center gap-1">
+              <span class="material-symbols-outlined text-[17px]">calendar_month</span>
+              <%= post.event_date || post.published_at || '' %>
+            </span>
+
+            <span class="inline-flex items-center gap-1 text-sky-600 dark:text-sky-300 font-bold">
+              <span class="material-symbols-outlined text-[17px]">visibility</span>
+              <%= Number(post.views_count || 0) %> مشاهدة
+            </span>
+
+            <% if (Number(post.is_pinned || 0) === 1) { %>
+              <span class="inline-flex items-center gap-1 text-amber-600 dark:text-gold font-bold">
+                <span class="material-symbols-outlined text-[17px]">push_pin</span>
+                خبر مهم
+              </span>
+            <% } %>
+
+            <% if (post.person_id) { %>
+              <span class="inline-flex items-center gap-1 text-primary dark:text-gold font-bold">
+                <span class="material-symbols-outlined text-[17px]">link</span>
+                مرتبط بـ: <%= post.person_name || ('#' + post.person_id) %>
+              </span>
+            <% } %>
+          </div>
+
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-primary dark:text-gold leading-tight mb-6">
+            <%= post.title %>
+          </h1>
+
+          <% if (post.summary) { %>
+            <p class="text-base sm:text-lg leading-relaxed text-gray-600 dark:text-gray-300 mb-7 border-r-4 border-primary dark:border-gold pr-4">
+              <%= post.summary %>
+            </p>
+          <% } %>
+
+          <div class="text-base sm:text-lg leading-9 whitespace-pre-line text-gray-800 dark:text-gray-200">
+            <%= post.content || post.summary || '' %>
+          </div>
+
+          <div class="mt-10 pt-6 border-t border-gray-200 dark:border-white/10">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h3 class="font-black text-primary dark:text-gold mb-2">التفاعل مع الخبر</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">يمكنك تسجيل إعجابك أو إضافة تعليق.</p>
+              </div>
+
+              <button id="likeBtn"
+                      type="button"
+                      class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-red-50 text-red-600 border border-red-100 font-black hover:bg-red-100 dark:bg-red-500/10 dark:text-red-300 dark:border-red-500/20 dark:hover:bg-red-500/15">
+                <span class="material-symbols-outlined text-[20px]">favorite</span>
+                إعجاب
+                <span id="likeCount" class="inline-flex items-center justify-center min-w-7 h-7 rounded-full bg-white dark:bg-black/20 px-2">
+                  <%= likeCount %>
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-8 pt-6 border-t border-gray-200 dark:border-white/10">
+            <h3 class="font-black text-primary dark:text-gold mb-3">مشاركة الخبر</h3>
+
+            <div class="flex flex-wrap gap-2">
+              <a href="https://wa.me/?text=<%= encodedTitle %>%20<%= encodedShareUrl %>"
+                 target="_blank"
+                 rel="noopener"
+                 class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-700">
+                <span class="material-symbols-outlined text-[18px]">share</span>
+                واتساب
+              </a>
+
+              <a href="https://twitter.com/intent/tweet?text=<%= encodedTitle %>&url=<%= encodedShareUrl %>"
+                 target="_blank"
+                 rel="noopener"
+                 class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 text-white font-bold hover:bg-sky-700">
+                <span class="material-symbols-outlined text-[18px]">share</span>
+                تويتر
+              </a>
+
+              <button id="copyLinkBtn"
+                      type="button"
+                      data-url="<%= currentShareUrl %>"
+                      class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 font-bold hover:bg-gray-50 dark:hover:bg-white/5">
+                <span class="material-symbols-outlined text-[18px]">content_copy</span>
+                نسخ الرابط
+              </button>
+            </div>
+
+            <p id="copyMsg" class="hidden mt-3 text-sm font-bold text-emerald-600 dark:text-emerald-300">
+              تم نسخ رابط الخبر.
+            </p>
+          </div>
+
+          <div class="mt-10 pt-6 border-t border-gray-200 dark:border-white/10">
+            <h3 class="text-2xl font-black text-primary dark:text-gold mb-4">التعليقات</h3>
+
+            <form method="post"
+                  action="/news/<%= post.id %>/comment"
+                  class="rounded-2xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-background-dark/40 p-4 sm:p-5 mb-6">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                <input name="name"
+                       required
+                       maxlength="80"
+                       placeholder="اسمك"
+                       class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-bg-card text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary/30 dark:focus:ring-gold/30"/>
+
+                <input value="<%= post.title || '' %>"
+                       disabled
+                       class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-white/10 bg-white/60 dark:bg-bg-card/60 text-sm font-bold text-gray-500 dark:text-gray-400"/>
+              </div>
+
+              <textarea name="content"
+                        required
+                        maxlength="1000"
+                        rows="4"
+                        placeholder="اكتب تعليقك..."
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-bg-card text-sm font-bold leading-relaxed focus:outline-none focus:ring-2 focus:ring-primary/30 dark:focus:ring-gold/30"></textarea>
+
+              <div class="mt-3 flex justify-end">
+                <button type="submit"
+                        class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-primary text-white dark:bg-gold dark:text-black font-black hover:bg-[#185366] dark:hover:bg-white transition-colors">
+                  <span class="material-symbols-outlined text-[18px]">send</span>
+                  إرسال التعليق
+                </button>
+              </div>
+            </form>
+
+            <% if (!commentList || commentList.length === 0) { %>
+              <div class="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-bg-card p-5 text-center text-gray-500 dark:text-gray-400 font-bold">
+                لا توجد تعليقات بعد. كن أول من يعلّق.
+              </div>
+            <% } else { %>
+              <div class="space-y-3">
+                <% commentList.forEach(function(c) { %>
+                  <div class="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-bg-card p-4">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                      <div class="font-black text-primary dark:text-gold">
+                        <%= c.name || 'زائر' %>
+                      </div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400">
+                        <%= c.created_at || '' %>
+                      </div>
+                    </div>
+                    <p class="text-sm sm:text-base leading-relaxed whitespace-pre-line text-gray-700 dark:text-gray-300">
+                      <%= c.content || '' %>
+                    </p>
+                  </div>
+                <% }) %>
+              </div>
+            <% } %>
+          </div>
+
+          <div class="mt-10 pt-6 border-t border-gray-200 dark:border-white/10 flex flex-col sm:flex-row justify-between gap-3">
+            <a href="/news" class="inline-flex justify-center items-center px-5 py-3 rounded-xl bg-primary text-white font-bold hover:bg-primary/90 dark:bg-gold dark:text-black dark:hover:bg-white">
+              العودة للأخبار
+            </a>
+
+            <a href="/" class="inline-flex justify-center items-center px-5 py-3 rounded-xl border border-gray-200 dark:border-white/10 font-bold hover:bg-gray-50 dark:hover:bg-white/5">
+              العودة للشجرة
+            </a>
+          </div>
+
+        </div>
+      </article>
+
+      <% if (typeof relatedPosts !== "undefined" && relatedPosts && relatedPosts.length) { %>
+        <section class="mt-10">
+          <div class="flex items-center justify-between gap-3 mb-4">
+            <h2 class="text-2xl font-black text-primary dark:text-gold">أخبار مشابهة</h2>
+            <a href="/news" class="text-sm font-bold text-primary dark:text-gold hover:underline">كل الأخبار</a>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <% relatedPosts.forEach(function(p) {
+              const relImg = p.image_url || p.person_photo_url || "/images/default.png";
+            %>
+              <article class="bg-white dark:bg-bg-card rounded-2xl overflow-hidden border border-gray-200 dark:border-white/10 shadow-sm hover:shadow-lg transition">
+                <a href="/news/<%= p.id %>" class="block h-44 bg-gray-100 dark:bg-black/20">
+                  <img src="<%= relImg %>"
+                       alt="<%= p.title || 'خبر' %>"
+                       class="w-full h-full object-cover"
+                       loading="lazy"
+                       decoding="async"
+                       onerror="this.src='/images/default.png'">
+                </a>
+
+                <div class="p-4">
+                  <div class="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                    <%= p.event_date || p.published_at || '' %>
+                  </div>
+
+                  <h3 class="font-black text-primary dark:text-white line-clamp-2 mb-2">
+                    <a href="/news/<%= p.id %>" class="hover:text-accent dark:hover:text-gold">
+                      <%= p.title %>
+                    </a>
+                  </h3>
+
+                  <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                    <%= p.summary || p.content || '' %>
+                  </p>
+                </div>
+              </article>
+            <% }) %>
+          </div>
+        </section>
+      <% } %>
+
+    </div>
+  </section>
+
+</main>
+
+<footer class="bg-white dark:bg-background-dark border-t border-gray-200 dark:border-white/10 mt-auto">
+  <div class="max-w-7xl mx-auto px-4 py-6 text-center text-xs text-gray-500 dark:text-muted-slate font-amiri">
+    © ٢٠٢٦ وقف عائلة خاشقجي. جميع الحقوق محفوظة. حفظ الأنساب والاحتفاء بالتراث.
+  </div>
+</footer>
+
+<script>
+(function(){
+  const saved = localStorage.getItem("theme") || document.documentElement.getAttribute("data-theme") || "dark";
+  document.documentElement.setAttribute("data-theme", saved);
+  document.documentElement.classList.toggle("dark", saved === "dark");
+
+  const btn = document.getElementById("themeBtn");
+  btn?.addEventListener("click", () => {
+    const current = document.documentElement.classList.contains("dark") ? "dark" : "light";
+    const next = current === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    document.documentElement.classList.toggle("dark", next === "dark");
+    localStorage.setItem("theme", next);
+  });
+})();
+
+(function(){
+  const likeBtn = document.getElementById("likeBtn");
+  const likeCount = document.getElementById("likeCount");
+
+  likeBtn?.addEventListener("click", async () => {
+    try {
+      likeBtn.disabled = true;
+
+      const res = await fetch("/news/<%= post.id %>/like", {
+        method: "POST",
+        headers: { "Accept": "application/json" }
+      });
+
+      const data = await res.json();
+
+      if (data && data.ok && likeCount) {
+        likeCount.textContent = data.count;
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setTimeout(() => {
+        likeBtn.disabled = false;
+      }, 600);
+    }
+  });
+})();
+
+(function(){
+  const copyBtn = document.getElementById("copyLinkBtn");
+  const copyMsg = document.getElementById("copyMsg");
+
+  copyBtn?.addEventListener("click", async () => {
+    const url = copyBtn.getAttribute("data-url") || window.location.href;
+
+    try {
+      await navigator.clipboard.writeText(url);
+      copyMsg?.classList.remove("hidden");
+      setTimeout(() => copyMsg?.classList.add("hidden"), 2500);
+    } catch (e) {
+      window.prompt("انسخ الرابط:", url);
+    }
+  });
+})();
+
+(function mobileNavInit(){
+  const btn = document.getElementById("mobileNavBtn");
+  const navDrawer = document.getElementById("mobileNavDrawer");
+  const overlay = document.getElementById("mobileNavOverlay");
+  const closeBtn = document.getElementById("mobileNavClose");
+
+  function setOpenState(isOpen){
+    btn?.setAttribute("data-open", isOpen ? "true" : "false");
+    btn?.setAttribute("aria-expanded", isOpen ? "true" : "false");
+  }
+
+  function openNav(){
+    overlay?.classList.remove("hidden");
+    navDrawer?.classList.add("isOpen");
+    setOpenState(true);
+  }
+
+  function closeNav(){
+    navDrawer?.classList.remove("isOpen");
+    overlay?.classList.add("hidden");
+    setOpenState(false);
+  }
+
+  btn?.addEventListener("click", () => {
+    const open = btn.getAttribute("data-open") === "true";
+    open ? closeNav() : openNav();
+  });
+
+  closeBtn?.addEventListener("click", closeNav);
+  overlay?.addEventListener("click", closeNav);
+  navDrawer?.querySelectorAll("a").forEach(a => a.addEventListener("click", closeNav));
+
+  window.addEventListener("keydown", e => {
+    if (e.key === "Escape") closeNav();
+  });
+
+  setOpenState(false);
+})();
+</script>
+
+</body>
+</html>

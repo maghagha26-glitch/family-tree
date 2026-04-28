@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>إدارة تعليقات الأخبار</title>
+
+  <script src="/theme.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries,line-clamp"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#1f637a",
+            accent: "#E3C56F",
+            "background-light": "#FBF9F6",
+            "background-dark": "#0F1115",
+            "surface-dark": "#1A1D21",
+            "border-dark": "#2D3139",
+            "primary-dark": "#C5A854"
+          },
+          fontFamily: { display: ["Cairo", "sans-serif"] }
+        }
+      }
+    };
+  </script>
+</head>
+
+<body class="font-display bg-background-light text-slate-800 dark:bg-background-dark dark:text-slate-300 min-h-screen">
+
+<main class="max-w-7xl mx-auto p-4 sm:p-8">
+
+  <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+    <div>
+      <h1 class="text-2xl font-black text-primary dark:text-accent">إدارة تعليقات الأخبار</h1>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+        راجع تعليقات الزوار واحذف أي تعليق غير مناسب.
+      </p>
+    </div>
+
+    <div class="flex flex-wrap gap-2">
+      <a href="/admin/news"
+         class="px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold hover:bg-slate-50 dark:bg-surface-dark dark:border-border-dark dark:text-slate-200 dark:hover:bg-white/5">
+        رجوع للأخبار
+      </a>
+
+      <a href="/admin/news/comments/export.csv"
+         class="px-4 py-2 rounded-xl bg-primary text-white font-bold hover:bg-primary/90 dark:bg-accent dark:text-black dark:hover:bg-primary-dark">
+        تصدير CSV
+      </a>
+    </div>
+  </header>
+
+  <% if (deleted) { %>
+    <div class="mb-4 rounded-xl border border-red-200 bg-red-50 text-red-700 px-4 py-3 font-bold dark:bg-red-500/10 dark:border-red-500/20 dark:text-red-300">
+      تم حذف التعليق بنجاح.
+    </div>
+  <% } %>
+
+  <section class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
+    <div class="rounded-2xl border border-slate-100 bg-white p-4 dark:bg-surface-dark dark:border-border-dark">
+      <p class="text-xs font-black text-slate-500 dark:text-slate-400">إجمالي التعليقات</p>
+      <p class="text-2xl font-black text-primary dark:text-accent mt-1"><%= comments?.length || 0 %></p>
+    </div>
+
+    <div class="rounded-2xl border border-slate-100 bg-white p-4 dark:bg-surface-dark dark:border-border-dark">
+      <p class="text-xs font-black text-slate-500 dark:text-slate-400">أحدث تعليق</p>
+      <p class="text-sm font-black text-slate-700 dark:text-slate-200 mt-2 line-clamp-1">
+        <%= comments && comments[0] ? (comments[0].created_at || '-') : '-' %>
+      </p>
+    </div>
+
+    <div class="rounded-2xl border border-slate-100 bg-white p-4 dark:bg-surface-dark dark:border-border-dark">
+      <p class="text-xs font-black text-slate-500 dark:text-slate-400">أخبار عليها تعليقات</p>
+      <p class="text-2xl font-black text-emerald-600 dark:text-emerald-300 mt-1">
+        <%= Array.from(new Set((comments || []).map(c => c.post_id).filter(Boolean))).length %>
+      </p>
+    </div>
+  </section>
+
+  <section class="rounded-2xl border bg-white border-slate-100 shadow-sm overflow-hidden dark:bg-surface-dark dark:border-border-dark">
+    <div class="p-4 border-b border-slate-100 dark:border-border-dark">
+      <div class="relative max-w-md">
+        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+        <input id="searchInput"
+               type="text"
+               placeholder="بحث في الاسم أو التعليق أو عنوان الخبر..."
+               class="w-full pr-11 pl-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 font-medium focus:ring-0 focus:border-primary dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent">
+      </div>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full min-w-[1100px]">
+        <thead class="bg-slate-50 border-b border-slate-100 dark:bg-[#14171B] dark:border-border-dark">
+          <tr>
+            <th class="py-4 px-5 text-right text-xs font-black text-slate-500">ID</th>
+            <th class="py-4 px-5 text-right text-xs font-black text-slate-500">الخبر</th>
+            <th class="py-4 px-5 text-right text-xs font-black text-slate-500">الاسم</th>
+            <th class="py-4 px-5 text-right text-xs font-black text-slate-500">التعليق</th>
+            <th class="py-4 px-5 text-right text-xs font-black text-slate-500">التاريخ</th>
+            <th class="py-4 px-5 text-left text-xs font-black text-slate-500">إجراءات</th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y divide-slate-100 dark:divide-border-dark">
+          <% if (!comments || comments.length === 0) { %>
+            <tr>
+              <td colspan="6" class="py-10 px-5 text-center text-slate-500 dark:text-slate-400">
+                لا توجد تعليقات بعد.
+              </td>
+            </tr>
+          <% } %>
+
+          <% (comments || []).forEach(function(c) { %>
+            <tr class="comment-row hover:bg-primary/5 dark:hover:bg-accent/5 transition-colors">
+              <td class="py-4 px-5 text-sm text-slate-500 comment-id"><%= c.id %></td>
+
+              <td class="py-4 px-5 comment-news">
+                <div class="font-extrabold text-slate-900 dark:text-white line-clamp-2">
+                  <%= c.news_title || ('خبر #' + c.post_id) %>
+                </div>
+                <% if (c.post_id) { %>
+                  <a href="/news/<%= c.post_id %>"
+                     target="_blank"
+                     class="inline-flex items-center gap-1 mt-1 text-xs font-black text-primary dark:text-accent hover:underline">
+                    <span class="material-symbols-outlined text-[15px]">open_in_new</span>
+                    عرض الخبر
+                  </a>
+                <% } %>
+              </td>
+
+              <td class="py-4 px-5 text-sm text-slate-700 dark:text-slate-300 comment-name">
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-black dark:bg-white/5 dark:text-slate-300">
+                  <span class="material-symbols-outlined text-[15px]">person</span>
+                  <%= c.name || 'زائر' %>
+                </span>
+              </td>
+
+              <td class="py-4 px-5 comment-content">
+                <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-3">
+                  <%= c.content || '' %>
+                </p>
+              </td>
+
+              <td class="py-4 px-5 text-sm text-slate-500 dark:text-slate-400 comment-date">
+                <%= c.created_at || '-' %>
+              </td>
+
+              <td class="py-4 px-5">
+                <div class="flex justify-end gap-2">
+                  <% if (c.post_id) { %>
+                    <a href="/news/<%= c.post_id %>"
+                       target="_blank"
+                       class="p-2 rounded-lg text-emerald-600 hover:bg-emerald-50 dark:text-emerald-300 dark:hover:bg-emerald-500/10"
+                       title="عرض الخبر">
+                      <span class="material-symbols-outlined text-[20px]">visibility</span>
+                    </a>
+                  <% } %>
+
+                  <form method="post"
+                        action="/admin/news/comments/<%= c.id %>/delete"
+                        style="margin:0"
+                        onsubmit="return confirm('حذف هذا التعليق؟');">
+                    <button type="submit"
+                            class="p-2 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10"
+                            title="حذف التعليق">
+                      <span class="material-symbols-outlined text-[20px]">delete</span>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(function(){
+  const input = document.getElementById("searchInput");
+  const rows = Array.from(document.querySelectorAll(".comment-row"));
+
+  input?.addEventListener("input", () => {
+    const q = input.value.trim().toLowerCase();
+
+    rows.forEach(row => {
+      const text = [
+        row.querySelector(".comment-id")?.textContent,
+        row.querySelector(".comment-news")?.textContent,
+        row.querySelector(".comment-name")?.textContent,
+        row.querySelector(".comment-content")?.textContent,
+        row.querySelector(".comment-date")?.textContent
+      ].join(" ").toLowerCase();
+
+      row.style.display = !q || text.includes(q) ? "" : "none";
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

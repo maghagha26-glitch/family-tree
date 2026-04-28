@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>تسجيل دخول المشرف - شجرة عائلة خاشقجي</title>
+
+  <script src="/theme.js"></script>
+  <link rel="stylesheet" href="/styles.css"/>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#005A2B",
+            primaryDark: "#003D1D", 
+            accent: "#E5B869",
+            "background-light": "#F8F8F6",
+            "background-dark": "#050505",
+            "card-light": "#FFFFFF",
+            "card-dark": "#0A0A0A",
+            "bg-charcoal": "#050505",
+            "bg-card": "#0A0A0A",
+            "text-cream": "#FAFAFA",
+            "muted-slate": "#71717A",
+            gold: "#E5B869",
+          },
+          fontFamily: {
+            display: ["'Aref Ruqaa'", "serif"],
+            sans: ["Tajawal", "sans-serif"],
+          },
+          backgroundImage: {
+            "islamic-pattern": "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23E5B869' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+          }
+        }
+      }
+    };
+  </script>
+
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .scrollbar-hide::-webkit-scrollbar { display: none; }
+      .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+      .glass-premium { @apply backdrop-blur-2xl bg-white/70 dark:bg-[#0A0A0A]/70 border border-white/40 dark:border-white/10; }
+    }
+  </style>
+
+  <style>
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #E5B869; border-radius: 4px; }
+
+    /* حقول الإدخال */
+    .premium-input {
+      background: rgba(0, 0, 0, 0.03);
+      border: none;
+      border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .dark .premium-input {
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    .premium-input:focus {
+      background: rgba(229, 184, 105, 0.05);
+      border-bottom-color: #E5B869;
+      box-shadow: 0 10px 20px -10px rgba(229, 184, 105, 0.2);
+      outline: none;
+      transform: translateY(-2px);
+    }
+
+    /* تأثير الكسوف للزر */
+    .btn-eclipse {
+      position: relative; overflow: hidden; z-index: 1;
+    }
+    .btn-eclipse::after {
+      content: ''; position: absolute; top: 50%; left: 50%; width: 150%; height: 300%;
+      background: radial-gradient(circle, #E5B869 0%, transparent 70%);
+      transform: translate(-50%, -50%) scale(0); transition: transform 0.6s ease; z-index: -1; opacity: 0.4;
+    }
+    .btn-eclipse:hover::after { transform: translate(-50%, -50%) scale(1); }
+
+    /* الكانفاس 3D */
+    #globeCanvas {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 0; pointer-events: none;
+    }
+
+    html.dark .dark-toggle-icon-moon { display: none; }
+    html:not(.dark) .dark-toggle-icon-sun { display: none; }
+  </style>
+
+  <script>
+    (function () {
+      const saved = localStorage.getItem("theme") || "dark";
+      document.documentElement.setAttribute("data-theme", saved);
+      document.documentElement.classList.toggle("dark", saved === "dark");
+    })();
+  </script>
+</head>
+
+<body class="bg-background-light dark:bg-bg-charcoal text-gray-900 dark:text-text-cream font-sans min-h-screen flex flex-col overflow-x-hidden selection:bg-accent selection:text-background-dark transition-colors duration-300 relative">
+
+  <canvas id="globeCanvas"></canvas>
+  <div class="absolute inset-0 bg-islamic-pattern opacity-100 dark:opacity-30 pointer-events-none z-[1]"></div>
+  <div class="absolute inset-0 bg-gradient-to-b from-transparent via-white/40 to-white/60 dark:from-transparent dark:via-black/40 dark:to-black/80 pointer-events-none z-[2]"></div>
+
+  <div class="fixed top-6 left-6 right-6 z-50 flex items-center justify-between pointer-events-none">
+    
+    <a href="/" class="pointer-events-auto flex items-center gap-2 px-5 py-3 rounded-full glass-premium shadow-lg hover:shadow-accent/20 hover:border-accent/50 transition-all text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-accent font-bold text-sm">
+      <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+      العودة للرئيسية
+    </a>
+
+    <button id="uiThemeBtn"
+      class="pointer-events-auto w-12 h-12 flex items-center justify-center rounded-full glass-premium shadow-lg hover:shadow-accent/20 hover:border-accent/50 transition-all text-gray-600 dark:text-accent"
+      type="button" aria-label="تبديل المظهر" title="تبديل المظهر">
+      <span class="material-symbols-outlined dark-toggle-icon-moon">dark_mode</span>
+      <span class="material-symbols-outlined dark-toggle-icon-sun">light_mode</span>
+    </button>
+  </div>
+
+  <main class="flex-grow flex items-center justify-center p-4 sm:p-6 lg:p-8 relative z-10">
+    
+    <div class="w-full max-w-[460px]">
+
+      <div class="glass-premium rounded-[2.5rem] shadow-[0_20px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_30px_80px_rgba(0,0,0,0.8)] overflow-hidden relative border-t border-l border-white/50 dark:border-white/10">
+        
+        <div class="h-1.5 w-full bg-gradient-to-r from-primary via-accent to-primaryDark"></div>
+
+        <div class="px-8 sm:px-12 pt-12 pb-8 text-center">
+          
+          <div class="mx-auto flex items-center justify-center mb-8 relative group cursor-default">
+            <div class="absolute inset-0 bg-accent/20 blur-2xl rounded-full scale-150 z-0 hidden dark:block transition-all duration-500 group-hover:bg-accent/30"></div>
+            
+            <img src="/assets/logo-light.svg" alt="شعار العائلة" class="w-20 h-20 md:w-24 md:h-24 object-contain dark:hidden relative z-10 drop-shadow-xl transition-transform duration-500 group-hover:scale-105"/>
+            <img src="/assets/logo-dark.svg" alt="شعار العائلة" class="w-20 h-20 md:w-24 md:h-24 object-contain hidden dark:block relative z-10 drop-shadow-[0_0_15px_rgba(229,184,105,0.3)] transition-transform duration-500 group-hover:scale-105"/>
+          </div>
+
+          <h2 class="text-3xl sm:text-4xl font-display font-bold text-primary dark:text-white tracking-tight mb-2">
+            تسجيل دخول المشرف
+          </h2>
+          <p class="text-xs font-sans font-bold text-gray-500 dark:text-accent uppercase tracking-[0.2em]">
+            البوابة الرقمية المركزية
+          </p>
+        </div>
+
+        <div class="px-8 sm:px-12 pb-10">
+
+          <% if (error) { %>
+            <div class="mb-6 rounded-xl border border-red-200 bg-red-50/90 px-5 py-4 text-red-700 text-sm font-bold flex items-center gap-3 dark:border-red-500/20 dark:bg-red-950/80 dark:text-red-300 backdrop-blur-sm shadow-inner justify-center">
+              <span class="material-symbols-outlined text-[22px]">error</span>
+              <%= error %>
+            </div>
+          <% } %>
+
+          <form class="flex flex-col gap-6" method="post" action="/admin/login">
+
+            <div class="flex flex-col gap-2 relative group">
+              <label for="username" class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest px-2">اسم المستخدم / البريد</label>
+              <div class="relative">
+                <span class="absolute top-1/2 -translate-y-1/2 right-4 text-gray-400 group-focus-within:text-accent transition-colors material-symbols-outlined text-[22px]">person</span>
+                <input id="username" name="username" required type="text"
+                  placeholder="أدخل اسم المستخدم الكريم"
+                  class="premium-input w-full h-14 rounded-t-xl pr-12 pl-4 text-gray-900 dark:text-white placeholder:text-gray-400 font-sans font-bold text-base"/>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-2 relative group">
+              <label for="password" class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest px-2 flex justify-between items-center w-full">
+                <span>كلمة المرور</span>
+              </label>
+              <div class="relative">
+                <span class="absolute top-1/2 -translate-y-1/2 right-4 text-gray-400 group-focus-within:text-accent transition-colors material-symbols-outlined text-[22px] pointer-events-none">lock_open</span>
+                <input id="password" name="password" required type="password"
+                  placeholder="••••••••"
+                  class="premium-input w-full h-14 rounded-t-xl pr-12 pl-12 text-gray-900 dark:text-white placeholder:text-gray-400 font-sans font-bold text-base dir-ltr text-right"/>
+                
+                <button id="togglePass" type="button"
+                  class="absolute inset-y-0 left-0 pl-4 flex items-center justify-center text-gray-400 hover:text-accent transition-colors focus:outline-none"
+                  aria-label="إظهار/إخفاء كلمة المرور" title="إظهار/إخفاء">
+                  <span id="toggleIcon" class="material-symbols-outlined text-[22px]">visibility</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-4 mt-4">
+              <button type="submit"
+                class="btn-eclipse w-full h-14 rounded-xl font-sans font-bold text-base
+                       bg-primary text-white dark:bg-accent dark:text-black 
+                       shadow-[0_10px_20px_rgba(0,90,43,0.2)] dark:shadow-[0_10px_20px_rgba(229,184,105,0.2)]
+                       hover:shadow-lg active:scale-[0.98] transition-all duration-300">
+                <span class="inline-flex items-center justify-center gap-2 relative z-10">
+                  دخول للنظام
+                  <span class="material-symbols-outlined text-[20px] rtl:rotate-180">login</span>
+                </span>
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+        <div class="border-t border-gray-200 dark:border-white/5 bg-gray-50/80 dark:bg-black/40 px-6 py-4 text-center backdrop-blur-md">
+          <p class="text-[11px] font-bold text-gray-500 uppercase tracking-widest inline-flex items-center gap-2">
+            <span class="material-symbols-outlined text-[16px] text-green-600 dark:text-green-500">gpp_good</span>
+            اتصال آمن ومشفّر
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="relative z-10 py-6 text-center w-full pointer-events-none">
+    <p class="text-xs font-bold text-gray-500 dark:text-gray-600 font-sans tracking-wide">
+      © ٢٠٢٦ شجرة عائلة خاشقجي • جميع الحقوق محفوظة
+    </p>
+  </footer>
+
+  <script>
+    // ✅ Theme toggle
+    (function () {
+      const btn = document.getElementById("uiThemeBtn");
+      function applyTheme(next) {
+        document.documentElement.setAttribute("data-theme", next);
+        document.documentElement.classList.toggle("dark", next === "dark");
+        localStorage.setItem("theme", next);
+        if(window.initGlobe) window.initGlobe();
+      }
+      btn?.addEventListener("click", () => {
+        const current = document.documentElement.getAttribute("data-theme") || "dark";
+        applyTheme(current === "dark" ? "light" : "dark");
+      });
+      applyTheme(localStorage.getItem("theme") || "dark");
+    })();
+
+    // ✅ Password visibility toggle
+    (function () {
+      const btn = document.getElementById("togglePass");
+      const input = document.getElementById("password");
+      const icon = document.getElementById("toggleIcon");
+      btn?.addEventListener("click", () => {
+        if (!input) return;
+        const isPass = input.type === "password";
+        input.type = isPass ? "text" : "password";
+        if (icon) icon.textContent = isPass ? "visibility_off" : "visibility";
+      });
+    })();
+
+    // ==========================================
+    // سكريبت كوكب الأرض التفاعلي المطور (3D Interactive Globe)
+    // ==========================================
+    (function() {
+      const canvas = document.getElementById('globeCanvas');
+      if(!canvas) return;
+      const ctx = canvas.getContext('2d');
+      
+      let width, height;
+      let particles = [];
+      const numParticles = 250; 
+      const sphereRadius = 400; 
+      
+      let rotationX = 0;
+      let rotationY = 0;
+      
+      let mouseX = window.innerWidth / 2;
+      let mouseY = window.innerHeight / 2;
+      let targetRotationX = 0;
+      let targetRotationY = 0;
+
+      let dotColor, lineColor, connectionColor;
+
+      window.initGlobe = function() {
+        const isDark = document.documentElement.classList.contains('dark');
+        dotColor = isDark ? 'rgba(229, 184, 105, 0.8)' : 'rgba(0, 90, 43, 0.6)';
+        lineColor = isDark ? 'rgba(229, 184, 105, 0.15)' : 'rgba(0, 90, 43, 0.1)';
+        connectionColor = isDark ? '229, 184, 105' : '0, 90, 43'; 
+      };
+
+      function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+      }
+
+      function initParticles() {
+        particles = [];
+        for (let i = 0; i < numParticles; i++) {
+          const phi = Math.acos(-1 + (2 * i) / numParticles);
+          const theta = Math.sqrt(numParticles * Math.PI) * phi;
+          
+          particles.push({
+            baseX: sphereRadius * Math.cos(theta) * Math.sin(phi),
+            baseY: sphereRadius * Math.sin(theta) * Math.sin(phi),
+            baseZ: sphereRadius * Math.cos(phi),
+            x: 0, y: 0, z: 0,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5
+          });
+        }
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, width, height);
+
+        targetRotationY = (mouseX - width / 2) * 0.001;
+        targetRotationX = (mouseY - height / 2) * 0.001;
+        
+        rotationY += (targetRotationY - rotationY) * 0.05;
+        rotationX += (targetRotationX - rotationX) * 0.05 + 0.001; 
+
+        const cosX = Math.cos(rotationX);
+        const sinX = Math.sin(rotationX);
+        const cosY = Math.cos(rotationY);
+        const sinY = Math.sin(rotationY);
+
+        const projected = [];
+
+        for (let i = 0; i < numParticles; i++) {
+          const p = particles[i];
+          
+          const x1 = p.baseX * cosY - p.baseZ * sinY;
+          const z1 = p.baseZ * cosY + p.baseX * sinY;
+          
+          const y2 = p.baseY * cosX - z1 * sinX;
+          const z2 = z1 * cosX + p.baseY * sinX;
+
+          p.x = x1;
+          p.y = y2;
+          p.z = z2;
+
+          const scale = 1000 / (1000 + p.z);
+          const x2d = (width / 2) + p.x * scale;
+          const y2d = (height / 2) + p.y * scale;
+
+          projected.push({
+            original: p,
+            x: x2d,
+            y: y2d,
+            scale: scale,
+            z: p.z
+          });
+        }
+
+        projected.sort((a, b) => b.z - a.z);
+
+        for (let i = 0; i < projected.length; i++) {
+          const p1 = projected[i];
+          if (p1.z < 0) continue; 
+
+          for (let j = i + 1; j < projected.length; j++) {
+            const p2 = projected[j];
+            if (p2.z < 0) continue;
+
+            const dx = p1.x - p2.x;
+            const dy = p1.y - p2.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < 100) { 
+              ctx.beginPath();
+              ctx.moveTo(p1.x, p1.y);
+              ctx.lineTo(p2.x, p2.y);
+              ctx.strokeStyle = lineColor;
+              ctx.lineWidth = p1.scale * 0.5;
+              ctx.stroke();
+            }
+          }
+
+          const mDx = mouseX - p1.x;
+          const mDy = mouseY - p1.y;
+          const mDist = Math.sqrt(mDx*mDx + mDy*mDy);
+
+          if (mDist < 180 && p1.z > -100) {
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(mouseX, mouseY);
+            const lineOpacity = 0.5 * (1 - mDist/180);
+            ctx.strokeStyle = `rgba(${connectionColor}, ${lineOpacity})`;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            p1.x += mDx * 0.03;
+            p1.y += mDy * 0.03;
+          }
+        }
+
+        for (let i = 0; i < projected.length; i++) {
+          const p = projected[i];
+          const opacity = Math.max(0.1, Math.min(1, (p.z + sphereRadius) / (sphereRadius * 1.5)));
+          const mDx = mouseX - p.x;
+          const mDy = mouseY - p.y;
+          const mDist = Math.sqrt(mDx*mDx + mDy*mDy);
+          const hoverScale = mDist < 100 ? 1.5 : 1;
+          
+          const radius = Math.max(0.5, 2.5 * p.scale * hoverScale);
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+          ctx.fillStyle = dotColor;
+          ctx.globalAlpha = opacity;
+          ctx.fill();
+          ctx.globalAlpha = 1;
+        }
+
+        requestAnimationFrame(draw);
+      }
+
+      window.addEventListener('resize', resize);
+      window.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      });
+
+      window.addEventListener('mouseout', () => {
+        mouseX = width / 2;
+        mouseY = height / 2;
+      });
+
+      window.initGlobe();
+      resize();
+      initParticles();
+      draw();
+    })();
+  </script>
+</body>
+</html>

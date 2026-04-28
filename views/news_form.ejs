@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= mode === "edit" ? "تعديل خبر" : "إضافة خبر" %></title>
+
+  <script src="/theme.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#1f637a",
+            accent: "#E3C56F",
+            "background-light": "#FBF9F6",
+            "background-dark": "#0F1115",
+            "surface-dark": "#1A1D21",
+            "border-dark": "#2D3139",
+            "primary-dark": "#C5A854"
+          },
+          fontFamily: { display: ["Cairo", "sans-serif"] }
+        }
+      }
+    };
+  </script>
+</head>
+
+<body class="font-display bg-background-light text-slate-800 dark:bg-background-dark dark:text-slate-300 min-h-screen">
+
+  <main class="max-w-5xl mx-auto p-4 sm:p-8">
+
+    <header class="flex items-center justify-between gap-4 mb-6">
+      <div>
+        <h1 class="text-2xl font-black text-primary dark:text-accent">
+          <%= mode === "edit" ? "تعديل خبر أو مناسبة" : "إضافة خبر أو مناسبة" %>
+        </h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          يمكنك رفع صورة مستقلة للخبر من الهاتف أو الكمبيوتر، وربط الخبر بفرد من الشجرة اختياري فقط.
+        </p>
+      </div>
+
+      <a href="/admin/news"
+         class="px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold hover:bg-slate-50 dark:bg-surface-dark dark:border-border-dark dark:text-slate-200 dark:hover:bg-white/5">
+        رجوع
+      </a>
+    </header>
+
+    <% if (mode === "edit") { %>
+      <div class="mb-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div class="rounded-2xl border border-slate-200 bg-white p-4 dark:bg-surface-dark dark:border-border-dark">
+          <p class="text-xs font-black text-slate-500 dark:text-slate-400 mb-1">المشاهدات</p>
+          <div class="flex items-center gap-2 text-primary dark:text-accent font-black text-xl">
+            <span class="material-symbols-outlined">visibility</span>
+            <%= Number(post?.views_count || 0) %>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 bg-white p-4 dark:bg-surface-dark dark:border-border-dark">
+          <p class="text-xs font-black text-slate-500 dark:text-slate-400 mb-1">حالة الخبر</p>
+          <div class="flex items-center gap-2 font-black <%= Number(post?.is_active || 0) === 1 ? 'text-emerald-600 dark:text-emerald-300' : 'text-slate-500' %>">
+            <span class="material-symbols-outlined"><%= Number(post?.is_active || 0) === 1 ? 'check_circle' : 'visibility_off' %></span>
+            <%= Number(post?.is_active || 0) === 1 ? 'منشور' : 'مخفي' %>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 bg-white p-4 dark:bg-surface-dark dark:border-border-dark">
+          <p class="text-xs font-black text-slate-500 dark:text-slate-400 mb-1">التثبيت</p>
+          <div class="flex items-center gap-2 font-black <%= Number(post?.is_pinned || 0) === 1 ? 'text-amber-600 dark:text-accent' : 'text-slate-500' %>">
+            <span class="material-symbols-outlined"><%= Number(post?.is_pinned || 0) === 1 ? 'push_pin' : 'keep_off' %></span>
+            <%= Number(post?.is_pinned || 0) === 1 ? 'خبر مهم مثبت' : 'غير مثبت' %>
+          </div>
+        </div>
+      </div>
+    <% } %>
+
+    <form method="post"
+          action="<%= mode === 'edit' ? ('/admin/news/' + post.id + '/edit') : '/admin/news/new' %>"
+          class="rounded-2xl border bg-white border-slate-100 shadow-sm overflow-hidden dark:bg-surface-dark dark:border-border-dark">
+
+      <div class="p-5 border-b border-slate-100 dark:border-border-dark">
+        <h2 class="font-extrabold text-slate-900 dark:text-white">بيانات الخبر</h2>
+      </div>
+
+      <div class="p-5 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
+
+        <section class="space-y-5">
+
+          <div>
+            <label class="block text-sm font-black mb-2 text-slate-700 dark:text-slate-300">العنوان</label>
+            <input name="title"
+                   required
+                   value="<%= post?.title || '' %>"
+                   placeholder="مثال: تهنئة بمناسبة..."
+                   class="w-full rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 font-bold focus:ring-0 focus:border-primary dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent">
+          </div>
+
+          <div>
+            <label class="block text-sm font-black mb-2 text-slate-700 dark:text-slate-300">ملخص قصير</label>
+            <textarea name="summary"
+                      rows="3"
+                      placeholder="ملخص يظهر في بطاقة الخبر..."
+                      class="w-full rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 font-bold focus:ring-0 focus:border-primary dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent"><%= post?.summary || '' %></textarea>
+          </div>
+
+          <div>
+            <label class="block text-sm font-black mb-2 text-slate-700 dark:text-slate-300">المحتوى الكامل</label>
+            <textarea name="content"
+                      rows="8"
+                      placeholder="اكتب تفاصيل الخبر أو المناسبة..."
+                      class="w-full rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 font-bold focus:ring-0 focus:border-primary dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent"><%= post?.content || '' %></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-black mb-2 text-slate-700 dark:text-slate-300">تاريخ المناسبة</label>
+              <input name="event_date"
+                     type="date"
+                     value="<%= post?.event_date || '' %>"
+                     class="w-full rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 font-bold focus:ring-0 focus:border-primary dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent">
+            </div>
+
+            <div>
+              <label class="block text-sm font-black mb-2 text-slate-700 dark:text-slate-300">تاريخ النشر</label>
+              <input name="published_at"
+                     type="date"
+                     value="<%= post?.published_at ? String(post.published_at).slice(0,10) : '' %>"
+                     class="w-full rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 font-bold focus:ring-0 focus:border-primary dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-border-dark dark:bg-background-dark/30">
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox"
+                       name="is_active"
+                       value="1"
+                       <%= !post || Number(post?.is_active || 0) === 1 ? 'checked' : '' %>
+                       class="rounded border-slate-300 text-primary focus:ring-primary dark:bg-background-dark dark:border-border-dark">
+                <span class="font-black text-slate-700 dark:text-slate-300">نشر الخبر للعامة</span>
+              </label>
+            </div>
+
+            <div class="rounded-2xl border border-amber-200 bg-amber-50 p-4 dark:border-accent/30 dark:bg-accent/10">
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox"
+                       name="is_pinned"
+                       value="1"
+                       <%= Number(post?.is_pinned || 0) === 1 ? 'checked' : '' %>
+                       class="rounded border-amber-300 text-amber-600 focus:ring-amber-500 dark:bg-background-dark dark:border-accent">
+                <span class="font-black text-amber-800 dark:text-accent">تثبيت كخبر مهم</span>
+              </label>
+            </div>
+
+            <div class="rounded-2xl border border-sky-200 bg-sky-50 p-4 dark:border-sky-500/30 dark:bg-sky-500/10">
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox"
+                       name="notify_enabled"
+                       value="1"
+                       <%= Number(post?.notify_enabled || 0) === 1 ? 'checked' : '' %>
+                       class="rounded border-sky-300 text-sky-600 focus:ring-sky-500 dark:bg-background-dark dark:border-sky-500">
+                <span class="font-black text-sky-800 dark:text-sky-300">إرسال إشعار</span>
+              </label>
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            ملاحظة: عند تفعيل "إرسال إشعار" سيتم إنشاء إشعار جديد للخبر عند الحفظ. أما "تثبيت كخبر مهم" فيجعل الخبر يظهر أولًا في صفحة الأخبار.
+          </p>
+
+        </section>
+
+        <aside class="space-y-5">
+
+          <div>
+            <label class="block text-sm font-black mb-2 text-slate-700 dark:text-slate-300">ربط بفرد من الشجرة</label>
+            <select id="personSelect"
+                    name="person_id"
+                    class="w-full rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 font-bold focus:ring-0 focus:border-primary dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent">
+              <option value="">بدون ربط</option>
+              <% (persons || []).forEach(function(p) { %>
+                <option
+                  value="<%= p.id %>"
+                  data-photo="<%= p.photo_url || '' %>"
+                  data-job="<%= p.job || '' %>"
+                  data-bio="<%= p.short_bio || '' %>"
+                  <%= String(post?.person_id || '') === String(p.id) ? 'selected' : '' %>
+                >
+                  <%= p.name %>
+                </option>
+              <% }) %>
+            </select>
+
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">
+              الربط اختياري. اختيار شخص لا يغيّر صورة الخبر تلقائيًا.
+            </p>
+          </div>
+
+          <div>
+            <label class="block text-sm font-black mb-2 text-slate-700 dark:text-slate-300">صورة الخبر</label>
+
+            <div class="rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 dark:border-border-dark dark:bg-background-dark/40 mb-3">
+              <img id="imagePreview"
+                   src="<%= post?.image_url || '/images/default.png' %>"
+                   alt="معاينة"
+                   class="w-full h-64 object-contain bg-slate-100 dark:bg-black/20"
+                   onerror="this.src='/images/default.png'">
+            </div>
+
+            <input id="imageUrl"
+                   name="image_url"
+                   value="<%= post?.image_url || '' %>"
+                   placeholder="/uploads/image.jpg"
+                   class="w-full rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 font-bold focus:ring-0 focus:border-primary dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent">
+
+            <p id="uploadStatus" class="hidden mt-3 text-sm font-bold rounded-xl px-3 py-2"></p>
+
+            <div class="grid grid-cols-1 gap-2 mt-3">
+              <button id="uploadBtn"
+                      type="button"
+                      class="w-full px-4 py-3 rounded-xl bg-primary text-white font-black hover:bg-primary/90 dark:bg-accent dark:text-black dark:hover:bg-primary-dark">
+                رفع صورة من الجهاز
+              </button>
+
+              <button id="usePersonPhoto"
+                      type="button"
+                      class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-700 font-black hover:bg-slate-50 dark:bg-surface-dark dark:border-border-dark dark:text-slate-200 dark:hover:bg-white/5">
+                استخدام صورة الفرد المختار
+              </button>
+
+              <button id="clearImage"
+                      type="button"
+                      class="w-full px-4 py-3 rounded-xl border border-red-200 bg-red-50 text-red-700 font-black hover:bg-red-100 dark:bg-red-500/10 dark:border-red-500/20 dark:text-red-300 dark:hover:bg-red-500/15">
+                مسح صورة الخبر
+              </button>
+            </div>
+
+            <input id="fileInput" type="file" accept="image/*" class="hidden">
+
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-3 leading-relaxed">
+              يمكنك رفع أي صورة خبر من الهاتف أو الكمبيوتر. صورة الفرد لا تستخدم إلا عند الضغط على زر "استخدام صورة الفرد المختار".
+            </p>
+          </div>
+
+        </aside>
+      </div>
+
+      <div class="p-5 border-t border-slate-100 dark:border-border-dark flex flex-col sm:flex-row justify-end gap-3">
+        <% if (mode === "edit") { %>
+          <a href="/news/<%= post.id %>"
+             target="_blank"
+             class="px-6 py-3 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 font-black hover:bg-emerald-100 dark:bg-emerald-500/10 dark:border-emerald-500/20 dark:text-emerald-300 dark:hover:bg-emerald-500/15 text-center">
+            عرض الخبر
+          </a>
+        <% } %>
+
+        <a href="/admin/news"
+           class="px-6 py-3 rounded-xl border border-slate-200 bg-white text-slate-700 font-black hover:bg-slate-50 dark:bg-surface-dark dark:border-border-dark dark:text-slate-200 dark:hover:bg-white/5 text-center">
+          إلغاء
+        </a>
+
+        <button type="submit"
+                class="px-6 py-3 rounded-xl bg-primary text-white font-black hover:bg-primary/90 dark:bg-accent dark:text-black dark:hover:bg-primary-dark">
+          حفظ
+        </button>
+      </div>
+
+    </form>
+  </main>
+
+  <script>
+    const imageUrl = document.getElementById("imageUrl");
+    const imagePreview = document.getElementById("imagePreview");
+    const fileInput = document.getElementById("fileInput");
+    const uploadBtn = document.getElementById("uploadBtn");
+    const usePersonPhoto = document.getElementById("usePersonPhoto");
+    const clearImage = document.getElementById("clearImage");
+    const personSelect = document.getElementById("personSelect");
+    const uploadStatus = document.getElementById("uploadStatus");
+
+    function setPreview(url) {
+      const clean = (url || "").trim();
+      imagePreview.src = clean || "/images/default.png";
+    }
+
+    function setStatus(message, type) {
+      if (!uploadStatus) return;
+
+      uploadStatus.classList.remove("hidden");
+      uploadStatus.textContent = message;
+
+      uploadStatus.className = "mt-3 text-sm font-bold rounded-xl px-3 py-2 " + (
+        type === "success"
+          ? "bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/20"
+          : type === "error"
+          ? "bg-red-50 text-red-700 border border-red-200 dark:bg-red-500/10 dark:text-red-300 dark:border-red-500/20"
+          : "bg-slate-50 text-slate-600 border border-slate-200 dark:bg-white/5 dark:text-slate-300 dark:border-white/10"
+      );
+    }
+
+    imageUrl?.addEventListener("input", () => {
+      setPreview(imageUrl.value);
+    });
+
+    uploadBtn?.addEventListener("click", () => {
+      fileInput?.click();
+    });
+
+    fileInput?.addEventListener("change", async () => {
+      if (!fileInput.files || !fileInput.files[0]) return;
+
+      const file = fileInput.files[0];
+
+      if (!file.type || !file.type.startsWith("image/")) {
+        setStatus("الملف المختار ليس صورة.", "error");
+        fileInput.value = "";
+        return;
+      }
+
+      const localUrl = URL.createObjectURL(file);
+      setPreview(localUrl);
+      setStatus("جاري رفع الصورة...", "info");
+
+      const fd = new FormData();
+      fd.append("photo", file);
+
+      try {
+        const res = await fetch("/admin/upload", {
+          method: "POST",
+          body: fd,
+          credentials: "same-origin"
+        });
+
+        if (!res.ok) throw new Error("Upload failed");
+
+        const data = await res.json();
+
+        if (!data || !data.url) throw new Error("No URL returned");
+
+        imageUrl.value = data.url;
+        setPreview(data.url);
+        setStatus("تم رفع صورة الخبر بنجاح. اضغط حفظ لتثبيت الخبر.", "success");
+      } catch (err) {
+        console.error(err);
+        setStatus("تعذر رفع الصورة. تأكد أنك مسجل دخول وأن حجم الصورة مناسب.", "error");
+      } finally {
+        fileInput.value = "";
+      }
+    });
+
+    usePersonPhoto?.addEventListener("click", () => {
+      const opt = personSelect?.selectedOptions?.[0];
+      const photo = opt?.dataset?.photo || "";
+
+      if (!personSelect?.value) {
+        setStatus("اختر فردًا من الشجرة أولًا.", "error");
+        return;
+      }
+
+      if (!photo) {
+        setStatus("الشخص المختار لا يحتوي على صورة.", "error");
+        return;
+      }
+
+      imageUrl.value = photo;
+      setPreview(photo);
+      setStatus("تم استخدام صورة الفرد المختار كصورة للخبر.", "success");
+    });
+
+    clearImage?.addEventListener("click", () => {
+      imageUrl.value = "";
+      setPreview("");
+      setStatus("تم مسح صورة الخبر.", "info");
+    });
+
+    personSelect?.addEventListener("change", () => {
+      setStatus("تم تغيير الشخص المرتبط. صورة الخبر لن تتغير إلا إذا ضغطت على زر استخدام صورة الفرد.", "info");
+    });
+  </script>
+
+</body>
+</html>

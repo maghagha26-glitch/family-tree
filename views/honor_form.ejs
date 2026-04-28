@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= mode === "edit" ? "تعديل عنصر السير الذاتية" : "إضافة السير الذاتية" %></title>
+
+  <script src="/theme.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#1f637a",
+            accent: "#E3C56F",
+            "background-light": "#FBF9F6",
+            "background-dark": "#0F1115",
+            "surface-dark": "#1A1D21",
+            "border-dark": "#2D3139",
+            "primary-dark": "#C5A854",
+          },
+          fontFamily: { display: ["Cairo", "sans-serif"] },
+          borderRadius: { "2xl": "1rem" }
+        }
+      }
+    };
+  </script>
+
+  <script>
+    (function () {
+      const t = document.documentElement.getAttribute("data-theme") || localStorage.getItem("theme") || "dark";
+      document.documentElement.setAttribute("data-theme", t);
+      document.documentElement.classList.toggle("dark", t === "dark");
+      const obs = new MutationObserver(() => {
+        const next = document.documentElement.getAttribute("data-theme") || "dark";
+        document.documentElement.classList.toggle("dark", next === "dark");
+      });
+      obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    })();
+  </script>
+</head>
+
+<body class="font-display antialiased bg-background-light text-slate-800 dark:bg-background-dark dark:text-slate-300">
+  <main class="min-h-screen p-4 sm:p-8">
+    <div class="max-w-5xl mx-auto">
+
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-black text-slate-900 dark:text-white">
+            <%= mode === "edit" ? "تعديل العنصر" : "إضافة عنصر جديد" %>
+          </h1>
+          <p class="text-sm text-slate-500 dark:text-slate-500 mt-1">
+            اربط السيرة بشخص من الشجرة لاستخدام الصورة الموحدة والنبذة تلقائيًا.
+          </p>
+        </div>
+
+        <a href="/admin/honor"
+           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50
+                  dark:bg-surface-dark dark:border-border-dark dark:text-slate-300 dark:hover:bg-white/5">
+          <span class="material-symbols-outlined">arrow_forward</span>
+          رجوع
+        </a>
+      </div>
+
+      <section class="rounded-2xl border bg-white border-slate-100 shadow-[0_10px_30px_rgba(0,0,0,0.05)]
+                      dark:bg-surface-dark dark:border-border-dark overflow-hidden">
+        <div class="px-6 py-5 border-b border-slate-100 dark:border-border-dark flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-accent">workspace_premium</span>
+            <h2 class="font-extrabold text-slate-800 dark:text-white">بيانات العنصر</h2>
+          </div>
+
+          <span class="text-xs text-slate-500 dark:text-slate-500">
+            <%= mode === "edit" ? "تعديل" : "إضافة" %>
+          </span>
+        </div>
+
+        <form method="post" action="<%= mode === 'edit' ? ('/admin/honor/' + item.id + '/edit') : '/admin/honor/new' %>" class="p-6 space-y-6">
+
+          <div class="rounded-2xl border border-primary/10 bg-primary/5 p-4 dark:border-accent/20 dark:bg-accent/10">
+            <div class="flex items-start gap-3">
+              <span class="material-symbols-outlined text-primary dark:text-accent">link</span>
+              <div class="flex-1">
+                <h3 class="font-extrabold text-slate-800 dark:text-white mb-1">ربط السيرة بفرد من الشجرة</h3>
+                <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                  عند اختيار شخص سيتم تعبئة الاسم والصورة والنبذة تلقائيًا من بيانات الشخص، ويمكنك تعديل النص بعد ذلك.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-[1fr_160px] gap-4 items-end">
+            <div>
+              <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">اختيار شخص من الشجرة</label>
+              <select id="personSelect"
+                      class="w-full rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium
+                             focus:border-primary focus:ring-0
+                             dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent">
+                <option value="">— بدون ربط مباشر —</option>
+              </select>
+
+              <input type="hidden" name="person_id" id="personIdInput" value="<%= item?.person_id || '' %>"/>
+
+              <p id="personSelectHint" class="text-xs text-slate-500 dark:text-slate-500 mt-2">
+                الربط الحالي:
+                <span class="font-bold"><%= item?.person_id ? ('#' + item.person_id) : 'غير مربوط' %></span>
+              </p>
+            </div>
+
+            <div>
+              <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">معاينة الصورة</label>
+              <div class="w-36 h-44 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 dark:border-border-dark dark:bg-background-dark/40">
+                <img id="photoPreview"
+                     src="<%= item?.photo_url || '/images/default.png' %>"
+                     alt="معاينة الصورة"
+                     class="w-full h-full object-cover"
+                     onerror="this.src='/images/default.png'"/>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">الاسم</label>
+              <input id="nameInput" name="name" required value="<%= item?.name || '' %>"
+                     class="w-full rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium
+                            focus:border-primary focus:ring-0
+                            dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent"/>
+            </div>
+
+            <div>
+              <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">المجال</label>
+              <input id="fieldInput" name="field" value="<%= item?.field || '' %>"
+                     placeholder="مثال: عالم / طبيب / رجل أعمال"
+                     class="w-full rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium
+                            focus:border-primary focus:ring-0
+                            dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent"/>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">تاريخ الميلاد</label>
+              <input id="birthDateInput" type="date" name="birth_date" value="<%= item?.birth_date || '' %>"
+                     class="w-full rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium
+                            focus:border-primary focus:ring-0
+                            dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent"/>
+            </div>
+
+            <div>
+              <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">تاريخ الوفاة</label>
+              <input id="deathDateInput" type="date" name="death_date" value="<%= item?.death_date || '' %>"
+                     class="w-full rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium
+                            focus:border-primary focus:ring-0
+                            dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent"/>
+            </div>
+
+            <div>
+              <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">مكان الميلاد</label>
+              <input id="birthPlaceInput" name="birth_place" value="<%= item?.birth_place || '' %>"
+                     placeholder="مثال: مكة المكرمة"
+                     class="w-full rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium
+                            focus:border-primary focus:ring-0
+                            dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent"/>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">النبذة</label>
+            <textarea id="bioInput" name="bio" rows="4"
+                      class="w-full rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium
+                             focus:border-primary focus:ring-0
+                             dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent"
+                      placeholder="اكتب نبذة مختصرة..."><%= item?.bio || '' %></textarea>
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">الإنجاز / الوصف</label>
+            <textarea id="achievementInput" name="achievement" rows="5"
+                      class="w-full rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium
+                             focus:border-primary focus:ring-0
+                             dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent"><%= item?.achievement || '' %></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">رابط الصورة الموحدة</label>
+              <input id="photoUrlInput" name="photo_url" value="<%= item?.photo_url || '' %>"
+                     placeholder="/uploads/xxx.jpg أو رابط خارجي"
+                     class="w-full rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium
+                            focus:border-primary focus:ring-0
+                            dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent"/>
+              <p class="text-xs text-slate-500 dark:text-slate-500 mt-2">
+                الأفضل تركها تأتي من الشخص المختار حتى تبقى الصورة موحدة في الموقع.
+              </p>
+            </div>
+
+            <div>
+              <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">الترتيب (ORD)</label>
+              <input type="number" name="ord" value="<%= (item?.ord ?? 1) %>"
+                     class="w-full rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium
+                            focus:border-primary focus:ring-0
+                            dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent"/>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3">
+            <button type="submit"
+                    class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-white font-extrabold hover:bg-primary/90 active:scale-[0.99]
+                           dark:bg-accent dark:text-black dark:hover:bg-primary-dark">
+              <span class="material-symbols-outlined">save</span>
+              حفظ
+            </button>
+
+            <a href="/admin/honor"
+               class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50
+                      dark:bg-surface-dark dark:border-border-dark dark:text-slate-300 dark:hover:bg-white/5">
+              <span class="material-symbols-outlined">close</span>
+              إلغاء
+            </a>
+
+            <button id="fillFromPersonBtn" type="button"
+                    class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-primary/20 bg-primary/5 text-primary hover:bg-primary/10
+                           dark:border-accent/20 dark:bg-accent/10 dark:text-accent dark:hover:bg-accent/15">
+              <span class="material-symbols-outlined">auto_fix_high</span>
+              تعبئة من الشخص
+            </button>
+
+            <button id="uploadBtn" type="button"
+                    class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50
+                           dark:bg-surface-dark dark:border-border-dark dark:text-slate-300 dark:hover:bg-white/5">
+              <span class="material-symbols-outlined">upload</span>
+              رفع صورة
+            </button>
+
+            <button id="clearPhotoBtn" type="button"
+                    class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50
+                           dark:bg-surface-dark dark:border-border-dark dark:text-slate-300 dark:hover:bg-white/5">
+              <span class="material-symbols-outlined">delete</span>
+              مسح الصورة
+            </button>
+
+            <input id="photoFileInput" type="file" accept="image/*" class="hidden"/>
+          </div>
+
+        </form>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    (function(){
+      const uploadBtn = document.getElementById("uploadBtn");
+      const fileInput = document.getElementById("photoFileInput");
+      const photoUrl = document.getElementById("photoUrlInput");
+      const clearBtn = document.getElementById("clearPhotoBtn");
+      const preview = document.getElementById("photoPreview");
+
+      function updatePreview(url) {
+        if (!preview) return;
+        preview.src = (url && String(url).trim()) ? String(url).trim() : "/images/default.png";
+      }
+
+      uploadBtn?.addEventListener("click", () => fileInput?.click());
+
+      clearBtn?.addEventListener("click", () => {
+        if (photoUrl) photoUrl.value = "";
+        updatePreview("");
+      });
+
+      photoUrl?.addEventListener("input", () => updatePreview(photoUrl.value));
+
+      fileInput?.addEventListener("change", async () => {
+        if (!fileInput.files || !fileInput.files[0]) return;
+
+        const fd = new FormData();
+        fd.append("photo", fileInput.files[0]);
+
+        try {
+          const res = await fetch("/admin/upload", { method: "POST", body: fd });
+          if (!res.ok) throw new Error("Upload failed");
+          const data = await res.json();
+          if (photoUrl) photoUrl.value = data.url || "";
+          updatePreview(data.url || "");
+        } catch (e) {
+          alert("تعذر رفع الصورة");
+        } finally {
+          fileInput.value = "";
+        }
+      });
+    })();
+
+    (function personLinking(){
+      const select = document.getElementById("personSelect");
+      const personIdInput = document.getElementById("personIdInput");
+      const hint = document.getElementById("personSelectHint");
+      const nameInput = document.getElementById("nameInput");
+      const fieldInput = document.getElementById("fieldInput");
+      const bioInput = document.getElementById("bioInput");
+      const achievementInput = document.getElementById("achievementInput");
+      const birthDateInput = document.getElementById("birthDateInput");
+      const deathDateInput = document.getElementById("deathDateInput");
+      const birthPlaceInput = document.getElementById("birthPlaceInput");
+      const photoUrlInput = document.getElementById("photoUrlInput");
+      const photoPreview = document.getElementById("photoPreview");
+      const fillBtn = document.getElementById("fillFromPersonBtn");
+
+      const currentPersonId = String(personIdInput?.value || "").trim();
+
+      function updatePhoto(url) {
+        const clean = String(url || "").trim();
+        if (photoUrlInput) photoUrlInput.value = clean;
+        if (photoPreview) photoPreview.src = clean || "/images/default.png";
+      }
+
+      function flattenTree(root) {
+        const list = [];
+        function walk(node) {
+          if (!node) return;
+          list.push(node);
+          (node.children || []).forEach(walk);
+        }
+        walk(root);
+        return list;
+      }
+
+      async function loadPersons() {
+        if (!select) return;
+
+        try {
+          const res = await fetch("/api/tree");
+          if (!res.ok) throw new Error("tree failed");
+          const root = await res.json();
+          const persons = flattenTree(root);
+
+          persons.forEach((p) => {
+            const opt = document.createElement("option");
+            opt.value = p.id;
+            opt.textContent = `${p.name || "بدون اسم"}${p.birth_date ? " — " + p.birth_date : ""}`;
+            opt.dataset.name = p.name || "";
+            opt.dataset.photo = p.photo_url || "";
+            opt.dataset.job = p.job || "";
+            opt.dataset.shortBio = p.short_bio || "";
+            opt.dataset.notes = p.notes || "";
+            opt.dataset.birthDate = p.birth_date || "";
+            opt.dataset.deathDate = p.death_date || "";
+            opt.dataset.birthPlace = p.birth_place || "";
+            select.appendChild(opt);
+          });
+
+          if (currentPersonId) {
+            select.value = currentPersonId;
+            if (hint) {
+              hint.innerHTML = `الربط الحالي: <span class="font-bold">#${currentPersonId}</span>`;
+            }
+          }
+        } catch (err) {
+          console.error("loadPersons error:", err);
+          if (hint) {
+            hint.textContent = "تعذر تحميل قائمة الأشخاص من الشجرة.";
+          }
+        }
+      }
+
+      async function fetchPerson(id) {
+        const res = await fetch(`/api/person/${encodeURIComponent(id)}`);
+        if (!res.ok) throw new Error("person failed");
+        return res.json();
+      }
+
+      async function fillFromPerson(forceFillAll = true) {
+        const id = String(select?.value || "").trim();
+        if (!id) {
+          if (personIdInput) personIdInput.value = "";
+          if (hint) hint.innerHTML = `الربط الحالي: <span class="font-bold">غير مربوط</span>`;
+          return;
+        }
+
+        try {
+          const p = await fetchPerson(id);
+
+          if (personIdInput) personIdInput.value = p.id || id;
+          if (hint) hint.innerHTML = `الربط الحالي: <span class="font-bold">#${p.id || id}</span>`;
+
+          if (forceFillAll || !nameInput.value.trim()) {
+            nameInput.value = p.name || "";
+          }
+
+          if (forceFillAll || !fieldInput.value.trim()) {
+            fieldInput.value = p.job || "";
+          }
+
+          if (forceFillAll || !bioInput.value.trim()) {
+            bioInput.value = p.short_bio || p.notes || "";
+          }
+
+          if (forceFillAll || !achievementInput.value.trim()) {
+            achievementInput.value = p.notes || "";
+          }
+
+          if (forceFillAll || !birthDateInput.value.trim()) {
+            birthDateInput.value = p.birth_date || "";
+          }
+
+          if (forceFillAll || !deathDateInput.value.trim()) {
+            deathDateInput.value = p.death_date || "";
+          }
+
+          if (forceFillAll || !birthPlaceInput.value.trim()) {
+            birthPlaceInput.value = p.birth_place || "";
+          }
+
+          updatePhoto(p.photo_url || "");
+        } catch (err) {
+          console.error("fillFromPerson error:", err);
+          alert("تعذر تحميل بيانات الشخص المختار");
+        }
+      }
+
+      select?.addEventListener("change", () => fillFromPerson(true));
+      fillBtn?.addEventListener("click", () => fillFromPerson(true));
+
+      loadPersons();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>مشتركو النشرة البريدية</title>
+
+  <script src="/theme.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#1f637a",
+            accent: "#E3C56F",
+            "background-light": "#FBF9F6",
+            "background-dark": "#0F1115",
+            "surface-dark": "#1A1D21",
+            "border-dark": "#2D3139",
+            "primary-dark": "#C5A854"
+          },
+          fontFamily: { display: ["Cairo", "sans-serif"] }
+        }
+      }
+    };
+  </script>
+</head>
+
+<body class="font-display bg-background-light text-slate-800 dark:bg-background-dark dark:text-slate-300 min-h-screen">
+
+<main class="max-w-7xl mx-auto p-4 sm:p-8">
+
+  <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+    <div>
+      <h1 class="text-2xl font-black text-primary dark:text-accent">مشتركو النشرة البريدية</h1>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+        إدارة المشتركين في أخبار العائلة والتنبيهات.
+      </p>
+    </div>
+
+    <div class="flex flex-wrap gap-2">
+      <a href="/admin/news"
+         class="px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold hover:bg-slate-50 dark:bg-surface-dark dark:border-border-dark dark:text-slate-200 dark:hover:bg-white/5">
+        رجوع للأخبار
+      </a>
+
+      <a href="/admin/news/subscribers/export.csv"
+         class="px-4 py-2 rounded-xl bg-primary text-white font-bold hover:bg-primary/90 dark:bg-accent dark:text-black dark:hover:bg-primary-dark">
+        تصدير CSV
+      </a>
+    </div>
+  </header>
+
+  <section class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
+    <div class="rounded-2xl border border-slate-100 bg-white p-4 dark:bg-surface-dark dark:border-border-dark">
+      <p class="text-xs font-black text-slate-500 dark:text-slate-400">إجمالي المشتركين</p>
+      <p class="text-2xl font-black text-primary dark:text-accent mt-1"><%= subscribers?.length || 0 %></p>
+    </div>
+
+    <div class="rounded-2xl border border-slate-100 bg-white p-4 dark:bg-surface-dark dark:border-border-dark">
+      <p class="text-xs font-black text-slate-500 dark:text-slate-400">النشطون</p>
+      <p class="text-2xl font-black text-emerald-600 dark:text-emerald-300 mt-1">
+        <%= (subscribers || []).filter(s => Number(s.is_active || 0) === 1).length %>
+      </p>
+    </div>
+
+    <div class="rounded-2xl border border-slate-100 bg-white p-4 dark:bg-surface-dark dark:border-border-dark">
+      <p class="text-xs font-black text-slate-500 dark:text-slate-400">الموقوفون</p>
+      <p class="text-2xl font-black text-red-600 dark:text-red-300 mt-1">
+        <%= (subscribers || []).filter(s => Number(s.is_active || 0) !== 1).length %>
+      </p>
+    </div>
+  </section>
+
+  <section class="rounded-2xl border bg-white border-slate-100 shadow-sm overflow-hidden dark:bg-surface-dark dark:border-border-dark">
+    <div class="p-4 border-b border-slate-100 dark:border-border-dark">
+      <div class="relative max-w-md">
+        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+        <input id="searchInput"
+               type="text"
+               placeholder="بحث بالبريد أو الاسم..."
+               class="w-full pr-11 pl-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 font-medium focus:ring-0 focus:border-primary dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent">
+      </div>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full min-w-[900px]">
+        <thead class="bg-slate-50 border-b border-slate-100 dark:bg-[#14171B] dark:border-border-dark">
+          <tr>
+            <th class="py-4 px-5 text-right text-xs font-black text-slate-500">ID</th>
+            <th class="py-4 px-5 text-right text-xs font-black text-slate-500">البريد الإلكتروني</th>
+            <th class="py-4 px-5 text-right text-xs font-black text-slate-500">الاسم</th>
+            <th class="py-4 px-5 text-right text-xs font-black text-slate-500">تاريخ الاشتراك</th>
+            <th class="py-4 px-5 text-right text-xs font-black text-slate-500">الحالة</th>
+            <th class="py-4 px-5 text-left text-xs font-black text-slate-500">إجراءات</th>
+          </tr>
+        </thead>
+
+        <tbody id="subsTbody" class="divide-y divide-slate-100 dark:divide-border-dark">
+          <% if (!subscribers || subscribers.length === 0) { %>
+            <tr>
+              <td colspan="6" class="py-10 px-5 text-center text-slate-500 dark:text-slate-400">
+                لا يوجد مشتركون بعد.
+              </td>
+            </tr>
+          <% } %>
+
+          <% (subscribers || []).forEach(function(s) {
+            const active = Number(s.is_active || 0) === 1;
+          %>
+            <tr class="subscriber-row hover:bg-primary/5 dark:hover:bg-accent/5 transition-colors">
+              <td class="py-4 px-5 text-sm text-slate-500 sub-id"><%= s.id %></td>
+
+              <td class="py-4 px-5">
+                <div class="font-extrabold text-slate-900 dark:text-white sub-email"><%= s.email %></div>
+              </td>
+
+              <td class="py-4 px-5 text-sm text-slate-600 dark:text-slate-300 sub-name">
+                <%= s.subscriber_name || '-' %>
+              </td>
+
+              <td class="py-4 px-5 text-sm text-slate-600 dark:text-slate-300 sub-date">
+                <%= s.created_at || '-' %>
+              </td>
+
+              <td class="py-4 px-5 sub-status">
+                <% if (active) { %>
+                  <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-black dark:bg-emerald-500/10 dark:text-emerald-300">
+                    نشط
+                  </span>
+                <% } else { %>
+                  <span class="px-2.5 py-1 rounded-full bg-red-100 text-red-700 text-xs font-black dark:bg-red-500/10 dark:text-red-300">
+                    متوقف
+                  </span>
+                <% } %>
+              </td>
+
+              <td class="py-4 px-5">
+                <div class="flex justify-end gap-2 flex-wrap">
+                  <form method="post" action="/admin/news/subscribers/<%= s.id %>/toggle" style="margin:0">
+                    <button type="submit"
+                            class="px-3 py-2 rounded-lg text-xs font-black <%= active ? 'bg-amber-50 text-amber-700 hover:bg-amber-100 dark:bg-accent/10 dark:text-accent' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-300' %>">
+                      <%= active ? 'إيقاف' : 'تفعيل' %>
+                    </button>
+                  </form>
+
+                  <form method="post" action="/admin/news/subscribers/<%= s.id %>/delete" style="margin:0" onsubmit="return confirm('حذف المشترك؟');">
+                    <button type="submit"
+                            class="px-3 py-2 rounded-lg text-xs font-black bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-500/10 dark:text-red-300">
+                      حذف
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(function(){
+  const input = document.getElementById("searchInput");
+  const rows = Array.from(document.querySelectorAll(".subscriber-row"));
+
+  input?.addEventListener("input", () => {
+    const q = input.value.trim().toLowerCase();
+
+    rows.forEach(row => {
+      const text = [
+        row.querySelector(".sub-id")?.textContent,
+        row.querySelector(".sub-email")?.textContent,
+        row.querySelector(".sub-name")?.textContent,
+        row.querySelector(".sub-date")?.textContent,
+        row.querySelector(".sub-status")?.textContent
+      ].join(" ").toLowerCase();
+
+      row.style.display = !q || text.includes(q) ? "" : "none";
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
