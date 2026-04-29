@@ -2,14 +2,14 @@
 <html dir="rtl" lang="ar">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title><%= mode === "edit" ? "تعديل عنصر السير الذاتية" : "إضافة السير الذاتية" %></title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title><%= mode === "edit" ? "تعديل سيرة ذاتية" : "إضافة سيرة ذاتية" %> - لوحة الإدارة</title>
 
   <script src="/theme.js"></script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..800&display=swap" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
@@ -19,418 +19,640 @@
       theme: {
         extend: {
           colors: {
-            primary: "#1f637a",
-            accent: "#E3C56F",
-            "background-light": "#FBF9F6",
-            "background-dark": "#0F1115",
-            "surface-dark": "#1A1D21",
-            "border-dark": "#2D3139",
-            "primary-dark": "#C5A854",
+            primary: "#005A2B",     /* الأخضر المعتمد بالكود الأساسي */
+            primaryDark: "#00361A", 
+            accent: "#E5B869",      /* الذهب السائل */
+            "bg-light": "#F5F3F7",  /* خلفية فاتحة دافئة */
+            "bg-dark": "#050505",   /* خلفية داكنة جداً */
+            "card-light": "rgba(255, 255, 255, 0.8)",
+            "card-dark": "rgba(15, 12, 25, 0.8)",
+            "border-light": "rgba(0, 90, 43, 0.1)",
+            "border-dark": "rgba(229, 184, 105, 0.1)",
           },
-          fontFamily: { display: ["Cairo", "sans-serif"] },
-          borderRadius: { "2xl": "1rem" }
+          fontFamily: {
+            display: ["'Aref Ruqaa'", "serif"],
+            sans: ["Tajawal", "sans-serif"],
+          },
         }
       }
     };
   </script>
 
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .scrollbar-hide::-webkit-scrollbar { display: none; }
+      .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+      .glass-panel { @apply backdrop-blur-2xl shadow-xl; }
+    }
+  </style>
+
+  <style>
+    /* تخصيص شريط التمرير */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #005A2B; border-radius: 10px; }
+    html.dark ::-webkit-scrollbar-thumb { background: #E5B869; }
+
+    /* حقول الإدخال */
+    .form-input { transition: all 0.3s ease; }
+    .form-input:focus {
+      box-shadow: 0 0 20px rgba(0, 90, 43, 0.15);
+      border-color: #005A2B !important;
+      transform: translateY(-1px);
+    }
+    html.dark .form-input:focus {
+      box-shadow: 0 0 20px rgba(229, 184, 105, 0.15);
+      border-color: #E5B869 !important;
+    }
+
+    /* شبكة العائلة التفاعلية في الخلفية */
+    #nexusCanvas {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 0; pointer-events: auto;
+    }
+
+    /* إعدادات أيقونات المظهر */
+    html.dark .dark-toggle-icon-moon { display: none; }
+    html:not(.dark) .dark-toggle-icon-sun { display: none; }
+
+    /* Mobile Nav */
+    #mobileNavOverlay.hidden { display: none; }
+    #mobileNavOverlay { display: block; }
+    #mobileNavDrawer { transform: translateX(110%); transition: transform .4s cubic-bezier(0.16, 1, 0.3, 1); }
+    #mobileNavDrawer.isOpen { transform: translateX(0); }
+  </style>
+
   <script>
     (function () {
-      const t = document.documentElement.getAttribute("data-theme") || localStorage.getItem("theme") || "dark";
-      document.documentElement.setAttribute("data-theme", t);
-      document.documentElement.classList.toggle("dark", t === "dark");
-      const obs = new MutationObserver(() => {
-        const next = document.documentElement.getAttribute("data-theme") || "dark";
-        document.documentElement.classList.toggle("dark", next === "dark");
-      });
-      obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+      const saved = localStorage.getItem("theme") || "dark";
+      document.documentElement.setAttribute("data-theme", saved);
+      document.documentElement.classList.toggle("dark", saved === "dark");
     })();
   </script>
+
+  <style id="solid-color-final-fix">
+    .bg-primary, a.bg-primary, button.bg-primary { background-color: #005A2B !important; background-image: none !important; }
+    .dark .dark\:bg-accent, html.dark .dark\:bg-accent { background-color: #E5B869 !important; background-image: none !important; }
+    [class*="bg-gradient"] { background-image: none !important; }
+    .solid-admin-action { background-color: #005A2B !important; background-image: none !important; }
+    html.dark .solid-admin-action { background-color: #E5B869 !important; color: #050505 !important; }
+  </style>
 </head>
 
-<body class="font-display antialiased bg-background-light text-slate-800 dark:bg-background-dark dark:text-slate-300">
-  <main class="min-h-screen p-4 sm:p-8">
-    <div class="max-w-5xl mx-auto">
+<body class="bg-bg-light dark:bg-bg-dark text-gray-800 dark:text-gray-200 font-sans h-screen flex overflow-hidden selection:bg-accent selection:text-primaryDark">
 
-      <div class="flex items-center justify-between mb-6">
-        <div>
-          <h1 class="text-2xl font-black text-slate-900 dark:text-white">
-            <%= mode === "edit" ? "تعديل العنصر" : "إضافة عنصر جديد" %>
-          </h1>
-          <p class="text-sm text-slate-500 dark:text-slate-500 mt-1">
-            اربط السيرة بشخص من الشجرة لاستخدام الصورة الموحدة والنبذة تلقائيًا.
-          </p>
-        </div>
+  <canvas id="nexusCanvas"></canvas>
+  <div class="fixed inset-0 bg-gradient-to-b from-white/40 to-white/80 dark:from-black/40 dark:to-[#050505]/90 pointer-events-none z-[1]"></div>
 
-        <a href="/admin/honor"
-           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50
-                  dark:bg-surface-dark dark:border-border-dark dark:text-slate-300 dark:hover:bg-white/5">
-          <span class="material-symbols-outlined">arrow_forward</span>
-          رجوع
+  <aside class="relative z-20 hidden lg:flex flex-col w-[280px] h-[calc(100vh-2rem)] my-4 mx-4 bg-card-light dark:bg-card-dark glass-panel rounded-3xl border border-border-light dark:border-border-dark overflow-hidden shrink-0">
+    <div class="flex items-center gap-3 p-6 border-b border-border-light dark:border-border-dark shrink-0">
+      <div class="w-12 h-12 flex items-center justify-center rounded-2xl bg-primary dark:bg-accent text-white dark:text-black shadow-lg">
+        <span class="material-symbols-outlined text-[28px]">shield_person</span>
+      </div>
+      <div>
+        <h1 class="font-display font-bold text-xl leading-none text-primary dark:text-white">عائلة خاشقجي</h1>
+        <p class="text-[10px] font-bold text-gray-500 dark:text-accent uppercase tracking-widest mt-1.5">نظام الإدارة المركزية</p>
+      </div>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-6">
+      <div class="space-y-2">
+        <p class="px-3 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">البيانات الرئيسية</p>
+        <a href="/admin" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-white/5 hover:text-primary dark:hover:text-accent font-bold text-sm transition-colors border border-transparent">
+          <span class="material-symbols-outlined text-[22px]">group</span> إدارة الأفراد
+        </a>
+        <a href="/admin/pages" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-white/5 hover:text-primary dark:hover:text-accent font-bold text-sm transition-colors border border-transparent">
+          <span class="material-symbols-outlined text-[22px]">history_edu</span> إدارة الصفحات
+        </a>
+        <a href="/admin/honor" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-primary/10 dark:bg-accent/10 text-primary dark:text-accent font-bold text-sm border border-primary/20 dark:border-accent/20 transition-all relative overflow-hidden shadow-sm">
+          <div class="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-6 rounded-l-full bg-primary dark:bg-accent shadow-[0_0_10px_rgba(229,184,105,0.8)]"></div>
+          <span class="material-symbols-outlined text-[22px]">workspace_premium</span> السير الذاتية
+        </a>
+        <a href="/admin/news" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-white/5 hover:text-primary dark:hover:text-accent font-bold text-sm transition-colors border border-transparent">
+          <span class="material-symbols-outlined text-[22px]">newspaper</span> الأخبار والمناسبات
         </a>
       </div>
 
-      <section class="rounded-2xl border bg-white border-slate-100 shadow-[0_10px_30px_rgba(0,0,0,0.05)]
-                      dark:bg-surface-dark dark:border-border-dark overflow-hidden">
-        <div class="px-6 py-5 border-b border-slate-100 dark:border-border-dark flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-accent">workspace_premium</span>
-            <h2 class="font-extrabold text-slate-800 dark:text-white">بيانات العنصر</h2>
-          </div>
+      <div class="space-y-2">
+        <p class="px-3 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">النظام والموقع</p>
+        <a href="/admin/support-messages" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-white/5 hover:text-primary dark:hover:text-accent font-bold text-sm transition-colors border border-transparent">
+          <span class="material-symbols-outlined text-[22px]">mail</span> رسائل الدعم
+        </a>
+        <a href="/" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-white/5 hover:text-primary dark:hover:text-accent font-bold text-sm transition-colors border border-transparent">
+          <span class="material-symbols-outlined text-[22px]">account_tree</span> عرض الشجرة
+        </a>
+      </div>
+    </nav>
 
-          <span class="text-xs text-slate-500 dark:text-slate-500">
-            <%= mode === "edit" ? "تعديل" : "إضافة" %>
-          </span>
+    <div class="p-4 border-t border-border-light dark:border-border-dark shrink-0 m-2 rounded-2xl bg-white/50 dark:bg-black/30">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-cover bg-center border border-gray-200 dark:border-white/10 shadow-sm" style="background-image:url('/assets/default-avatar.png'); background-color: #ddd;"></div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-bold text-gray-900 dark:text-white truncate"><%= locals.admin?.username || "مدير النظام" %></p>
+          <p class="text-[10px] text-primary dark:text-accent uppercase tracking-widest mt-0.5 font-bold">Admin</p>
         </div>
+        <form method="post" action="/admin/logout" class="m-0">
+          <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-xl bg-red-50 dark:bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm" title="تسجيل خروج">
+            <span class="material-symbols-outlined text-[18px]">logout</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </aside>
 
-        <form method="post" action="<%= mode === 'edit' ? ('/admin/honor/' + item.id + '/edit') : '/admin/honor/new' %>" class="p-6 space-y-6">
+  <main class="flex-1 flex flex-col min-w-0 h-full relative z-10">
+    
+    <header class="flex items-center justify-between p-4 lg:p-8 shrink-0">
+      <div class="flex items-center gap-3">
+        <button id="mobileNavBtn" class="lg:hidden flex items-center justify-center w-12 h-12 rounded-2xl bg-card-light dark:bg-card-dark glass-panel border border-border-light dark:border-border-dark text-primary dark:text-accent shadow-sm" type="button">
+          <span class="material-symbols-outlined text-[24px]">menu</span>
+        </button>
 
-          <div class="rounded-2xl border border-primary/10 bg-primary/5 p-4 dark:border-accent/20 dark:bg-accent/10">
-            <div class="flex items-start gap-3">
-              <span class="material-symbols-outlined text-primary dark:text-accent">link</span>
-              <div class="flex-1">
-                <h3 class="font-extrabold text-slate-800 dark:text-white mb-1">ربط السيرة بفرد من الشجرة</h3>
-                <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                  عند اختيار شخص سيتم تعبئة الاسم والصورة والنبذة تلقائيًا من بيانات الشخص، ويمكنك تعديل النص بعد ذلك.
+        <div>
+          <h2 class="text-2xl md:text-3xl font-display font-bold text-primary dark:text-white tracking-tight leading-none mb-1.5">
+            <%= mode === "edit" ? "تعديل سيرة ذاتية" : "إضافة سيرة ذاتية" %>
+          </h2>
+          <div class="flex items-center gap-1.5 text-gray-500 text-[11px] font-bold uppercase tracking-widest">
+            <span>لوحة الإدارة</span>
+            <span class="material-symbols-outlined text-[14px]">chevron_left</span>
+            <a href="/admin/honor" class="hover:text-primary dark:hover:text-accent transition-colors">السير الذاتية</a>
+            <span class="material-symbols-outlined text-[14px]">chevron_left</span>
+            <span class="text-accent"><%= mode === "edit" ? "تعديل" : "إضافة" %></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 shrink-0">
+        <button id="themeBtn" class="flex items-center justify-center w-12 h-12 rounded-2xl bg-card-light dark:bg-card-dark glass-panel border border-border-light dark:border-border-dark text-gray-600 dark:text-accent shadow-sm hover:-translate-y-1 transition-transform" type="button" title="تبديل المظهر">
+          <span class="material-symbols-outlined text-[22px] dark-toggle-icon-moon">dark_mode</span>
+          <span class="material-symbols-outlined hidden dark:block text-[24px]">light_mode</span>
+        </button>
+
+        <a href="/admin/honor" class="hidden sm:flex items-center gap-2 px-6 h-12 rounded-2xl font-bold text-sm bg-card-light dark:bg-card-dark glass-panel border border-border-light dark:border-border-dark text-gray-600 dark:text-gray-300 shadow-sm hover:-translate-y-1 transition-transform">
+          <span class="material-symbols-outlined text-[22px]">arrow_back</span> رجوع
+        </a>
+      </div>
+    </header>
+
+    <div class="flex-1 overflow-y-auto custom-scrollbar px-4 lg:px-8 pb-12">
+      <div class="max-w-4xl mx-auto space-y-6 lg:space-y-8">
+
+        <form method="post" action="<%= mode === 'edit' ? ('/admin/honor/' + item.id + '/edit') : '/admin/honor/new' %>" class="bg-card-light dark:bg-card-dark glass-panel rounded-[2rem] border border-border-light dark:border-border-dark shadow-sm overflow-hidden relative p-6 md:p-8">
+          
+          <div class="absolute top-0 start-0 end-0 h-1 bg-gradient-to-l from-transparent via-accent to-transparent opacity-50"></div>
+
+          <div class="mb-8 p-6 rounded-3xl border border-primary/20 dark:border-accent/20 bg-primary/5 dark:bg-accent/5">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-primary/10 dark:bg-accent/10 text-primary dark:text-accent shrink-0 shadow-inner">
+                <span class="material-symbols-outlined text-[24px]">link</span>
+              </div>
+              <div class="flex-1 pt-1">
+                <h3 class="font-display font-bold text-lg text-primary dark:text-white mb-2">ربط السيرة بفرد من الشجرة</h3>
+                <p class="text-sm font-bold text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
+                  عند اختيار شخص، سيتم تعبئة الاسم والصورة والنبذة تلقائيًا من بيانات الفرد لتوفير الوقت، ويمكنك تعديلها لاحقاً.
                 </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 items-end">
+                  <div>
+                    <label class="block text-xs font-bold text-gray-500 dark:text-accent uppercase tracking-widest mb-2 block">اختيار شخص</label>
+                    <select id="personSelect" class="form-input w-full rounded-xl bg-white/80 dark:bg-black/40 border border-border-light dark:border-border-dark text-gray-900 dark:text-white font-bold text-sm py-3 px-4 focus:ring-0">
+                      <option value="">— بدون ربط مباشر —</option>
+                    </select>
+                    <input type="hidden" name="person_id" id="personIdInput" value="<%= item?.person_id || '' %>"/>
+                    <p id="personSelectHint" class="text-[11px] font-bold text-gray-500 dark:text-gray-500 mt-2">
+                      الربط الحالي: <span class="text-primary dark:text-accent"><%= item?.person_id ? ('#' + item.person_id) : 'غير مربوط' %></span>
+                    </p>
+                  </div>
+                  <button id="fillFromPersonBtn" type="button" class="h-[46px] inline-flex items-center justify-center gap-2 px-6 rounded-xl border border-primary/20 bg-white dark:bg-black/50 text-primary dark:text-accent hover:bg-primary hover:text-white dark:hover:bg-accent dark:hover:text-black transition-colors font-bold text-sm shadow-sm">
+                    <span class="material-symbols-outlined text-[20px]">auto_fix_high</span> استيراد البيانات
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-[1fr_160px] gap-4 items-end">
+          <div class="grid grid-cols-1 lg:grid-cols-[1fr_200px] gap-8 mb-8">
+            <div class="space-y-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label class="block text-xs font-bold text-gray-500 dark:text-accent uppercase tracking-widest mb-2 block">الاسم</label>
+                  <input id="nameInput" name="name" required value="<%= item?.name || '' %>" placeholder="اسم صاحب السيرة..."
+                         class="form-input w-full rounded-xl bg-white/50 dark:bg-black/20 border border-border-light dark:border-border-dark text-gray-900 dark:text-white font-bold text-sm py-3 px-4 focus:ring-0"/>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-gray-500 dark:text-accent uppercase tracking-widest mb-2 block">المجال</label>
+                  <input id="fieldInput" name="field" value="<%= item?.field || '' %>" placeholder="مثال: عالم / طبيب / رجل أعمال"
+                         class="form-input w-full rounded-xl bg-white/50 dark:bg-black/20 border border-border-light dark:border-border-dark text-gray-900 dark:text-white font-bold text-sm py-3 px-4 focus:ring-0"/>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-gray-500 dark:text-accent uppercase tracking-widest mb-2 block">تاريخ الميلاد</label>
+                  <input id="birthDateInput" type="date" name="birth_date" value="<%= item?.birth_date || '' %>"
+                         class="form-input w-full rounded-xl bg-white/50 dark:bg-black/20 border border-border-light dark:border-border-dark text-gray-900 dark:text-white font-bold text-sm py-3 px-4 focus:ring-0"/>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-gray-500 dark:text-accent uppercase tracking-widest mb-2 block">تاريخ الوفاة</label>
+                  <input id="deathDateInput" type="date" name="death_date" value="<%= item?.death_date || '' %>"
+                         class="form-input w-full rounded-xl bg-white/50 dark:bg-black/20 border border-border-light dark:border-border-dark text-gray-900 dark:text-white font-bold text-sm py-3 px-4 focus:ring-0"/>
+                </div>
+
+                <div class="md:col-span-2">
+                  <label class="block text-xs font-bold text-gray-500 dark:text-accent uppercase tracking-widest mb-2 block">مكان الميلاد / المنشأ</label>
+                  <input id="birthPlaceInput" name="birth_place" value="<%= item?.birth_place || '' %>" placeholder="مثال: مكة المكرمة"
+                         class="form-input w-full rounded-xl bg-white/50 dark:bg-black/20 border border-border-light dark:border-border-dark text-gray-900 dark:text-white font-bold text-sm py-3 px-4 focus:ring-0"/>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-4">
+              <label class="block text-xs font-bold text-gray-500 dark:text-accent uppercase tracking-widest mb-0 block">معاينة الصورة</label>
+              <div class="w-full aspect-[3/4] rounded-2xl overflow-hidden border-2 border-border-light dark:border-border-dark bg-white/50 dark:bg-black/30 shadow-sm p-2">
+                <img id="photoPreview" src="<%= item?.photo_url || '/images/default.png' %>" alt="معاينة الصورة" class="w-full h-full object-cover rounded-xl" onerror="this.src='/images/default.png'"/>
+              </div>
+              
+              <div class="flex flex-col gap-2">
+                <button id="uploadBtn" type="button" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-primary/20 dark:border-accent/20 bg-white dark:bg-black/30 text-primary dark:text-accent hover:bg-primary hover:text-white dark:hover:bg-accent dark:hover:text-black transition-colors font-bold text-xs shadow-sm">
+                  <span class="material-symbols-outlined text-[18px]">upload</span> رفع صورة
+                </button>
+                <button id="clearPhotoBtn" type="button" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-black/30 text-gray-600 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors font-bold text-xs shadow-sm">
+                  <span class="material-symbols-outlined text-[18px]">delete</span> مسح الصورة
+                </button>
+              </div>
+              <input id="photoFileInput" type="file" accept="image/*" class="hidden"/>
+            </div>
+          </div>
+
+          <div class="space-y-6 mb-8">
             <div>
-              <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">اختيار شخص من الشجرة</label>
-              <select id="personSelect"
-                      class="w-full rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium
-                             focus:border-primary focus:ring-0
-                             dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent">
-                <option value="">— بدون ربط مباشر —</option>
-              </select>
-
-              <input type="hidden" name="person_id" id="personIdInput" value="<%= item?.person_id || '' %>"/>
-
-              <p id="personSelectHint" class="text-xs text-slate-500 dark:text-slate-500 mt-2">
-                الربط الحالي:
-                <span class="font-bold"><%= item?.person_id ? ('#' + item.person_id) : 'غير مربوط' %></span>
-              </p>
+              <label class="block text-xs font-bold text-gray-500 dark:text-accent uppercase tracking-widest mb-2 block">النبذة (تظهر في البطاقة)</label>
+              <textarea id="bioInput" name="bio" rows="3" placeholder="اكتب نبذة مختصرة تظهر في بطاقة السيرة..."
+                        class="form-input w-full rounded-xl bg-white/50 dark:bg-black/20 border border-border-light dark:border-border-dark text-gray-900 dark:text-white font-bold text-sm py-3 px-4 resize-y focus:ring-0"><%= item?.bio || '' %></textarea>
             </div>
 
             <div>
-              <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">معاينة الصورة</label>
-              <div class="w-36 h-44 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 dark:border-border-dark dark:bg-background-dark/40">
-                <img id="photoPreview"
-                     src="<%= item?.photo_url || '/images/default.png' %>"
-                     alt="معاينة الصورة"
-                     class="w-full h-full object-cover"
-                     onerror="this.src='/images/default.png'"/>
+              <label class="block text-xs font-bold text-gray-500 dark:text-accent uppercase tracking-widest mb-2 block">الإنجاز / الوصف التفصيلي</label>
+              <textarea id="achievementInput" name="achievement" rows="5" placeholder="اكتب تفاصيل الإنجازات والأعمال بشكل مفصل..."
+                        class="form-input w-full rounded-xl bg-white/50 dark:bg-black/20 border border-border-light dark:border-border-dark text-gray-900 dark:text-white font-bold text-sm py-3 px-4 resize-y focus:ring-0"><%= item?.achievement || '' %></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-xs font-bold text-gray-500 dark:text-accent uppercase tracking-widest mb-2 block">رابط الصورة الموحدة (اختياري)</label>
+                <input id="photoUrlInput" name="photo_url" value="<%= item?.photo_url || '' %>" placeholder="/uploads/xxx.jpg أو رابط خارجي"
+                       class="form-input w-full rounded-xl bg-white/50 dark:bg-black/20 border border-border-light dark:border-border-dark text-gray-900 dark:text-white font-bold text-sm py-3 px-4 focus:ring-0"/>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-gray-500 dark:text-accent uppercase tracking-widest mb-2 block">الترتيب (ORD)</label>
+                <input type="number" name="ord" value="<%= (item?.ord ?? 1) %>"
+                       class="form-input w-full rounded-xl bg-white/50 dark:bg-black/20 border border-border-light dark:border-border-dark text-gray-900 dark:text-white font-bold text-sm py-3 px-4 focus:ring-0"/>
               </div>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">الاسم</label>
-              <input id="nameInput" name="name" required value="<%= item?.name || '' %>"
-                     class="w-full rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium
-                            focus:border-primary focus:ring-0
-                            dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent"/>
-            </div>
-
-            <div>
-              <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">المجال</label>
-              <input id="fieldInput" name="field" value="<%= item?.field || '' %>"
-                     placeholder="مثال: عالم / طبيب / رجل أعمال"
-                     class="w-full rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium
-                            focus:border-primary focus:ring-0
-                            dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent"/>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">تاريخ الميلاد</label>
-              <input id="birthDateInput" type="date" name="birth_date" value="<%= item?.birth_date || '' %>"
-                     class="w-full rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium
-                            focus:border-primary focus:ring-0
-                            dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent"/>
-            </div>
-
-            <div>
-              <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">تاريخ الوفاة</label>
-              <input id="deathDateInput" type="date" name="death_date" value="<%= item?.death_date || '' %>"
-                     class="w-full rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium
-                            focus:border-primary focus:ring-0
-                            dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent"/>
-            </div>
-
-            <div>
-              <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">مكان الميلاد</label>
-              <input id="birthPlaceInput" name="birth_place" value="<%= item?.birth_place || '' %>"
-                     placeholder="مثال: مكة المكرمة"
-                     class="w-full rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium
-                            focus:border-primary focus:ring-0
-                            dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent"/>
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">النبذة</label>
-            <textarea id="bioInput" name="bio" rows="4"
-                      class="w-full rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium
-                             focus:border-primary focus:ring-0
-                             dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent"
-                      placeholder="اكتب نبذة مختصرة..."><%= item?.bio || '' %></textarea>
-          </div>
-
-          <div>
-            <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">الإنجاز / الوصف</label>
-            <textarea id="achievementInput" name="achievement" rows="5"
-                      class="w-full rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium
-                             focus:border-primary focus:ring-0
-                             dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent"><%= item?.achievement || '' %></textarea>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">رابط الصورة الموحدة</label>
-              <input id="photoUrlInput" name="photo_url" value="<%= item?.photo_url || '' %>"
-                     placeholder="/uploads/xxx.jpg أو رابط خارجي"
-                     class="w-full rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium
-                            focus:border-primary focus:ring-0
-                            dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent"/>
-              <p class="text-xs text-slate-500 dark:text-slate-500 mt-2">
-                الأفضل تركها تأتي من الشخص المختار حتى تبقى الصورة موحدة في الموقع.
-              </p>
-            </div>
-
-            <div>
-              <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">الترتيب (ORD)</label>
-              <input type="number" name="ord" value="<%= (item?.ord ?? 1) %>"
-                     class="w-full rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium
-                            focus:border-primary focus:ring-0
-                            dark:bg-background-dark/40 dark:border-border-dark dark:text-slate-200 dark:focus:border-accent"/>
-            </div>
-          </div>
-
-          <div class="flex flex-wrap items-center gap-3">
-            <button type="submit"
-                    class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-white font-extrabold hover:bg-primary/90 active:scale-[0.99]
-                           dark:bg-accent dark:text-black dark:hover:bg-primary-dark">
-              <span class="material-symbols-outlined">save</span>
-              حفظ
+          <div class="flex flex-col sm:flex-row gap-3 sm:justify-end pt-4 border-t border-border-light dark:border-border-dark">
+            <button type="submit" class="flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold transition-transform hover:-translate-y-1 bg-primary dark:bg-accent text-white dark:text-black shadow-md">
+              <span class="material-symbols-outlined text-[20px]">save</span> حفظ التعديلات
             </button>
 
-            <a href="/admin/honor"
-               class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50
-                      dark:bg-surface-dark dark:border-border-dark dark:text-slate-300 dark:hover:bg-white/5">
-              <span class="material-symbols-outlined">close</span>
-              إلغاء
+            <a href="/admin/honor" class="flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:border-red-500 hover:text-red-600 dark:hover:border-red-500 dark:hover:text-red-400 transition-all">
+              <span class="material-symbols-outlined text-[20px]">close</span> إلغاء والعودة
             </a>
-
-            <button id="fillFromPersonBtn" type="button"
-                    class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-primary/20 bg-primary/5 text-primary hover:bg-primary/10
-                           dark:border-accent/20 dark:bg-accent/10 dark:text-accent dark:hover:bg-accent/15">
-              <span class="material-symbols-outlined">auto_fix_high</span>
-              تعبئة من الشخص
-            </button>
-
-            <button id="uploadBtn" type="button"
-                    class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50
-                           dark:bg-surface-dark dark:border-border-dark dark:text-slate-300 dark:hover:bg-white/5">
-              <span class="material-symbols-outlined">upload</span>
-              رفع صورة
-            </button>
-
-            <button id="clearPhotoBtn" type="button"
-                    class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50
-                           dark:bg-surface-dark dark:border-border-dark dark:text-slate-300 dark:hover:bg-white/5">
-              <span class="material-symbols-outlined">delete</span>
-              مسح الصورة
-            </button>
-
-            <input id="photoFileInput" type="file" accept="image/*" class="hidden"/>
           </div>
 
         </form>
-      </section>
 
+      </div>
     </div>
   </main>
+</div>
 
-  <script>
-    (function(){
-      const uploadBtn = document.getElementById("uploadBtn");
-      const fileInput = document.getElementById("photoFileInput");
-      const photoUrl = document.getElementById("photoUrlInput");
-      const clearBtn = document.getElementById("clearPhotoBtn");
-      const preview = document.getElementById("photoPreview");
+<aside id="mobileNavDrawer" class="fixed top-0 right-0 h-full w-[320px] max-w-[85vw] bg-card-light dark:bg-card-dark glass-panel border-l border-border-light dark:border-border-dark z-[90] flex flex-col">
+  <div class="h-1.5 w-full bg-primary"></div>
+  <div class="flex items-center justify-between p-6 border-b border-border-light dark:border-border-dark shrink-0">
+    <div>
+      <h1 class="font-display font-bold text-xl leading-none text-primary dark:text-white">عائلة خاشقجي</h1>
+      <p class="text-[10px] font-bold text-gray-500 dark:text-accent uppercase tracking-widest mt-1.5">نظام الإدارة</p>
+    </div>
+    <button id="mobileNavClose" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center text-gray-500 hover:text-primary dark:hover:text-accent transition-colors" type="button">
+      <span class="material-symbols-outlined text-[24px]">close</span>
+    </button>
+  </div>
 
-      function updatePreview(url) {
-        if (!preview) return;
-        preview.src = (url && String(url).trim()) ? String(url).trim() : "/images/default.png";
+  <nav class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-3 text-sm font-bold text-gray-700 dark:text-gray-300">
+    <a href="/admin" class="flex items-center gap-3 px-4 py-4 rounded-2xl border border-transparent hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-gray-400">group</span> إدارة الأفراد</a>
+    <a href="/admin/pages" class="flex items-center gap-3 px-4 py-4 rounded-2xl border border-transparent hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-gray-400">history_edu</span> إدارة الصفحات</a>
+    <a href="/admin/honor" class="flex items-center gap-3 px-4 py-4 rounded-2xl bg-primary/10 dark:bg-accent/10 text-primary dark:text-accent transition-colors border border-primary/20 dark:border-accent/20"><span class="material-symbols-outlined">workspace_premium</span> السير الذاتية</a>
+    <a href="/admin/news" class="flex items-center gap-3 px-4 py-4 rounded-2xl border border-transparent hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-gray-400">newspaper</span> الأخبار</a>
+    <a href="/admin/support-messages" class="flex items-center gap-3 px-4 py-4 rounded-2xl border border-transparent hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-gray-400">mail</span> رسائل الدعم</a>
+    <div class="my-4 border-t border-border-light dark:border-border-dark"></div>
+    <a href="/" class="flex items-center gap-3 px-4 py-4 rounded-2xl border border-transparent hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-gray-400">account_tree</span> العودة للموقع</a>
+    
+    <form method="post" action="/admin/logout" class="m-0 mt-4">
+      <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-4 rounded-2xl border border-red-200 dark:border-red-900/30 text-red-600 dark:text-red-400 bg-red-50/50 dark:bg-red-500/10 hover:bg-red-50 transition-colors">
+        <span class="material-symbols-outlined">logout</span> تسجيل خروج
+      </button>
+    </form>
+  </nav>
+</aside>
+
+<div id="mobileNavOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[80] hidden" aria-hidden="true"></div>
+
+<script>
+  // Theme Toggle
+  (function () {
+    const btn = document.getElementById("themeBtn");
+    function setTheme(next) {
+      document.documentElement.setAttribute("data-theme", next);
+      document.documentElement.classList.toggle("dark", next === "dark");
+      localStorage.setItem("theme", next);
+      if(window.initNexus) window.initNexus();
+    }
+    btn?.addEventListener("click", () => {
+      const cur = document.documentElement.getAttribute("data-theme") || "dark";
+      setTheme(cur === "dark" ? "light" : "dark");
+    });
+  })();
+
+  // Mobile Drawer
+  (function mobileNavInit(){
+    const btn = document.getElementById("mobileNavBtn");
+    const navDrawer = document.getElementById("mobileNavDrawer");
+    const overlay = document.getElementById("mobileNavOverlay");
+    const closeBtn = document.getElementById("mobileNavClose");
+
+    function toggleNav() {
+      navDrawer?.classList.toggle("isOpen");
+      overlay?.classList.toggle("hidden");
+    }
+    
+    btn?.addEventListener("click", toggleNav);
+    closeBtn?.addEventListener("click", toggleNav);
+    overlay?.addEventListener("click", toggleNav);
+  })();
+
+  // وظائف رفع وتحديث الصورة
+  (function(){
+    const uploadBtn = document.getElementById("uploadBtn");
+    const fileInput = document.getElementById("photoFileInput");
+    const photoUrl = document.getElementById("photoUrlInput");
+    const clearBtn = document.getElementById("clearPhotoBtn");
+    const preview = document.getElementById("photoPreview");
+
+    function updatePreview(url) {
+      if (!preview) return;
+      preview.src = (url && String(url).trim()) ? String(url).trim() : "/images/default.png";
+    }
+
+    uploadBtn?.addEventListener("click", () => fileInput?.click());
+
+    clearBtn?.addEventListener("click", () => {
+      if (photoUrl) photoUrl.value = "";
+      updatePreview("");
+    });
+
+    photoUrl?.addEventListener("input", () => updatePreview(photoUrl.value));
+
+    fileInput?.addEventListener("change", async () => {
+      if (!fileInput.files || !fileInput.files[0]) return;
+
+      const fd = new FormData();
+      fd.append("photo", fileInput.files[0]);
+
+      try {
+        const res = await fetch("/admin/upload", { method: "POST", body: fd });
+        if (!res.ok) throw new Error("Upload failed");
+        const data = await res.json();
+        if (photoUrl) photoUrl.value = data.url || "";
+        updatePreview(data.url || "");
+      } catch (e) {
+        alert("تعذر رفع الصورة");
+      } finally {
+        fileInput.value = "";
       }
+    });
+  })();
 
-      uploadBtn?.addEventListener("click", () => fileInput?.click());
+  // وظائف جلب البيانات من الشجرة
+  (function personLinking(){
+    const select = document.getElementById("personSelect");
+    const personIdInput = document.getElementById("personIdInput");
+    const hint = document.getElementById("personSelectHint");
+    const nameInput = document.getElementById("nameInput");
+    const fieldInput = document.getElementById("fieldInput");
+    const bioInput = document.getElementById("bioInput");
+    const achievementInput = document.getElementById("achievementInput");
+    const birthDateInput = document.getElementById("birthDateInput");
+    const deathDateInput = document.getElementById("deathDateInput");
+    const birthPlaceInput = document.getElementById("birthPlaceInput");
+    const photoUrlInput = document.getElementById("photoUrlInput");
+    const photoPreview = document.getElementById("photoPreview");
+    const fillBtn = document.getElementById("fillFromPersonBtn");
 
-      clearBtn?.addEventListener("click", () => {
-        if (photoUrl) photoUrl.value = "";
-        updatePreview("");
-      });
+    const currentPersonId = String(personIdInput?.value || "").trim();
 
-      photoUrl?.addEventListener("input", () => updatePreview(photoUrl.value));
+    function updatePhoto(url) {
+      const clean = String(url || "").trim();
+      if (photoUrlInput) photoUrlInput.value = clean;
+      if (photoPreview) photoPreview.src = clean || "/images/default.png";
+    }
 
-      fileInput?.addEventListener("change", async () => {
-        if (!fileInput.files || !fileInput.files[0]) return;
-
-        const fd = new FormData();
-        fd.append("photo", fileInput.files[0]);
-
-        try {
-          const res = await fetch("/admin/upload", { method: "POST", body: fd });
-          if (!res.ok) throw new Error("Upload failed");
-          const data = await res.json();
-          if (photoUrl) photoUrl.value = data.url || "";
-          updatePreview(data.url || "");
-        } catch (e) {
-          alert("تعذر رفع الصورة");
-        } finally {
-          fileInput.value = "";
-        }
-      });
-    })();
-
-    (function personLinking(){
-      const select = document.getElementById("personSelect");
-      const personIdInput = document.getElementById("personIdInput");
-      const hint = document.getElementById("personSelectHint");
-      const nameInput = document.getElementById("nameInput");
-      const fieldInput = document.getElementById("fieldInput");
-      const bioInput = document.getElementById("bioInput");
-      const achievementInput = document.getElementById("achievementInput");
-      const birthDateInput = document.getElementById("birthDateInput");
-      const deathDateInput = document.getElementById("deathDateInput");
-      const birthPlaceInput = document.getElementById("birthPlaceInput");
-      const photoUrlInput = document.getElementById("photoUrlInput");
-      const photoPreview = document.getElementById("photoPreview");
-      const fillBtn = document.getElementById("fillFromPersonBtn");
-
-      const currentPersonId = String(personIdInput?.value || "").trim();
-
-      function updatePhoto(url) {
-        const clean = String(url || "").trim();
-        if (photoUrlInput) photoUrlInput.value = clean;
-        if (photoPreview) photoPreview.src = clean || "/images/default.png";
+    function flattenTree(root) {
+      const list = [];
+      function walk(node) {
+        if (!node) return;
+        list.push(node);
+        (node.children || []).forEach(walk);
       }
+      walk(root);
+      return list;
+    }
 
-      function flattenTree(root) {
-        const list = [];
-        function walk(node) {
-          if (!node) return;
-          list.push(node);
-          (node.children || []).forEach(walk);
-        }
-        walk(root);
-        return list;
-      }
+    async function loadPersons() {
+      if (!select) return;
 
-      async function loadPersons() {
-        if (!select) return;
+      try {
+        const res = await fetch("/api/tree");
+        if (!res.ok) throw new Error("tree failed");
+        const root = await res.json();
+        const persons = flattenTree(root);
 
-        try {
-          const res = await fetch("/api/tree");
-          if (!res.ok) throw new Error("tree failed");
-          const root = await res.json();
-          const persons = flattenTree(root);
+        persons.forEach((p) => {
+          const opt = document.createElement("option");
+          opt.value = p.id;
+          opt.textContent = `${p.name || "بدون اسم"}${p.birth_date ? " — " + p.birth_date : ""}`;
+          opt.dataset.name = p.name || "";
+          opt.dataset.photo = p.photo_url || "";
+          opt.dataset.job = p.job || "";
+          opt.dataset.shortBio = p.short_bio || "";
+          opt.dataset.notes = p.notes || "";
+          opt.dataset.birthDate = p.birth_date || "";
+          opt.dataset.deathDate = p.death_date || "";
+          opt.dataset.birthPlace = p.birth_place || "";
+          select.appendChild(opt);
+        });
 
-          persons.forEach((p) => {
-            const opt = document.createElement("option");
-            opt.value = p.id;
-            opt.textContent = `${p.name || "بدون اسم"}${p.birth_date ? " — " + p.birth_date : ""}`;
-            opt.dataset.name = p.name || "";
-            opt.dataset.photo = p.photo_url || "";
-            opt.dataset.job = p.job || "";
-            opt.dataset.shortBio = p.short_bio || "";
-            opt.dataset.notes = p.notes || "";
-            opt.dataset.birthDate = p.birth_date || "";
-            opt.dataset.deathDate = p.death_date || "";
-            opt.dataset.birthPlace = p.birth_place || "";
-            select.appendChild(opt);
-          });
-
-          if (currentPersonId) {
-            select.value = currentPersonId;
-            if (hint) {
-              hint.innerHTML = `الربط الحالي: <span class="font-bold">#${currentPersonId}</span>`;
-            }
-          }
-        } catch (err) {
-          console.error("loadPersons error:", err);
+        if (currentPersonId) {
+          select.value = currentPersonId;
           if (hint) {
-            hint.textContent = "تعذر تحميل قائمة الأشخاص من الشجرة.";
+            hint.innerHTML = `الربط الحالي: <span class="text-primary dark:text-accent font-bold">#${currentPersonId}</span>`;
+          }
+        }
+      } catch (err) {
+        if (hint) {
+          hint.textContent = "تعذر تحميل قائمة الأشخاص من الشجرة.";
+        }
+      }
+    }
+
+    async function fetchPerson(id) {
+      const res = await fetch(`/api/person/${encodeURIComponent(id)}`);
+      if (!res.ok) throw new Error("person failed");
+      return res.json();
+    }
+
+    async function fillFromPerson(forceFillAll = true) {
+      const id = String(select?.value || "").trim();
+      if (!id) {
+        if (personIdInput) personIdInput.value = "";
+        if (hint) hint.innerHTML = `الربط الحالي: <span class="font-bold">غير مربوط</span>`;
+        return;
+      }
+
+      try {
+        const p = await fetchPerson(id);
+
+        if (personIdInput) personIdInput.value = p.id || id;
+        if (hint) hint.innerHTML = `الربط الحالي: <span class="text-primary dark:text-accent font-bold">#${p.id || id}</span>`;
+
+        if (forceFillAll || !nameInput.value.trim()) nameInput.value = p.name || "";
+        if (forceFillAll || !fieldInput.value.trim()) fieldInput.value = p.job || "";
+        if (forceFillAll || !bioInput.value.trim()) bioInput.value = p.short_bio || p.notes || "";
+        if (forceFillAll || !achievementInput.value.trim()) achievementInput.value = p.notes || "";
+        if (forceFillAll || !birthDateInput.value.trim()) birthDateInput.value = p.birth_date || "";
+        if (forceFillAll || !deathDateInput.value.trim()) deathDateInput.value = p.death_date || "";
+        if (forceFillAll || !birthPlaceInput.value.trim()) birthPlaceInput.value = p.birth_place || "";
+
+        updatePhoto(p.photo_url || "");
+      } catch (err) {
+        alert("تعذر تحميل بيانات الشخص المختار");
+      }
+    }
+
+    select?.addEventListener("change", () => fillFromPerson(true));
+    fillBtn?.addEventListener("click", () => fillFromPerson(true));
+
+    loadPersons();
+  })();
+
+  // ==========================================
+  // شبكة العائلة التفاعلية
+  // ==========================================
+  (function() {
+    const canvas = document.getElementById('nexusCanvas');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    let width, height;
+    let particles = [];
+    const numParticles = window.innerWidth > 1024 ? 130 : 70; 
+    
+    let mouseX = -1000;
+    let mouseY = -1000;
+
+    let dotColor, lineColor, connectionColor;
+
+    window.initNexus = function() {
+      const isDark = document.documentElement.classList.contains('dark');
+      dotColor = isDark ? 'rgba(229, 184, 105, 0.55)' : 'rgba(0, 90, 43, 0.32)'; 
+      lineColor = isDark ? 'rgba(229, 184, 105, 0.16)' : 'rgba(0, 90, 43, 0.09)';
+      connectionColor = isDark ? '229, 184, 105' : '0, 90, 43'; 
+    };
+
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < numParticles; i++) {
+        particles.push({
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight,
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: (Math.random() - 0.5) * 0.5,
+          radius: Math.random() * 2.8 + 1.2
+        });
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, width, height);
+
+      for (let i = 0; i < numParticles; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = dotColor;
+        ctx.fill();
+
+        const dxMouse = mouseX - p.x;
+        const dyMouse = mouseY - p.y;
+        const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+
+        if (distMouse < 230) {
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(mouseX, mouseY);
+          const opacity = 0.6 * (1 - distMouse / 230);
+          ctx.strokeStyle = `rgba(${connectionColor}, ${opacity})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+          
+          p.x += dxMouse * 0.014;
+          p.y += dyMouse * 0.014;
+        }
+
+        for (let j = i + 1; j < numParticles; j++) {
+          const p2 = particles[j];
+          const dx = p.x - p2.x;
+          const dy = p.y - p2.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < 165) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = lineColor;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
           }
         }
       }
 
-      async function fetchPerson(id) {
-        const res = await fetch(`/api/person/${encodeURIComponent(id)}`);
-        if (!res.ok) throw new Error("person failed");
-        return res.json();
-      }
+      requestAnimationFrame(draw);
+    }
 
-      async function fillFromPerson(forceFillAll = true) {
-        const id = String(select?.value || "").trim();
-        if (!id) {
-          if (personIdInput) personIdInput.value = "";
-          if (hint) hint.innerHTML = `الربط الحالي: <span class="font-bold">غير مربوط</span>`;
-          return;
-        }
+    window.addEventListener('resize', () => { resize(); initParticles(); });
+    window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+    window.addEventListener('mouseout', () => { mouseX = -1000; mouseY = -1000; });
 
-        try {
-          const p = await fetchPerson(id);
-
-          if (personIdInput) personIdInput.value = p.id || id;
-          if (hint) hint.innerHTML = `الربط الحالي: <span class="font-bold">#${p.id || id}</span>`;
-
-          if (forceFillAll || !nameInput.value.trim()) {
-            nameInput.value = p.name || "";
-          }
-
-          if (forceFillAll || !fieldInput.value.trim()) {
-            fieldInput.value = p.job || "";
-          }
-
-          if (forceFillAll || !bioInput.value.trim()) {
-            bioInput.value = p.short_bio || p.notes || "";
-          }
-
-          if (forceFillAll || !achievementInput.value.trim()) {
-            achievementInput.value = p.notes || "";
-          }
-
-          if (forceFillAll || !birthDateInput.value.trim()) {
-            birthDateInput.value = p.birth_date || "";
-          }
-
-          if (forceFillAll || !deathDateInput.value.trim()) {
-            deathDateInput.value = p.death_date || "";
-          }
-
-          if (forceFillAll || !birthPlaceInput.value.trim()) {
-            birthPlaceInput.value = p.birth_place || "";
-          }
-
-          updatePhoto(p.photo_url || "");
-        } catch (err) {
-          console.error("fillFromPerson error:", err);
-          alert("تعذر تحميل بيانات الشخص المختار");
-        }
-      }
-
-      select?.addEventListener("change", () => fillFromPerson(true));
-      fillBtn?.addEventListener("click", () => fillFromPerson(true));
-
-      loadPersons();
-    })();
-  </script>
+    window.initNexus();
+    resize();
+    initParticles();
+    draw();
+  })();
+</script>
 </body>
 </html>

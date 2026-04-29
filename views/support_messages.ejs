@@ -7,9 +7,11 @@
 
   <script src="/theme.js"></script>
 
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..900&display=swap" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries,line-clamp"></script>
 
   <script>
     tailwind.config = {
@@ -17,357 +19,301 @@
       theme: {
         extend: {
           colors: {
-            primary: "#1f637a",
-            accent: "#E3C56F",
-            "background-light": "#FBF9F6",
-            "background-dark": "#0F1115",
-            "surface-dark": "#1A1D21",
-            "border-dark": "#2D3139",
-            "primary-dark": "#C5A854",
+            primary: "#005A2B",
+            primaryDark: "#00361A",
+            accent: "#E5B869",
+            "bg-light": "#F5F3F7",
+            "bg-dark": "#050505",
+            "card-light": "rgba(255, 255, 255, 0.8)",
+            "card-dark": "rgba(15, 12, 25, 0.8)",
+            "border-light": "rgba(0, 90, 43, 0.1)",
+            "border-dark": "rgba(229, 184, 105, 0.1)",
           },
-          fontFamily: { display: ["Cairo", "sans-serif"] },
-          backgroundImage: {
-            "islamic-pattern": "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231f637a' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-          }
+          fontFamily: {
+            display: ["'Aref Ruqaa'", "serif"],
+            sans: ["Tajawal", "sans-serif"],
+          },
         }
       }
     };
   </script>
 
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .scrollbar-hide::-webkit-scrollbar { display: none; }
+      .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+      .glass-panel { @apply backdrop-blur-2xl shadow-xl; }
+    }
+  </style>
+
   <style>
     .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; }
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 6px; }
-    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-    html.dark ::-webkit-scrollbar-thumb { background: #2D3139; }
-    html.dark ::-webkit-scrollbar-thumb:hover { background: #E3C56F; }
+    ::-webkit-scrollbar-thumb { background: #005A2B; border-radius: 10px; }
+    html.dark ::-webkit-scrollbar-thumb { background: #E5B869; }
 
-    /* ===== Mobile Nav (Premium Capsule + Frosted Drawer) - Unified ===== */
+    .search-input { transition: all 0.3s ease; }
+    .search-input:focus {
+      box-shadow: 0 0 20px rgba(0, 90, 43, 0.15);
+      border-color: #005A2B;
+      transform: translateY(-1px);
+    }
+    html.dark .search-input:focus {
+      box-shadow: 0 0 20px rgba(229, 184, 105, 0.15);
+      border-color: #E5B869;
+    }
+
+    .interactive-row {
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      border-right: 3px solid transparent;
+      border-radius: 12px;
+    }
+    .interactive-row:hover {
+      background: #ffffff !important;
+      border-right-color: #005A2B;
+      transform: translateX(-4px) scale(1.005);
+      box-shadow: 0 10px 30px rgba(0, 90, 43, 0.1);
+      z-index: 10;
+      position: relative;
+    }
+    html.dark .interactive-row:hover {
+      background: #1A1525 !important;
+      border-right-color: #E5B869;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    }
+    .interactive-row:hover td { border-bottom-color: transparent !important; }
+
+    #nexusCanvas {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 0; pointer-events: auto;
+    }
+
+    html.dark .dark-toggle-icon-moon { display: none; }
+    html:not(.dark) .dark-toggle-icon-sun { display: none; }
+
     #mobileNavOverlay.hidden { display: none; }
     #mobileNavOverlay { display: block; }
-
-    #mobileNavDrawer {
-      transform: translateX(-110%);
-      transition: transform .26s cubic-bezier(.2,.9,.2,1);
-      will-change: transform;
-    }
+    #mobileNavDrawer { transform: translateX(110%); transition: transform .4s cubic-bezier(0.16, 1, 0.3, 1); }
     #mobileNavDrawer.isOpen { transform: translateX(0); }
 
-    #mobileNavBtn[data-open="true"] .ico-open { display: none; }
-    #mobileNavBtn[data-open="true"] .ico-close { display: inline; }
-    #mobileNavBtn[data-open="false"] .ico-open { display: inline; }
-    #mobileNavBtn[data-open="false"] .ico-close { display: none; }
+    .bg-primary,
+    a.bg-primary,
+    button.bg-primary {
+      background-color: #005A2B !important;
+      background-image: none !important;
+    }
+
+    .dark .dark\:bg-accent,
+    html.dark .dark\:bg-accent {
+      background-color: #E5B869 !important;
+      background-image: none !important;
+    }
+
+    [class*="bg-gradient"] { background-image: none !important; }
+
+    .solid-admin-action { background-color: #005A2B !important; background-image: none !important; }
+    html.dark .solid-admin-action { background-color: #E5B869 !important; color: #050505 !important; }
   </style>
 
   <script>
     (function () {
-      const t = document.documentElement.getAttribute("data-theme") || localStorage.getItem("theme") || "dark";
-      document.documentElement.setAttribute("data-theme", t);
-      document.documentElement.classList.toggle("dark", t === "dark");
-
-      const obs = new MutationObserver(() => {
-        const next = document.documentElement.getAttribute("data-theme") || "dark";
-        document.documentElement.classList.toggle("dark", next === "dark");
-      });
-      obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+      const saved = localStorage.getItem("theme") || "dark";
+      document.documentElement.setAttribute("data-theme", saved);
+      document.documentElement.classList.toggle("dark", saved === "dark");
     })();
   </script>
 </head>
 
-<body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 font-display min-h-screen overflow-hidden">
+<body class="bg-bg-light dark:bg-bg-dark text-gray-800 dark:text-gray-200 font-sans h-screen flex overflow-hidden selection:bg-accent selection:text-primaryDark">
 
-  <!-- ✅ Mobile Admin Nav Overlay + Drawer -->
-  <div id="mobileNavOverlay" class="fixed inset-0 bg-black/40 z-[80] hidden" aria-hidden="true"></div>
+  <canvas id="nexusCanvas"></canvas>
+  <div class="fixed inset-0 bg-gradient-to-b from-white/40 to-white/80 dark:from-black/40 dark:to-[#050505]/90 pointer-events-none z-[1]"></div>
 
-  <aside id="mobileNavDrawer"
-         class="fixed top-0 left-0 h-full w-[320px] max-w-[86vw]
-                bg-white/95 dark:bg-surface-dark/95 backdrop-blur-xl
-                border-r border-slate-200 dark:border-border-dark
-                shadow-2xl z-[90]">
-    <div class="h-1.5 w-full bg-gradient-to-r from-primary via-accent to-primary dark:from-accent dark:via-white/10 dark:to-accent"></div>
+  <aside class="relative z-20 hidden lg:flex flex-col w-[280px] h-[calc(100vh-2rem)] my-4 mx-4 bg-card-light dark:bg-card-dark glass-panel rounded-3xl border border-border-light dark:border-border-dark overflow-hidden shrink-0">
 
-    <div class="flex items-center justify-between p-4 border-b border-slate-100 dark:border-border-dark/60">
+    <div class="flex items-center gap-3 p-6 border-b border-border-light dark:border-border-dark shrink-0">
+      <div class="w-12 h-12 flex items-center justify-center rounded-2xl bg-primary dark:bg-accent text-white dark:text-black shadow-lg">
+        <span class="material-symbols-outlined text-[28px]">shield_person</span>
+      </div>
+      <div>
+        <h1 class="font-display font-bold text-xl leading-none text-primary dark:text-white">عائلة خاشقجي</h1>
+        <p class="text-[10px] font-bold text-gray-500 dark:text-accent uppercase tracking-widest mt-1.5">نظام الإدارة المركزية</p>
+      </div>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-6">
+      <div class="space-y-2">
+        <p class="px-3 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">البيانات الرئيسية</p>
+
+        <a href="/admin" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-white/5 hover:text-primary dark:hover:text-accent font-bold text-sm transition-colors border border-transparent">
+          <span class="material-symbols-outlined text-[22px]">group</span>
+          إدارة الأفراد
+        </a>
+
+        <a href="/admin/pages" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-white/5 hover:text-primary dark:hover:text-accent font-bold text-sm transition-colors border border-transparent">
+          <span class="material-symbols-outlined text-[22px]">history_edu</span> إدارة الصفحات
+        </a>
+
+        <a href="/admin/honor" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-white/5 hover:text-primary dark:hover:text-accent font-bold text-sm transition-colors border border-transparent">
+          <span class="material-symbols-outlined text-[22px]">workspace_premium</span> السير الذاتية
+        </a>
+
+        <a href="/admin/news" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-white/5 hover:text-primary dark:hover:text-accent font-bold text-sm transition-colors border border-transparent">
+          <span class="material-symbols-outlined text-[22px]">newspaper</span> الأخبار والمناسبات
+        </a>
+      </div>
+
+      <div class="space-y-2">
+        <p class="px-3 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">النظام والموقع</p>
+
+        <a href="/admin/support-messages" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-primary/10 dark:bg-accent/10 text-primary dark:text-accent font-bold text-sm border border-primary/20 dark:border-accent/20 transition-all relative overflow-hidden shadow-sm">
+          <div class="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-6 rounded-l-full bg-primary dark:bg-accent shadow-[0_0_10px_rgba(229,184,105,0.8)]"></div>
+          <span class="material-symbols-outlined text-[22px]">mail</span>
+          رسائل الدعم
+          <span class="mr-auto text-[11px] font-black px-2 py-0.5 rounded-full bg-primary text-white dark:bg-accent dark:text-black"><%= (msgs && msgs.length) ? msgs.length : 0 %></span>
+        </a>
+
+        <a href="/" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-white/5 hover:text-primary dark:hover:text-accent font-bold text-sm transition-colors border border-transparent">
+          <span class="material-symbols-outlined text-[22px]">account_tree</span> عرض الشجرة
+        </a>
+      </div>
+    </nav>
+
+    <div class="p-4 border-t border-border-light dark:border-border-dark shrink-0 m-2 rounded-2xl bg-white/50 dark:bg-black/30">
       <div class="flex items-center gap-3">
-        <div class="size-10 rounded-xl bg-primary/10 dark:bg-accent/10 text-primary dark:text-accent flex items-center justify-center">
-          <span class="material-symbols-outlined">admin_panel_settings</span>
+        <div class="w-10 h-10 rounded-full bg-cover bg-center border border-gray-200 dark:border-white/10 shadow-sm" style="background-image:url('/assets/default-avatar.png'); background-color: #ddd;"></div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-bold text-gray-900 dark:text-white truncate"><%= admin?.username || "مدير النظام" %></p>
+          <p class="text-[10px] text-primary dark:text-accent uppercase tracking-widest mt-0.5 font-bold">Admin</p>
         </div>
+        <form method="post" action="/admin/logout" class="m-0">
+          <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-xl bg-red-50 dark:bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm" title="تسجيل خروج">
+            <span class="material-symbols-outlined text-[18px]">logout</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </aside>
+
+  <main class="flex-1 flex flex-col min-w-0 h-full relative z-10">
+
+    <header class="flex items-center justify-between p-4 lg:p-8 shrink-0">
+      <div class="flex items-center gap-3">
+        <button id="mobileNavBtn" class="lg:hidden flex items-center justify-center w-12 h-12 rounded-2xl bg-card-light dark:bg-card-dark glass-panel border border-border-light dark:border-border-dark text-primary dark:text-accent shadow-sm" type="button">
+          <span class="material-symbols-outlined text-[24px]">menu</span>
+        </button>
+
         <div>
-          <div class="font-extrabold text-primary dark:text-white leading-none">لوحة الإدارة</div>
-          <div class="text-[11px] font-bold text-slate-400 dark:text-accent/70 uppercase tracking-[0.2em] mt-1">
-            رسائل الدعم
+          <h2 class="text-2xl md:text-3xl font-display font-bold text-primary dark:text-white tracking-tight leading-none mb-1.5">رسائل الدعم والشكاوى</h2>
+          <div class="flex items-center gap-1.5 text-gray-500 text-[11px] font-bold uppercase tracking-widest">
+            <span>لوحة الإدارة</span>
+            <span class="material-symbols-outlined text-[14px]">chevron_left</span>
+            <span class="text-accent">رسائل الدعم</span>
           </div>
         </div>
       </div>
 
-      <button id="mobileNavClose"
-              class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
-              type="button"
-              aria-label="إغلاق القائمة">
-        <span class="material-symbols-outlined">close</span>
-      </button>
-    </div>
-
-    <nav class="p-4 flex flex-col gap-2 overflow-y-auto h-[calc(100%-72px)]">
-      <a class="group px-4 py-3 rounded-2xl font-extrabold border border-slate-200 dark:border-border-dark hover:bg-slate-50 dark:hover:bg-white/5 transition-colors flex items-center justify-between" href="/admin">
-        <span class="flex items-center gap-2"><span class="material-symbols-outlined text-[20px] opacity-80">dashboard</span>الأشخاص</span>
-        <span class="material-symbols-outlined text-[18px] opacity-40 group-hover:opacity-80">chevron_left</span>
-      </a>
-
-      <a class="group px-4 py-3 rounded-2xl font-extrabold border border-slate-200 dark:border-border-dark hover:bg-slate-50 dark:hover:bg-white/5 transition-colors flex items-center justify-between" href="/admin/pages">
-        <span class="flex items-center gap-2"><span class="material-symbols-outlined text-[20px] opacity-80">history_edu</span>إدارة الصفحات</span>
-        <span class="material-symbols-outlined text-[18px] opacity-40 group-hover:opacity-80">chevron_left</span>
-      </a>
-
-      <a class="group px-4 py-3 rounded-2xl font-extrabold border border-slate-200 dark:border-border-dark hover:bg-slate-50 dark:hover:bg-white/5 transition-colors flex items-center justify-between" href="/admin/honor">
-        <span class="flex items-center gap-2"><span class="material-symbols-outlined text-[20px] opacity-80">workspace_premium</span>إدارة السير الذاتية</span>
-        <span class="material-symbols-outlined text-[18px] opacity-40 group-hover:opacity-80">chevron_left</span>
-      </a>
-
-      <a class="group px-4 py-3 rounded-2xl font-extrabold border border-slate-200 dark:border-border-dark bg-primary/5 dark:bg-accent/10 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors flex items-center justify-between" href="/admin/support-messages">
-        <span class="flex items-center gap-2"><span class="material-symbols-outlined text-[20px] opacity-80">mail</span>رسائل الدعم</span>
-        <span class="material-symbols-outlined text-[18px] opacity-40 group-hover:opacity-80">chevron_left</span>
-      </a>
-
-      <div class="mt-3 pt-3 border-t border-slate-100 dark:border-border-dark/60"></div>
-
-      <a class="group px-4 py-3 rounded-2xl font-extrabold border border-slate-200 dark:border-border-dark hover:bg-slate-50 dark:hover:bg-white/5 transition-colors flex items-center justify-between" href="/">
-        <span class="flex items-center gap-2"><span class="material-symbols-outlined text-[20px] opacity-80">account_tree</span>العودة للشجرة</span>
-        <span class="material-symbols-outlined text-[18px] opacity-40 group-hover:opacity-80">chevron_left</span>
-      </a>
-
-      <form method="post" action="/admin/logout" class="m-0">
-        <button type="submit" class="w-full group px-4 py-3 rounded-2xl font-extrabold border border-red-200 dark:border-red-500/20 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors flex items-center justify-between text-red-600 dark:text-red-300">
-          <span class="flex items-center gap-2"><span class="material-symbols-outlined text-[20px] opacity-80">logout</span>تسجيل خروج</span>
-          <span class="material-symbols-outlined text-[18px] opacity-40 group-hover:opacity-80">chevron_left</span>
-        </button>
-      </form>
-
-      <div class="mt-4 text-[11px] leading-relaxed text-slate-500 dark:text-slate-500 opacity-90">
-        © ٢٠٢٦ وقف عائلة خاشقجي. جميع الحقوق محفوظة. حفظ الأنساب والاحتفاء بالتراث.
-      </div>
-    </nav>
-  </aside>
-
-<div class="flex h-screen w-full">
-
-  <!-- Sidebar desktop -->
-  <aside class="hidden lg:flex w-72 flex-col border-e bg-white dark:bg-surface-dark border-slate-100 dark:border-border-dark relative">
-    <div class="absolute inset-0 bg-islamic-pattern pointer-events-none"></div>
-
-    <div class="relative z-10 h-20 dark:h-24 px-6 flex items-center border-b border-slate-50 dark:border-border-dark/60">
-      <div class="flex items-center gap-3">
-        <div class="size-10 dark:size-11 rounded-xl bg-primary/10 dark:bg-accent/10 text-primary dark:text-accent flex items-center justify-center border border-transparent dark:border-accent/20">
-          <span class="material-symbols-outlined text-[22px]">family_history</span>
-        </div>
-        <div>
-          <div class="text-lg font-extrabold text-primary dark:text-white leading-none">لوحة الإدارة</div>
-          <div class="text-[11px] font-bold text-slate-400 dark:text-accent/70 uppercase tracking-[0.2em] mt-1">رسائل الدعم</div>
-        </div>
-      </div>
-    </div>
-
-    <nav class="relative z-10 flex-1 overflow-y-auto px-4 py-6 space-y-1">
-      <a href="/admin" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-primary dark:hover:text-accent transition-colors">
-        <span class="material-symbols-outlined text-slate-400 dark:text-slate-500">dashboard</span>
-        <span class="text-sm font-bold">الأشخاص</span>
-      </a>
-
-      <a href="/admin/pages" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-primary dark:hover:text-accent transition-colors">
-        <span class="material-symbols-outlined text-slate-400 dark:text-slate-500">history_edu</span>
-        <span class="text-sm font-bold">إدارة الصفحات</span>
-      </a>
-
-      <a href="/admin/honor" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-primary dark:hover:text-accent transition-colors">
-        <span class="material-symbols-outlined text-slate-400 dark:text-slate-500">workspace_premium</span>
-        <span class="text-sm font-bold">إدارة السير الذاتية</span>
-      </a>
-
-      <a href="/admin/support-messages"
-         class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-primary/10 text-primary dark:bg-accent/10 dark:text-accent border border-primary/10 dark:border-accent/20">
-        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">mail</span>
-        <span class="text-sm font-extrabold">رسائل الدعم</span>
-        <span class="ms-auto text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-primary text-white dark:bg-accent dark:text-black">
-          <%= (msgs && msgs.length) ? msgs.length : 0 %>
-        </span>
-      </a>
-
-      <div class="mt-4 pt-4 border-t border-slate-100 dark:border-border-dark/60"></div>
-
-      <a href="/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
-        <span class="material-symbols-outlined text-slate-400 dark:text-slate-500">account_tree</span>
-        <span class="text-sm font-bold">العودة للشجرة</span>
-      </a>
-
-      <form method="post" action="/admin/logout" class="m-0">
-        <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors text-start">
-          <span class="material-symbols-outlined text-slate-400 dark:text-slate-500">logout</span>
-          <span class="text-sm font-bold">تسجيل خروج</span>
-        </button>
-      </form>
-    </nav>
-
-    <div class="relative z-10 p-4 border-t border-slate-100 dark:border-border-dark/60">
-      <div class="flex items-center gap-3">
-        <div class="size-10 rounded-full bg-cover bg-center border border-slate-200 dark:border-border-dark"
-             style="background-image:url('https://lh3.googleusercontent.com/aida-public/AB6AXuAD76w7dErH89moiobJ2BKoYMF3cL0AkUNk0rupzEDTgILwjWTqmGWV27pkIE7W4mBMFcbgKo1mqLZWfhaKyXNTX2QMtJvfSqV55zjkIFUsACRZQF4yCE4KvO7oCzFCY6wR07xG7c3IIW-KGp1wiHaywIqzhVttikNgWU0f6vN1IvnI9u73S29_yq9QWhLvjk53ZIt6k2_RG_AQ2kLGMFmGVKsplfhUYuVY7ZrjQSh6Q4XuVZD_xWT_lkNTQZfKOpiaZkpC58hLMCs');"></div>
-        <div class="min-w-0">
-          <div class="text-sm font-extrabold text-slate-800 dark:text-white truncate"><%= admin?.username || "مدير النظام" %></div>
-          <div class="text-xs text-slate-500 dark:text-slate-500 truncate">مشرف النظام</div>
-        </div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- Main -->
-  <main class="flex-1 min-w-0 flex flex-col overflow-hidden">
-
-    <!-- Topbar -->
-    <header class="h-20 dark:h-24 px-4 sm:px-8 flex items-center justify-between border-b
-                   bg-white/80 dark:bg-surface-dark/85 backdrop-blur-md
-                   border-slate-200/60 dark:border-border-dark">
-      <div class="flex flex-col">
-        <div class="text-xs text-slate-500 dark:text-slate-500 font-bold flex items-center gap-2">
-          <span>التواصل</span>
-          <span class="material-symbols-outlined text-[14px]">chevron_left</span>
-          <span class="text-primary dark:text-accent">رسائل الدعم</span>
-        </div>
-        <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">رسائل الدعم والشكاوى</h1>
-      </div>
-
-      <!-- ✅ Actions: نفس مكان زر الموبايل -->
-      <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-
-        <button id="mobileNavBtn"
-                data-open="false"
-                class="lg:hidden inline-flex items-center gap-2 px-3 py-2 rounded-full
-                       bg-white/90 dark:bg-surface-dark/90 backdrop-blur
-                       border border-slate-200 dark:border-accent/30
-                       shadow-sm dark:shadow-[0_10px_30px_rgba(0,0,0,0.45)]
-                       text-slate-700 dark:text-accent
-                       hover:bg-white dark:hover:bg-white/5 transition-colors"
-                type="button"
-                aria-label="فتح القائمة"
-                aria-expanded="false">
-          <span class="material-symbols-outlined text-[20px] ico-open">apps</span>
-          <span class="material-symbols-outlined text-[20px] ico-close hidden">close</span>
-          <span class="text-[12px] font-extrabold tracking-wide">القائمة</span>
+      <div class="flex items-center gap-3 shrink-0">
+        <button id="themeBtn" class="flex items-center justify-center w-12 h-12 rounded-2xl bg-card-light dark:bg-card-dark glass-panel border border-border-light dark:border-border-dark text-gray-600 dark:text-accent shadow-sm hover:-translate-y-1 transition-transform" type="button" title="تبديل المظهر">
+          <span class="material-symbols-outlined text-[22px] dark-toggle-icon-moon">dark_mode</span>
+          <span class="material-symbols-outlined hidden dark:block text-[24px]">light_mode</span>
         </button>
 
-        <button id="themeBtn"
-          class="flex items-center justify-center w-10 h-10 rounded-full border border-slate-200 bg-white hover:bg-slate-50
-                 dark:border-accent/30 dark:bg-surface-dark dark:hover:bg-accent/10 transition-all"
-          type="button" title="تبديل المظهر">
-          <span class="material-symbols-outlined text-slate-600 dark:hidden">dark_mode</span>
-          <span class="material-symbols-outlined text-accent hidden dark:block">light_mode</span>
-        </button>
-
-        <a href="/admin/support-messages/export.csv"
-          class="flex items-center gap-2 px-4 py-2.5 rounded-lg font-extrabold text-sm
-                 bg-primary text-white hover:bg-primary/90 shadow-md shadow-primary/20
-                 dark:bg-accent dark:text-black dark:hover:bg-primary-dark dark:shadow-accent/10 transition-all">
-          <span class="material-symbols-outlined text-[20px]">download</span>
+        <a href="/admin/support-messages/export.csv" class="flex items-center gap-2 px-6 h-12 rounded-2xl font-bold text-sm bg-primary dark:bg-accent text-white dark:text-black shadow-[0_5px_20px_rgba(0,90,43,0.28)] dark:shadow-[0_5px_20px_rgba(229,184,105,0.20)] hover:-translate-y-1 transition-transform">
+          <span class="material-symbols-outlined text-[22px]">download</span>
           <span class="hidden sm:inline">تصدير CSV</span>
         </a>
       </div>
     </header>
 
-    <!-- Content -->
-    <div class="flex-1 overflow-y-auto p-4 sm:p-8">
-      <div class="max-w-7xl mx-auto space-y-5">
+    <div class="flex-1 overflow-y-auto custom-scrollbar px-4 lg:px-8 pb-12">
+      <div class="max-w-[100rem] mx-auto space-y-8">
+
         <% if (deleted) { %>
-          <div class="rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-800 px-4 py-3 font-extrabold
-                      dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-300">
-            ✅ تم حذف الرسالة
+          <div class="rounded-2xl border border-emerald-200 bg-emerald-50/90 text-emerald-700 px-5 py-4 font-bold dark:bg-emerald-500/10 dark:border-emerald-500/20 dark:text-emerald-300 glass-panel">
+            تم حذف الرسالة.
           </div>
         <% } %>
 
-        <div class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm
-                    dark:border-border-dark dark:bg-surface-dark">
-          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div class="flex items-center gap-3">
-              <div class="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center
-                          dark:bg-accent/10 dark:text-accent dark:border dark:border-accent/20">
-                <span class="material-symbols-outlined">mail</span>
-              </div>
-              <div>
-                <div class="text-sm font-extrabold text-slate-900 dark:text-white">الرسائل</div>
-                <div class="text-xs text-slate-500 dark:text-slate-500 font-bold">الترتيب: الأحدث أولاً</div>
-              </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
+          <div class="xl:col-span-2 bg-card-light dark:bg-card-dark glass-panel rounded-[2rem] border border-border-light dark:border-border-dark p-2 pl-4 flex items-center shadow-sm">
+            <span class="material-symbols-outlined text-gray-400 mr-4 ml-2 text-[26px]">search</span>
+            <input id="q" type="text" placeholder="بحث بالاسم، الهاتف، أو نص الرسالة..."
+                   class="search-input w-full h-14 bg-transparent border-none text-gray-900 dark:text-white placeholder-gray-400 font-sans font-bold text-base focus:ring-0 px-2"/>
+          </div>
+
+          <div class="bg-card-light dark:bg-card-dark glass-panel rounded-[2rem] border border-border-light dark:border-border-dark p-5 flex items-center gap-4 shadow-sm group">
+            <div class="w-14 h-14 rounded-2xl bg-primary/10 dark:bg-accent/10 flex items-center justify-center text-primary dark:text-accent group-hover:scale-110 transition-transform">
+              <span class="material-symbols-outlined text-[28px]">mail</span>
             </div>
-
-            <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
-              <div class="text-xs font-extrabold text-slate-600 dark:text-slate-400">
-                الإجمالي: <span class="text-primary dark:text-accent"><%= (msgs && msgs.length) ? msgs.length : 0 %></span>
-              </div>
-
-              <div class="relative w-full sm:w-80">
-                <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
-                <input id="q" type="text" placeholder="بحث بالاسم/الهاتف/النص..."
-                       class="w-full rounded-xl border border-slate-200 bg-slate-50 pr-10 pl-3 py-2.5 text-sm font-bold text-slate-700
-                              focus:bg-white focus:border-primary/50 focus:ring-0
-                              dark:border-border-dark dark:bg-background-dark/40 dark:text-slate-200 dark:focus:border-accent/50"/>
-              </div>
+            <div>
+              <p class="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-0.5">إجمالي الرسائل</p>
+              <p class="text-3xl font-black text-primary dark:text-white leading-none"><%= (msgs && msgs.length) ? msgs.length : 0 %></p>
             </div>
           </div>
+
+          <a href="/admin" class="bg-card-light dark:bg-card-dark glass-panel rounded-[2rem] border border-border-light dark:border-border-dark p-5 flex items-center gap-4 shadow-sm group hover:border-primary dark:hover:border-accent transition-colors">
+            <div class="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center text-[#cfae61] dark:text-accent group-hover:scale-110 transition-transform">
+              <span class="material-symbols-outlined text-[28px]">admin_panel_settings</span>
+            </div>
+            <div>
+              <p class="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-0.5">لوحة الإدارة</p>
+              <p class="text-sm font-black text-primary dark:text-white leading-none">العودة للرئيسية</p>
+            </div>
+            <span class="material-symbols-outlined mr-auto text-gray-300 dark:text-gray-600 rtl:rotate-180">arrow_forward_ios</span>
+          </a>
         </div>
 
         <% if (!msgs || msgs.length === 0) { %>
-          <div class="rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm
-                      dark:border-border-dark dark:bg-surface-dark">
-            <div class="mx-auto size-14 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-500
-                        dark:bg-background-dark/60 dark:text-slate-400 dark:border dark:border-border-dark">
-              <span class="material-symbols-outlined text-[28px]">inbox</span>
+          <section class="bg-card-light dark:bg-card-dark glass-panel rounded-3xl border border-border-light dark:border-border-dark p-12 text-center shadow-sm">
+            <div class="mx-auto w-16 h-16 rounded-2xl bg-primary/10 dark:bg-accent/10 flex items-center justify-center text-primary dark:text-accent mb-4">
+              <span class="material-symbols-outlined text-[32px]">inbox</span>
             </div>
-            <div class="mt-4 text-lg font-extrabold text-slate-900 dark:text-white">لا توجد رسائل حتى الآن</div>
-            <div class="mt-1 text-sm font-bold text-slate-500 dark:text-slate-500">ستظهر الرسائل المرسلة من صفحة الدعم هنا.</div>
-          </div>
+            <h3 class="text-xl font-black text-gray-900 dark:text-white">لا توجد رسائل حتى الآن</h3>
+            <p class="text-sm font-bold text-gray-500 dark:text-gray-400 mt-2">ستظهر الرسائل المرسلة من صفحة الدعم هنا.</p>
+          </section>
         <% } else { %>
-
-          <div class="hidden md:block rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden
-                      dark:border-border-dark dark:bg-surface-dark">
-            <div class="overflow-x-auto">
-              <table class="w-full min-w-[900px]">
-                <thead>
-                  <tr class="bg-slate-50 text-slate-500 text-xs font-extrabold uppercase tracking-wider
-                             dark:bg-background-dark/60 dark:text-slate-500">
-                    <th class="py-4 px-4 text-right w-24">ID</th>
-                    <th class="py-4 px-4 text-right w-56">الاسم</th>
-                    <th class="py-4 px-4 text-right w-52">الهاتف</th>
-                    <th class="py-4 px-4 text-right">الرسالة</th>
-                    <th class="py-4 px-4 text-right w-48">التاريخ</th>
-                    <th class="py-4 px-4 text-left w-40">إجراءات</th>
+          <section class="bg-card-light dark:bg-card-dark glass-panel rounded-3xl shadow-sm border border-border-light dark:border-border-dark overflow-hidden hidden md:block">
+            <div class="overflow-x-auto custom-scrollbar p-2">
+              <table class="w-full min-w-[980px] text-sm text-right border-separate border-spacing-y-2">
+                <thead class="bg-transparent">
+                  <tr>
+                    <th class="py-3 px-5 font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest text-[11px] w-24">ID</th>
+                    <th class="py-3 px-5 font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest text-[11px] w-56">الاسم</th>
+                    <th class="py-3 px-5 font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest text-[11px] w-52">الهاتف</th>
+                    <th class="py-3 px-5 font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest text-[11px] min-w-[360px]">الرسالة</th>
+                    <th class="py-3 px-5 font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest text-[11px] w-48">التاريخ</th>
+                    <th class="py-3 px-5 font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest text-[11px] w-28 text-center">إجراءات</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 dark:divide-border-dark">
+                <tbody>
                   <% for (let i=0; i<msgs.length; i++){ const m = msgs[i]; %>
-                    <tr class="msg-row hover:bg-slate-50/80 dark:hover:bg-white/5 transition-colors"
+                    <tr class="interactive-row msg-row group bg-gray-50/50 dark:bg-white/5 border border-transparent border-b-gray-100 dark:border-b-white/5"
                         data-name="<%= (m.sender_name || '').toLowerCase() %>"
                         data-phone="<%= (m.phone || '').toLowerCase() %>"
                         data-message="<%= (m.message || '').toLowerCase() %>">
-                      <td class="py-4 px-4 font-extrabold text-slate-900 dark:text-white">#<%= m.id %></td>
-                      <td class="py-4 px-4">
-                        <div class="font-extrabold text-slate-900 dark:text-white"><%= m.sender_name || "-" %></div>
+                      <td class="py-4 px-5 rounded-r-xl font-black text-primary dark:text-accent">#<%= m.id %></td>
+                      <td class="py-4 px-5">
+                        <div class="flex items-center gap-3">
+                          <div class="w-10 h-10 rounded-xl bg-primary/10 dark:bg-accent/10 flex items-center justify-center text-primary dark:text-accent shrink-0">
+                            <span class="material-symbols-outlined text-[22px]">person</span>
+                          </div>
+                          <div class="font-extrabold text-gray-900 dark:text-white"><%= m.sender_name || "-" %></div>
+                        </div>
                       </td>
-                      <td class="py-4 px-4 text-sm font-bold text-slate-600 dark:text-slate-300"><%= m.phone || "-" %></td>
-                      <td class="py-4 px-4">
-                        <div class="text-sm font-bold text-slate-700 dark:text-slate-200 leading-relaxed whitespace-pre-wrap max-w-[720px]">
+                      <td class="py-4 px-5 text-sm font-bold text-gray-600 dark:text-gray-300"><%= m.phone || "-" %></td>
+                      <td class="py-4 px-5">
+                        <div class="text-sm font-bold text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-wrap max-w-[720px]">
                           <%= m.message || "" %>
                         </div>
                       </td>
-                      <td class="py-4 px-4 text-xs font-extrabold text-slate-500 dark:text-slate-500"><%= m.created_at || "-" %></td>
-                      <td class="py-4 px-4">
-                        <div class="flex items-center justify-end gap-2">
-                          <form method="post"
-                                action="/admin/support-messages/<%= m.id %>/delete"
-                                class="m-0"
-                                onsubmit="return confirm('متأكد من حذف هذه الرسالة؟');">
-                            <button type="submit"
-                              class="inline-flex items-center gap-2 px-3 py-2 rounded-lg font-extrabold text-sm
-                                     bg-white border border-red-200 text-red-600 hover:bg-red-50
-                                     dark:bg-background-dark/40 dark:border-red-500/20 dark:text-red-400 dark:hover:bg-red-500/10 transition-colors">
+                      <td class="py-4 px-5 text-xs font-extrabold text-gray-500 dark:text-gray-400"><%= m.created_at || "-" %></td>
+                      <td class="py-4 px-5 text-center rounded-l-xl">
+                        <div class="flex items-center justify-center gap-2 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
+                          <form method="post" action="/admin/support-messages/<%= m.id %>/delete" class="m-0" onsubmit="return confirm('متأكد من حذف هذه الرسالة؟');">
+                            <button type="submit" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white dark:bg-[#111] border border-gray-200 hover:border-red-500 text-gray-600 hover:text-white hover:bg-red-500 dark:border-white/10 dark:text-gray-400 dark:hover:border-red-500/50 dark:hover:text-red-400 transition-all shadow-sm hover:scale-105" title="حذف">
                               <span class="material-symbols-outlined text-[18px]">delete</span>
-                              حذف
                             </button>
                           </form>
                         </div>
@@ -377,37 +323,30 @@
                 </tbody>
               </table>
             </div>
-          </div>
+          </section>
 
-          <div class="md:hidden space-y-3">
+          <div class="md:hidden space-y-4">
             <% for (let i=0; i<msgs.length; i++){ const m = msgs[i]; %>
-              <div class="msg-card rounded-2xl border border-slate-200 bg-white p-4 shadow-sm
-                          dark:border-border-dark dark:bg-surface-dark"
+              <div class="msg-card bg-card-light dark:bg-card-dark glass-panel rounded-3xl border border-border-light dark:border-border-dark p-5 shadow-sm"
                    data-name="<%= (m.sender_name || '').toLowerCase() %>"
                    data-phone="<%= (m.phone || '').toLowerCase() %>"
                    data-message="<%= (m.message || '').toLowerCase() %>">
                 <div class="flex items-start justify-between gap-3">
                   <div>
-                    <div class="text-xs font-extrabold text-slate-500">#<%= m.id %></div>
-                    <div class="text-lg font-black text-slate-900 dark:text-white"><%= m.sender_name || "-" %></div>
-                    <div class="text-sm font-bold text-slate-600 dark:text-slate-300 mt-1"><%= m.phone || "-" %></div>
+                    <div class="text-xs font-black text-primary dark:text-accent">#<%= m.id %></div>
+                    <div class="text-lg font-black text-gray-900 dark:text-white mt-1"><%= m.sender_name || "-" %></div>
+                    <div class="text-sm font-bold text-gray-600 dark:text-gray-300 mt-1"><%= m.phone || "-" %></div>
                   </div>
-                  <div class="text-xs font-extrabold text-slate-500"><%= m.created_at || "-" %></div>
+                  <div class="text-xs font-extrabold text-gray-500 dark:text-gray-400"><%= m.created_at || "-" %></div>
                 </div>
 
-                <div class="mt-3 text-sm font-bold text-slate-700 dark:text-slate-200 leading-relaxed whitespace-pre-wrap">
+                <div class="mt-4 text-sm font-bold text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-wrap rounded-2xl bg-white/60 dark:bg-black/20 border border-border-light dark:border-border-dark p-4">
                   <%= m.message || "" %>
                 </div>
 
                 <div class="mt-4 flex justify-end">
-                  <form method="post"
-                        action="/admin/support-messages/<%= m.id %>/delete"
-                        class="m-0"
-                        onsubmit="return confirm('متأكد من حذف هذه الرسالة؟');">
-                    <button type="submit"
-                      class="inline-flex items-center gap-2 px-3 py-2 rounded-lg font-extrabold text-sm
-                             bg-white border border-red-200 text-red-600 hover:bg-red-50
-                             dark:bg-background-dark/40 dark:border-red-500/20 dark:text-red-400 dark:hover:bg-red-500/10 transition-colors">
+                  <form method="post" action="/admin/support-messages/<%= m.id %>/delete" class="m-0" onsubmit="return confirm('متأكد من حذف هذه الرسالة؟');">
+                    <button type="submit" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-300 font-black hover:bg-red-500 hover:text-white transition-colors">
                       <span class="material-symbols-outlined text-[18px]">delete</span>
                       حذف
                     </button>
@@ -416,87 +355,187 @@
               </div>
             <% } %>
           </div>
-
         <% } %>
-
-        <div class="py-6 text-center text-xs font-bold text-slate-400 dark:text-slate-600">
-          © ٢٠٢٦ وقف عائلة خاشقجي. جميع الحقوق محفوظة. حفظ الأنساب والاحتفاء بالتراث.
-        </div>
 
       </div>
     </div>
   </main>
-</div>
 
-<script>
-  (function () {
-    const btn = document.getElementById("themeBtn");
-    function setTheme(next) {
-      document.documentElement.setAttribute("data-theme", next);
-      document.documentElement.classList.toggle("dark", next === "dark");
-      localStorage.setItem("theme", next);
-    }
-    btn?.addEventListener("click", () => {
-      const cur = document.documentElement.getAttribute("data-theme") || "dark";
-      setTheme(cur === "dark" ? "light" : "dark");
-    });
-    setTheme(localStorage.getItem("theme") || (document.documentElement.getAttribute("data-theme") || "dark"));
-  })();
+  <aside id="mobileNavDrawer" class="fixed top-0 right-0 h-full w-[320px] max-w-[85vw] bg-card-light dark:bg-card-dark glass-panel border-l border-border-light dark:border-border-dark z-[90] flex flex-col">
+    <div class="h-1.5 w-full bg-primary"></div>
+    <div class="flex items-center justify-between p-6 border-b border-border-light dark:border-border-dark shrink-0">
+      <div>
+        <h1 class="font-display font-bold text-xl leading-none text-primary dark:text-white">عائلة خاشقجي</h1>
+        <p class="text-[10px] font-bold text-gray-500 dark:text-accent uppercase tracking-widest mt-1.5">نظام الإدارة</p>
+      </div>
+      <button id="mobileNavClose" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center text-gray-500 hover:text-primary dark:hover:text-accent transition-colors" type="button">
+        <span class="material-symbols-outlined text-[24px]">close</span>
+      </button>
+    </div>
 
-  (function () {
-    const q = document.getElementById("q");
-    function apply() {
-      const v = (q?.value || "").trim().toLowerCase();
-      const rows = document.querySelectorAll(".msg-row, .msg-card");
-      rows.forEach(el => {
-        const hay = [
-          el.getAttribute("data-name") || "",
-          el.getAttribute("data-phone") || "",
-          el.getAttribute("data-message") || ""
-        ].join(" ");
-        el.style.display = (!v || hay.includes(v)) ? "" : "none";
+    <nav class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-3 text-sm font-bold text-gray-700 dark:text-gray-300">
+      <a href="/admin" class="flex items-center gap-3 px-4 py-4 rounded-2xl border border-transparent hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-gray-400">group</span> إدارة الأفراد</a>
+      <a href="/admin/pages" class="flex items-center gap-3 px-4 py-4 rounded-2xl border border-transparent hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-gray-400">history_edu</span> إدارة الصفحات</a>
+      <a href="/admin/honor" class="flex items-center gap-3 px-4 py-4 rounded-2xl border border-transparent hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-gray-400">workspace_premium</span> السير الذاتية</a>
+      <a href="/admin/news" class="flex items-center gap-3 px-4 py-4 rounded-2xl border border-transparent hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-gray-400">newspaper</span> الأخبار</a>
+      <a href="/admin/support-messages" class="flex items-center gap-3 px-4 py-4 rounded-2xl bg-primary/10 dark:bg-accent/10 text-primary dark:text-accent transition-colors border border-primary/20 dark:border-accent/20"><span class="material-symbols-outlined">mail</span> رسائل الدعم</a>
+      <div class="my-4 border-t border-border-light dark:border-border-dark"></div>
+      <a href="/" class="flex items-center gap-3 px-4 py-4 rounded-2xl border border-transparent hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-gray-400">account_tree</span> العودة للموقع</a>
+
+      <form method="post" action="/admin/logout" class="m-0 mt-4">
+        <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-4 rounded-2xl border border-red-200 dark:border-red-900/30 text-red-600 dark:text-red-400 bg-red-50/50 dark:bg-red-500/10 hover:bg-red-50 transition-colors">
+          <span class="material-symbols-outlined">logout</span> تسجيل خروج
+        </button>
+      </form>
+    </nav>
+  </aside>
+
+  <div id="mobileNavOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[80] hidden" aria-hidden="true"></div>
+
+  <script>
+    (function () {
+      const btn = document.getElementById("themeBtn");
+      function setTheme(next) {
+        document.documentElement.setAttribute("data-theme", next);
+        document.documentElement.classList.toggle("dark", next === "dark");
+        localStorage.setItem("theme", next);
+        if(window.initNexus) window.initNexus();
+      }
+      btn?.addEventListener("click", () => {
+        const cur = document.documentElement.getAttribute("data-theme") || "dark";
+        setTheme(cur === "dark" ? "light" : "dark");
       });
-    }
-    q?.addEventListener("input", apply);
-  })();
+    })();
 
-  // ✅ Mobile Nav open/close (Unified)
-  (function mobileNavInit(){
-    const btn = document.getElementById("mobileNavBtn");
-    const navDrawer = document.getElementById("mobileNavDrawer");
-    const overlay = document.getElementById("mobileNavOverlay");
-    const closeBtn = document.getElementById("mobileNavClose");
+    (function () {
+      const q = document.getElementById("q");
+      function apply() {
+        const v = (q?.value || "").trim().toLowerCase();
+        const rows = document.querySelectorAll(".msg-row, .msg-card");
+        rows.forEach(el => {
+          const hay = [
+            el.getAttribute("data-name") || "",
+            el.getAttribute("data-phone") || "",
+            el.getAttribute("data-message") || ""
+          ].join(" ");
+          el.style.display = (!v || hay.includes(v)) ? "" : "none";
+        });
+      }
+      q?.addEventListener("input", apply);
+    })();
 
-    function setOpenState(isOpen){
-      btn?.setAttribute("data-open", isOpen ? "true" : "false");
-      btn?.setAttribute("aria-expanded", isOpen ? "true" : "false");
-    }
+    (function mobileNavInit(){
+      const btn = document.getElementById("mobileNavBtn");
+      const navDrawer = document.getElementById("mobileNavDrawer");
+      const overlay = document.getElementById("mobileNavOverlay");
+      const closeBtn = document.getElementById("mobileNavClose");
 
-    function openNav(){
-      overlay?.classList.remove("hidden");
-      navDrawer?.classList.add("isOpen");
-      setOpenState(true);
-    }
-    function closeNav(){
-      navDrawer?.classList.remove("isOpen");
-      overlay?.classList.add("hidden");
-      setOpenState(false);
-    }
+      function toggleNav() {
+        navDrawer?.classList.toggle("isOpen");
+        overlay?.classList.toggle("hidden");
+      }
 
-    btn?.addEventListener("click", () => {
-      const open = btn.getAttribute("data-open") === "true";
-      open ? closeNav() : openNav();
-    });
+      btn?.addEventListener("click", toggleNav);
+      closeBtn?.addEventListener("click", toggleNav);
+      overlay?.addEventListener("click", toggleNav);
+    })();
 
-    closeBtn?.addEventListener("click", closeNav);
-    overlay?.addEventListener("click", closeNav);
-    navDrawer?.querySelectorAll("a").forEach(a => a.addEventListener("click", closeNav));
+    (function() {
+      const canvas = document.getElementById('nexusCanvas');
+      if(!canvas) return;
+      const ctx = canvas.getContext('2d');
 
-    window.addEventListener("keydown", (e) => { if (e.key === "Escape") closeNav(); });
+      let width, height;
+      let particles = [];
+      const numParticles = window.innerWidth > 1024 ? 130 : 70;
+      let mouseX = -1000;
+      let mouseY = -1000;
+      let dotColor, lineColor, connectionColor;
 
-    setOpenState(false);
-  })();
-</script>
+      window.initNexus = function() {
+        const isDark = document.documentElement.classList.contains('dark');
+        dotColor = isDark ? 'rgba(229, 184, 105, 0.55)' : 'rgba(0, 90, 43, 0.32)';
+        lineColor = isDark ? 'rgba(229, 184, 105, 0.16)' : 'rgba(0, 90, 43, 0.09)';
+        connectionColor = isDark ? '229, 184, 105' : '0, 90, 43';
+      };
 
+      function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+      }
+
+      function initParticles() {
+        particles = [];
+        for (let i = 0; i < numParticles; i++) {
+          particles.push({
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            radius: Math.random() * 2.8 + 1.2
+          });
+        }
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, width, height);
+        for (let i = 0; i < numParticles; i++) {
+          const p = particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.x < 0 || p.x > width) p.vx *= -1;
+          if (p.y < 0 || p.y > height) p.vy *= -1;
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = dotColor;
+          ctx.fill();
+
+          const dxMouse = mouseX - p.x;
+          const dyMouse = mouseY - p.y;
+          const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+
+          if (distMouse < 230) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(mouseX, mouseY);
+            const opacity = 0.6 * (1 - distMouse / 230);
+            ctx.strokeStyle = `rgba(${connectionColor}, ${opacity})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            p.x += dxMouse * 0.014;
+            p.y += dyMouse * 0.014;
+          }
+
+          for (let j = i + 1; j < numParticles; j++) {
+            const p2 = particles[j];
+            const dx = p.x - p2.x;
+            const dy = p.y - p2.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 165) {
+              ctx.beginPath();
+              ctx.moveTo(p.x, p.y);
+              ctx.lineTo(p2.x, p2.y);
+              ctx.strokeStyle = lineColor;
+              ctx.lineWidth = 0.5;
+              ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(draw);
+      }
+
+      window.addEventListener('resize', () => { resize(); initParticles(); });
+      window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+      window.addEventListener('mouseout', () => { mouseX = -1000; mouseY = -1000; });
+
+      window.initNexus();
+      resize();
+      initParticles();
+      draw();
+    })();
+  </script>
 </body>
 </html>

@@ -1,17 +1,19 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html dir="rtl" lang="ar">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>إحصائيات الأفراد التفاعلية</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>لوحة الإدارة - إحصائيات الأفراد</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+  <script src="/theme.js"></script>
 
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
 
   <script>
@@ -20,31 +22,43 @@
       theme: {
         extend: {
           colors: {
-            primary: "#1f637a",
-            primary_light: "#2a82a1",
-            gold: "#cfae61",
-            gold_light: "#dfc17a",
-            darkbg: "#0F1115",
-            card: "#16191E",
+            primary: "#005A2B",     /* البنفسجي الملكي */
+            primaryDark: "#00361A", 
+            accent: "#E5B869",      /* الذهب السائل */
+            "bg-light": "#F5F3F7",  /* خلفية فاتحة دافئة */
+            "bg-dark": "#050505",   /* خلفية داكنة جداً بلمحة بنفسجية */
+            "card-light": "rgba(255, 255, 255, 0.8)",
+            "card-dark": "rgba(15, 12, 25, 0.8)",
+            "border-light": "rgba(0, 90, 43, 0.1)",
+            "border-dark": "rgba(229, 184, 105, 0.1)",
           },
           fontFamily: {
-            cairo: ["Cairo", "sans-serif"]
-          }
+            display: ["'Aref Ruqaa'", "serif"],
+            sans: ["Tajawal", "sans-serif"],
+          },
         }
       }
     };
   </script>
 
-  <style>
-    /* تحسينات إضافية للتمرير (Scrollbar) */
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #1f637a; border-radius: 4px; }
-    .dark ::-webkit-scrollbar-thumb { background: #cfae61; }
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .scrollbar-hide::-webkit-scrollbar { display: none; }
+      .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+      .glass-panel { @apply backdrop-blur-2xl shadow-xl; }
+    }
+  </style>
 
-    /* أنيميشن دائرة النسبة - تم تقليل سماكة الخط من 8 إلى 3.5 لأناقة أكبر */
-    .circle-bg { fill: none; stroke: #e5e7eb; stroke-width: 3.5; }
-    .dark .circle-bg { stroke: #374151; }
+  <style>
+    /* تخصيص شريط التمرير */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #005A2B; border-radius: 10px; }
+    html.dark ::-webkit-scrollbar-thumb { background: #E5B869; }
+
+    /* أنيميشن دائرة النسبة */
+    .circle-bg { fill: none; stroke: rgba(0, 90, 43, 0.1); stroke-width: 3.5; }
+    html.dark .circle-bg { stroke: rgba(229, 184, 105, 0.1); }
     .circle-progress {
       fill: none;
       stroke-width: 3.5;
@@ -56,257 +70,395 @@
     /* الحفاظ على جودة 3D */
     .tilt-card { transform-style: preserve-3d; }
     .tilt-content { transform: translateZ(30px); }
+
+    /* شبكة العائلة التفاعلية في الخلفية */
+    #nexusCanvas {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 0; pointer-events: auto;
+    }
+
+    /* إعدادات أيقونات المظهر */
+    html.dark .dark-toggle-icon-moon { display: none; }
+    html:not(.dark) .dark-toggle-icon-sun { display: none; }
+
+    /* Mobile Nav */
+    #mobileNavOverlay.hidden { display: none; }
+    #mobileNavOverlay { display: block; }
+    #mobileNavDrawer { transform: translateX(110%); transition: transform .4s cubic-bezier(0.16, 1, 0.3, 1); }
+    #mobileNavDrawer.isOpen { transform: translateX(0); }
+  </style>
+
+  <script>
+    (function () {
+      const saved = localStorage.getItem("theme") || "dark";
+      document.documentElement.setAttribute("data-theme", saved);
+      document.documentElement.classList.toggle("dark", saved === "dark");
+    })();
+  </script>
+
+  <style id="solid-color-final-fix">
+    .bg-primary, a.bg-primary, button.bg-primary { background-color: #005A2B !important; background-image: none !important; }
+    .dark .dark\:bg-accent, html.dark .dark\:bg-accent { background-color: #E5B869 !important; background-image: none !important; }
+    [class*="bg-gradient"] { background-image: none !important; }
+    .solid-admin-action { background-color: #005A2B !important; background-image: none !important; }
+    html.dark .solid-admin-action { background-color: #E5B869 !important; color: #050505 !important; }
   </style>
 </head>
 
-<body class="font-cairo bg-gray-50 dark:bg-darkbg text-gray-800 dark:text-gray-200 transition-colors duration-500 min-h-screen pb-10">
+<body class="bg-bg-light dark:bg-bg-dark text-gray-800 dark:text-gray-200 font-sans h-screen flex overflow-hidden selection:bg-accent selection:text-primaryDark">
 
+  <%
+    // حساب آمن للأسماء المتكررة في حالة عدم إرسال repeatedCount من السيرفر
+    personStats = personStats || {};
+    personStats.recentPersons = personStats.recentPersons || [];
+    personStats.repeatedNames = personStats.repeatedNames || [];
+    personStats.repeatedCount = Number(
+      personStats.repeatedCount ??
+      personStats.duplicateNamesCount ??
+      personStats.repeated_names_count ??
+      personStats.repeatedNamesCount ??
+      personStats.repeatedNames.length ??
+      0
+    );
+  %>
 
-<%
-  // حساب آمن للأسماء المتكررة في حالة عدم إرسال repeatedCount من السيرفر
-  personStats = personStats || {};
-  personStats.recentPersons = personStats.recentPersons || [];
-  personStats.repeatedNames = personStats.repeatedNames || [];
-  personStats.repeatedCount = Number(
-    personStats.repeatedCount ??
-    personStats.duplicateNamesCount ??
-    personStats.repeated_names_count ??
-    personStats.repeatedNamesCount ??
-    personStats.repeatedNames.length ??
-    0
-  );
-%>
+  <canvas id="nexusCanvas"></canvas>
+  <div class="fixed inset-0 bg-gradient-to-b from-white/40 to-white/80 dark:from-black/40 dark:to-[#050505]/90 pointer-events-none z-[1]"></div>
 
-<div class="max-w-7xl mx-auto p-4 md:p-6 lg:p-8">
-
-  <div class="flex flex-col md:flex-row justify-between items-center gap-6 mb-8 bg-white dark:bg-card p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800">
-    <div class="flex items-center gap-4">
-      <div class="p-3 bg-primary/10 dark:bg-gold/10 rounded-2xl">
-        <span class="material-symbols-outlined text-4xl text-primary dark:text-gold">monitoring</span>
+  <aside class="relative z-20 hidden lg:flex flex-col w-[280px] h-[calc(100vh-2rem)] my-4 mx-4 bg-card-light dark:bg-card-dark glass-panel rounded-3xl border border-border-light dark:border-border-dark overflow-hidden shrink-0">
+    <div class="flex items-center gap-3 p-6 border-b border-border-light dark:border-border-dark shrink-0">
+      <div class="w-12 h-12 flex items-center justify-center rounded-2xl bg-primary dark:bg-accent text-white dark:text-black shadow-lg">
+        <span class="material-symbols-outlined text-[28px]">shield_person</span>
       </div>
       <div>
-        <h1 class="text-3xl font-black text-gray-900 dark:text-white">إحصائيات الأفراد</h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">تقارير ورسوم بيانية تفاعلية 3D</p>
+        <h1 class="font-display font-bold text-xl leading-none text-primary dark:text-white">عائلة خاشقجي</h1>
+        <p class="text-[10px] font-bold text-gray-500 dark:text-accent uppercase tracking-widest mt-1.5">نظام الإدارة المركزية</p>
       </div>
     </div>
 
-    <div class="flex flex-wrap items-center justify-center gap-3">
-      <button onclick="toggleTheme()" class="p-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors shadow-sm" title="تبديل المظهر">
-        <span class="material-symbols-outlined" id="themeIcon">light_mode</span>
-      </button>
+    <nav class="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-6">
+      <div class="space-y-2">
+        <p class="px-3 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">البيانات الرئيسية</p>
+        <a href="/admin" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-primary/10 dark:bg-accent/10 text-primary dark:text-accent font-bold text-sm border border-primary/20 dark:border-accent/20 transition-all relative overflow-hidden shadow-sm">
+          <div class="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-6 rounded-l-full bg-primary dark:bg-accent shadow-[0_0_10px_rgba(229,184,105,0.8)]"></div>
+          <span class="material-symbols-outlined text-[22px]">group</span> إدارة الأفراد
+        </a>
+        <a href="/admin/pages" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-white/5 hover:text-primary dark:hover:text-accent font-bold text-sm transition-colors border border-transparent">
+          <span class="material-symbols-outlined text-[22px]">history_edu</span> إدارة الصفحات
+        </a>
+        <a href="/admin/honor" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-white/5 hover:text-primary dark:hover:text-accent font-bold text-sm transition-colors border border-transparent">
+          <span class="material-symbols-outlined text-[22px]">workspace_premium</span> السير الذاتية
+        </a>
+        <a href="/admin/news" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-white/5 hover:text-primary dark:hover:text-accent font-bold text-sm transition-colors border border-transparent">
+          <span class="material-symbols-outlined text-[22px]">newspaper</span> الأخبار والمناسبات
+        </a>
+      </div>
 
-      <a href="/admin" class="flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-white font-bold hover:bg-primary_light dark:bg-gold dark:text-gray-900 dark:hover:bg-gold_light transition-all shadow-md hover:shadow-lg">
-        <span class="material-symbols-outlined text-sm">arrow_forward</span>
-        الرجوع للإدارة
-      </a>
+      <div class="space-y-2">
+        <p class="px-3 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">النظام والموقع</p>
+        <a href="/admin/support-messages" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-white/5 hover:text-primary dark:hover:text-accent font-bold text-sm transition-colors border border-transparent">
+          <span class="material-symbols-outlined text-[22px]">mail</span> رسائل الدعم
+        </a>
+        <a href="/" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-white/5 hover:text-primary dark:hover:text-accent font-bold text-sm transition-colors border border-transparent">
+          <span class="material-symbols-outlined text-[22px]">account_tree</span> عرض الشجرة
+        </a>
+      </div>
+    </nav>
+
+    <div class="p-4 border-t border-border-light dark:border-border-dark shrink-0 m-2 rounded-2xl bg-white/50 dark:bg-black/30">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-cover bg-center border border-gray-200 dark:border-white/10 shadow-sm" style="background-image:url('/assets/default-avatar.png'); background-color: #ddd;"></div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-bold text-gray-900 dark:text-white truncate"><%= locals.admin?.username || "مدير النظام" %></p>
+          <p class="text-[10px] text-primary dark:text-accent uppercase tracking-widest mt-0.5 font-bold">Admin</p>
+        </div>
+        <form method="post" action="/admin/logout" class="m-0">
+          <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-xl bg-red-50 dark:bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm" title="تسجيل خروج">
+            <span class="material-symbols-outlined text-[18px]">logout</span>
+          </button>
+        </form>
+      </div>
     </div>
-  </div>
+  </aside>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+  <main class="flex-1 flex flex-col min-w-0 h-full relative z-10">
     
-    <div class="lg:col-span-2 bg-white dark:bg-card p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 tilt-card" data-tilt data-tilt-max="2" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.1">
-      <div class="tilt-content h-full flex flex-col">
-        <h2 class="text-lg font-black text-gray-900 dark:text-white mb-4">📈 مقارنة الحالة (أحياء / متوفين)</h2>
-        <div class="relative w-full h-64 flex-1">
-          <canvas id="statusChart"></canvas>
-        </div>
-      </div>
-    </div>
+    <header class="flex items-center justify-between p-4 lg:p-8 shrink-0">
+      <div class="flex items-center gap-3">
+        <button id="mobileNavBtn" class="lg:hidden flex items-center justify-center w-12 h-12 rounded-2xl bg-card-light dark:bg-card-dark glass-panel border border-border-light dark:border-border-dark text-primary dark:text-accent shadow-sm" type="button">
+          <span class="material-symbols-outlined text-[24px]">menu</span>
+        </button>
 
-    <div class="bg-white dark:bg-card p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 tilt-card" data-tilt data-tilt-max="5" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.1">
-      <div class="tilt-content h-full flex flex-col items-center justify-center">
-        <h2 class="text-lg font-black text-gray-900 dark:text-white mb-4 w-full text-right"> توزيع الجنس</h2>
-        <div class="relative w-full h-56 flex justify-center">
-          <canvas id="genderChart"></canvas>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-
-    <div class="bg-white dark:bg-card p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 tilt-card" data-tilt data-tilt-max="10" data-tilt-glare data-tilt-max-glare="0.2">
-      <div class="tilt-content flex justify-between items-start">
         <div>
-          <p class="text-sm font-bold text-gray-500 dark:text-gray-400">إجمالي الأفراد</p>
-          <h2 class="text-4xl font-black mt-3 text-gray-900 dark:text-white"><%= personStats.total %></h2>
-        </div>
-        <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl text-blue-600 dark:text-blue-400 shadow-inner">
-          <span class="material-symbols-outlined text-3xl">groups</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="bg-white dark:bg-card p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 tilt-card" data-tilt data-tilt-max="10" data-tilt-glare data-tilt-max-glare="0.2">
-      <div class="tilt-content flex justify-between items-start">
-        <div>
-          <p class="text-sm font-bold text-gray-500 dark:text-gray-400">الأسماء المتكررة</p>
-          <h2 class="text-4xl font-black mt-3 text-gray-900 dark:text-white"><%= personStats.repeatedCount || 0 %></h2>
-        </div>
-        <div class="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-2xl text-purple-600 dark:text-purple-400 shadow-inner">
-          <span class="material-symbols-outlined text-3xl">content_copy</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="bg-white dark:bg-card p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 tilt-card relative overflow-hidden" data-tilt data-tilt-max="10" data-tilt-glare data-tilt-max-glare="0.2">
-      <div class="tilt-content flex justify-between items-center">
-        <div>
-          <p class="text-sm font-bold text-gray-500 dark:text-gray-400">الأحياء</p>
-          <h2 class="text-4xl font-black mt-2 text-emerald-600 dark:text-emerald-400"><%= personStats.alive %></h2>
-        </div>
-        <div class="relative w-14 h-14 shrink-0">
-          <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
-            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-            <path class="circle-progress stroke-emerald-500" style="stroke-dashoffset: calc(100 - <%= personStats.alivePercent %>);" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-          </svg>
-          <div class="absolute inset-0 flex items-center justify-center font-bold text-xs text-emerald-600 dark:text-emerald-400">
-            %<%= personStats.alivePercent %>
+          <h2 class="text-2xl md:text-3xl font-display font-bold text-primary dark:text-white tracking-tight leading-none mb-1.5">إحصائيات الأفراد</h2>
+          <div class="flex items-center gap-1.5 text-gray-500 text-[11px] font-bold uppercase tracking-widest">
+            <span>لوحة الإدارة</span>
+            <span class="material-symbols-outlined text-[14px]">chevron_left</span>
+            <a href="/admin" class="hover:text-primary dark:hover:text-accent transition-colors">إدارة الأفراد</a>
+            <span class="material-symbols-outlined text-[14px]">chevron_left</span>
+            <span class="text-accent">إحصائيات وتقارير</span>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="bg-white dark:bg-card p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 tilt-card relative overflow-hidden" data-tilt data-tilt-max="10" data-tilt-glare data-tilt-max-glare="0.2">
-      <div class="tilt-content flex justify-between items-center">
-        <div>
-          <p class="text-sm font-bold text-gray-500 dark:text-gray-400">المتوفين</p>
-          <h2 class="text-4xl font-black mt-2 text-rose-600 dark:text-rose-400"><%= personStats.deceased %></h2>
-        </div>
-        <div class="relative w-14 h-14 shrink-0">
-          <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
-            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-            <path class="circle-progress stroke-rose-500" style="stroke-dashoffset: calc(100 - <%= personStats.deceasedPercent %>);" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-          </svg>
-          <div class="absolute inset-0 flex items-center justify-center font-bold text-xs text-rose-600 dark:text-rose-400">
-            %<%= personStats.deceasedPercent %>
-          </div>
-        </div>
+      <div class="flex items-center gap-3 shrink-0">
+        <button id="themeBtn" class="flex items-center justify-center w-12 h-12 rounded-2xl bg-card-light dark:bg-card-dark glass-panel border border-border-light dark:border-border-dark text-gray-600 dark:text-accent shadow-sm hover:-translate-y-1 transition-transform" type="button" title="تبديل المظهر">
+          <span class="material-symbols-outlined text-[22px] dark-toggle-icon-moon">dark_mode</span>
+          <span class="material-symbols-outlined hidden dark:block text-[24px]">light_mode</span>
+        </button>
+
+        <a href="/admin" class="flex items-center gap-2 px-6 h-12 rounded-2xl font-bold text-sm bg-primary dark:bg-accent text-white dark:text-black shadow-[0_5px_20px_rgba(58,46,124,0.4)] dark:shadow-[0_5px_20px_rgba(229,184,105,0.20)] hover:-translate-y-1 transition-transform">
+          <span class="material-symbols-outlined text-[22px]">arrow_forward</span>
+          <span class="hidden sm:inline">الرجوع للإدارة</span>
+        </a>
       </div>
-    </div>
+    </header>
 
-    <div class="bg-white dark:bg-card p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 tilt-card relative overflow-hidden" data-tilt data-tilt-max="10" data-tilt-glare data-tilt-max-glare="0.2">
-      <div class="tilt-content flex justify-between items-center">
-        <div>
-          <p class="text-sm font-bold text-gray-500 dark:text-gray-400">الرجال</p>
-          <h2 class="text-4xl font-black mt-2 text-cyan-600 dark:text-cyan-400"><%= personStats.males %></h2>
-        </div>
-        <div class="relative w-14 h-14 shrink-0">
-          <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
-            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-            <path class="circle-progress stroke-cyan-500" style="stroke-dashoffset: calc(100 - <%= personStats.malePercent %>);" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-          </svg>
-          <div class="absolute inset-0 flex items-center justify-center font-bold text-xs text-cyan-600 dark:text-cyan-400">
-            %<%= personStats.malePercent %>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div class="flex-1 overflow-y-auto custom-scrollbar px-4 lg:px-8 pb-12">
+      <div class="max-w-[100rem] mx-auto space-y-6 lg:space-y-8">
 
-    <div class="bg-white dark:bg-card p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 tilt-card relative overflow-hidden" data-tilt data-tilt-max="10" data-tilt-glare data-tilt-max-glare="0.2">
-      <div class="tilt-content flex justify-between items-center">
-        <div>
-          <p class="text-sm font-bold text-gray-500 dark:text-gray-400">النساء</p>
-          <h2 class="text-4xl font-black mt-2 text-pink-600 dark:text-pink-400"><%= personStats.females %></h2>
-        </div>
-        <div class="relative w-14 h-14 shrink-0">
-          <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
-            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-            <path class="circle-progress stroke-pink-500" style="stroke-dashoffset: calc(100 - <%= personStats.femalePercent %>);" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-          </svg>
-          <div class="absolute inset-0 flex items-center justify-center font-bold text-xs text-pink-600 dark:text-pink-400">
-            %<%= personStats.femalePercent %>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-    
-    <div class="bg-white dark:bg-card p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col h-full tilt-card" data-tilt data-tilt-max="1" data-tilt-speed="1000">
-      <div class="tilt-content">
-        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100 dark:border-gray-800">
-          <div class="p-2 bg-primary/10 dark:bg-gold/10 rounded-lg text-primary dark:text-gold">
-            <span class="material-symbols-outlined">person_add</span>
-          </div>
-          <h2 class="text-xl font-black text-gray-900 dark:text-white">آخر المضافين</h2>
-        </div>
-
-        <div class="flex-1 overflow-y-auto pr-2" style="max-height: 400px;">
-          <% if (!personStats.recentPersons.length) { %>
-            <div class="flex flex-col items-center justify-center h-40 text-gray-400">
-              <span class="material-symbols-outlined text-4xl mb-2 opacity-50">inbox</span>
-              <p>لا يوجد بيانات لعرضها</p>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2 bg-card-light dark:bg-card-dark glass-panel p-6 md:p-8 rounded-[2rem] shadow-sm border border-border-light dark:border-border-dark tilt-card" data-tilt data-tilt-max="2" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.1">
+            <div class="tilt-content h-full flex flex-col">
+              <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary dark:text-accent">monitoring</span> مقارنة الحالة (أحياء / متوفين)
+              </h2>
+              <div class="relative w-full h-64 flex-1">
+                <canvas id="statusChart"></canvas>
+              </div>
             </div>
-          <% } else { %>
-            <div class="space-y-4">
-              <% personStats.recentPersons.forEach(p => { %>
-                <div class="flex items-center justify-between p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50 hover:-translate-y-1 hover:shadow-md transition-all duration-300 border border-transparent hover:border-primary/20">
-                  <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-full flex items-center justify-center text-white <%= p.gender === 'male' ? 'bg-cyan-500' : 'bg-pink-500' %> shadow-sm shrink-0">
-                      <span class="material-symbols-outlined text-xl"><%= p.gender === 'male' ? 'man' : 'woman' %></span>
-                    </div>
-                    <div>
-                      <p class="font-bold text-gray-900 dark:text-gray-100 text-lg"><%= p.name %></p>
-                      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        <%= p.gender === 'male' ? 'ذكر' : 'أنثى' %>
-                      </p>
-                    </div>
-                  </div>
-                  <span class="px-3 py-1 rounded-full text-xs font-bold shrink-0 <%= p.is_deceased ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' %>">
-                    <%= p.is_deceased ? 'متوفي' : 'حي' %>
-                  </span>
+          </div>
+
+          <div class="bg-card-light dark:bg-card-dark glass-panel p-6 md:p-8 rounded-[2rem] shadow-sm border border-border-light dark:border-border-dark tilt-card" data-tilt data-tilt-max="5" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.1">
+            <div class="tilt-content h-full flex flex-col items-center justify-center">
+              <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-6 w-full text-right flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary dark:text-accent">pie_chart</span> توزيع الجنس
+              </h2>
+              <div class="relative w-full h-56 flex justify-center">
+                <canvas id="genderChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          
+          <div class="bg-card-light dark:bg-card-dark glass-panel p-6 rounded-[2rem] shadow-sm border border-border-light dark:border-border-dark tilt-card" data-tilt data-tilt-max="10" data-tilt-glare data-tilt-max-glare="0.2">
+            <div class="tilt-content flex justify-between items-start">
+              <div>
+                <p class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">إجمالي الأفراد</p>
+                <h2 class="text-4xl font-black mt-3 text-gray-900 dark:text-white"><%= personStats.total %></h2>
+              </div>
+              <div class="w-14 h-14 flex items-center justify-center bg-primary/10 dark:bg-accent/10 rounded-2xl text-primary dark:text-accent shadow-inner">
+                <span class="material-symbols-outlined text-[28px]">groups</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-card-light dark:bg-card-dark glass-panel p-6 rounded-[2rem] shadow-sm border border-border-light dark:border-border-dark tilt-card" data-tilt data-tilt-max="10" data-tilt-glare data-tilt-max-glare="0.2">
+            <div class="tilt-content flex justify-between items-start">
+              <div>
+                <p class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">الأسماء المتكررة</p>
+                <h2 class="text-4xl font-black mt-3 text-gray-900 dark:text-white"><%= personStats.repeatedCount || 0 %></h2>
+              </div>
+              <div class="w-14 h-14 flex items-center justify-center bg-red-50 dark:bg-red-500/10 rounded-2xl text-red-500 dark:text-red-400 shadow-inner">
+                <span class="material-symbols-outlined text-[28px]">content_copy</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-card-light dark:bg-card-dark glass-panel p-6 rounded-[2rem] shadow-sm border border-border-light dark:border-border-dark tilt-card relative overflow-hidden" data-tilt data-tilt-max="10" data-tilt-glare data-tilt-max-glare="0.2">
+            <div class="tilt-content flex justify-between items-center">
+              <div>
+                <p class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">الأحياء</p>
+                <h2 class="text-4xl font-black mt-2 text-emerald-600 dark:text-emerald-400"><%= personStats.alive %></h2>
+              </div>
+              <div class="relative w-14 h-14 shrink-0">
+                <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
+                  <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path class="circle-progress stroke-emerald-500" style="stroke-dashoffset: calc(100 - <%= personStats.alivePercent %>);" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center font-bold text-[11px] text-emerald-600 dark:text-emerald-400">
+                  %<%= personStats.alivePercent %>
                 </div>
-              <% }) %>
+              </div>
             </div>
-          <% } %>
-        </div>
-      </div>
-    </div>
-
-    <div class="bg-white dark:bg-card p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col h-full tilt-card" data-tilt data-tilt-max="1" data-tilt-speed="1000">
-      <div class="tilt-content">
-        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100 dark:border-gray-800">
-          <div class="p-2 bg-primary/10 dark:bg-gold/10 rounded-lg text-primary dark:text-gold">
-            <span class="material-symbols-outlined">repeat</span>
           </div>
-          <h2 class="text-xl font-black text-gray-900 dark:text-white">الأسماء المتكررة</h2>
+
+          <div class="bg-card-light dark:bg-card-dark glass-panel p-6 rounded-[2rem] shadow-sm border border-border-light dark:border-border-dark tilt-card relative overflow-hidden" data-tilt data-tilt-max="10" data-tilt-glare data-tilt-max-glare="0.2">
+            <div class="tilt-content flex justify-between items-center">
+              <div>
+                <p class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">المتوفين</p>
+                <h2 class="text-4xl font-black mt-2 text-rose-600 dark:text-rose-400"><%= personStats.deceased %></h2>
+              </div>
+              <div class="relative w-14 h-14 shrink-0">
+                <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
+                  <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path class="circle-progress stroke-rose-500" style="stroke-dashoffset: calc(100 - <%= personStats.deceasedPercent %>);" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center font-bold text-[11px] text-rose-600 dark:text-rose-400">
+                  %<%= personStats.deceasedPercent %>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-card-light dark:bg-card-dark glass-panel p-6 rounded-[2rem] shadow-sm border border-border-light dark:border-border-dark tilt-card relative overflow-hidden" data-tilt data-tilt-max="10" data-tilt-glare data-tilt-max-glare="0.2">
+            <div class="tilt-content flex justify-between items-center">
+              <div>
+                <p class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">الرجال</p>
+                <h2 class="text-4xl font-black mt-2 text-cyan-600 dark:text-cyan-400"><%= personStats.males %></h2>
+              </div>
+              <div class="relative w-14 h-14 shrink-0">
+                <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
+                  <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path class="circle-progress stroke-cyan-500" style="stroke-dashoffset: calc(100 - <%= personStats.malePercent %>);" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center font-bold text-[11px] text-cyan-600 dark:text-cyan-400">
+                  %<%= personStats.malePercent %>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-card-light dark:bg-card-dark glass-panel p-6 rounded-[2rem] shadow-sm border border-border-light dark:border-border-dark tilt-card relative overflow-hidden" data-tilt data-tilt-max="10" data-tilt-glare data-tilt-max-glare="0.2">
+            <div class="tilt-content flex justify-between items-center">
+              <div>
+                <p class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">النساء</p>
+                <h2 class="text-4xl font-black mt-2 text-pink-600 dark:text-pink-400"><%= personStats.females %></h2>
+              </div>
+              <div class="relative w-14 h-14 shrink-0">
+                <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
+                  <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path class="circle-progress stroke-pink-500" style="stroke-dashoffset: calc(100 - <%= personStats.femalePercent %>);" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center font-bold text-[11px] text-pink-600 dark:text-pink-400">
+                  %<%= personStats.femalePercent %>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
-        <div class="flex-1 overflow-y-auto pr-2" style="max-height: 400px;">
-          <% if (!personStats.repeatedNames.length) { %>
-            <div class="flex flex-col items-center justify-center h-40 text-gray-400">
-              <span class="material-symbols-outlined text-4xl mb-2 opacity-50">verified</span>
-              <p>لا توجد أسماء مكررة</p>
-            </div>
-          <% } else { %>
-            <div class="space-y-3">
-              <% personStats.repeatedNames.forEach(r => { %>
-                <div class="flex items-center justify-between p-4 rounded-2xl border border-gray-100 dark:border-gray-700 hover:-translate-y-1 hover:border-primary dark:hover:border-gold transition-all duration-300 group bg-white dark:bg-card shadow-sm">
-                  <div class="flex items-center gap-3">
-                    <span class="material-symbols-outlined text-gray-400 group-hover:text-primary dark:group-hover:text-gold transition-colors">person</span>
-                    <span class="font-bold text-gray-800 dark:text-gray-200 text-lg"><%= r.name %></span>
-                  </div>
-                  <div class="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-700 shrink-0">
-                    <span class="text-sm text-gray-500 dark:text-gray-400">تكرار:</span>
-                    <span class="font-black text-xl text-primary dark:text-gold"><%= r.count %></span>
-                  </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+          
+          <div class="bg-card-light dark:bg-card-dark glass-panel p-6 md:p-8 rounded-[2rem] shadow-sm border border-border-light dark:border-border-dark flex flex-col h-full tilt-card" data-tilt data-tilt-max="1" data-tilt-speed="1000">
+            <div class="tilt-content">
+              <div class="flex items-center gap-3 mb-6 pb-4 border-b border-border-light dark:border-border-dark">
+                <div class="w-10 h-10 flex items-center justify-center bg-primary/10 dark:bg-accent/10 rounded-xl text-primary dark:text-accent">
+                  <span class="material-symbols-outlined">person_add</span>
                 </div>
-              <% }) %>
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white">آخر المضافين</h2>
+              </div>
+
+              <div class="flex-1 overflow-y-auto custom-scrollbar pr-2" style="max-height: 400px;">
+                <% if (!personStats.recentPersons.length) { %>
+                  <div class="flex flex-col items-center justify-center h-40 text-gray-400 dark:text-gray-500">
+                    <span class="material-symbols-outlined text-[40px] mb-2 opacity-50">inbox</span>
+                    <p class="font-bold text-sm">لا يوجد بيانات لعرضها</p>
+                  </div>
+                <% } else { %>
+                  <div class="space-y-3">
+                    <% personStats.recentPersons.forEach(p => { %>
+                      <div class="flex items-center justify-between p-4 rounded-2xl bg-white/50 dark:bg-black/20 hover:-translate-y-1 hover:shadow-md transition-all duration-300 border border-transparent hover:border-primary/20 dark:hover:border-accent/20 group">
+                        <div class="flex items-center gap-4">
+                          <div class="w-12 h-12 rounded-xl flex items-center justify-center text-white <%= p.gender === 'male' ? 'bg-cyan-500' : 'bg-pink-500' %> shadow-sm shrink-0">
+                            <span class="material-symbols-outlined text-[20px]"><%= p.gender === 'male' ? 'man' : 'woman' %></span>
+                          </div>
+                          <div>
+                            <p class="font-bold text-gray-900 dark:text-white text-base group-hover:text-primary dark:group-hover:text-accent transition-colors"><%= p.name %></p>
+                            <p class="text-[11px] font-bold text-gray-500 uppercase tracking-widest mt-1">
+                              <%= p.gender === 'male' ? 'ذكر' : 'أنثى' %>
+                            </p>
+                          </div>
+                        </div>
+                        <span class="px-3 py-1.5 rounded-lg text-[10px] font-bold shrink-0 <%= p.is_deceased ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' %>">
+                          <%= p.is_deceased ? 'متوفي' : 'حي' %>
+                        </span>
+                      </div>
+                    <% }) %>
+                  </div>
+                <% } %>
+              </div>
             </div>
-          <% } %>
+          </div>
+
+          <div class="bg-card-light dark:bg-card-dark glass-panel p-6 md:p-8 rounded-[2rem] shadow-sm border border-border-light dark:border-border-dark flex flex-col h-full tilt-card" data-tilt data-tilt-max="1" data-tilt-speed="1000">
+            <div class="tilt-content">
+              <div class="flex items-center gap-3 mb-6 pb-4 border-b border-border-light dark:border-border-dark">
+                <div class="w-10 h-10 flex items-center justify-center bg-red-50 dark:bg-red-500/10 rounded-xl text-red-500 dark:text-red-400">
+                  <span class="material-symbols-outlined">repeat</span>
+                </div>
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white">الأسماء المتكررة</h2>
+              </div>
+
+              <div class="flex-1 overflow-y-auto custom-scrollbar pr-2" style="max-height: 400px;">
+                <% if (!personStats.repeatedNames.length) { %>
+                  <div class="flex flex-col items-center justify-center h-40 text-gray-400 dark:text-gray-500">
+                    <span class="material-symbols-outlined text-[40px] mb-2 opacity-50">verified</span>
+                    <p class="font-bold text-sm">لا توجد أسماء مكررة</p>
+                  </div>
+                <% } else { %>
+                  <div class="space-y-3">
+                    <% personStats.repeatedNames.forEach(r => { %>
+                      <div class="flex items-center justify-between p-4 rounded-2xl bg-white/50 dark:bg-black/20 hover:-translate-y-1 hover:shadow-md transition-all duration-300 border border-transparent hover:border-red-500/20 group">
+                        <div class="flex items-center gap-3">
+                          <span class="material-symbols-outlined text-gray-400 group-hover:text-red-500 transition-colors">person</span>
+                          <span class="font-bold text-gray-800 dark:text-gray-200 text-base group-hover:text-red-500 dark:group-hover:text-red-400 transition-colors"><%= r.name %></span>
+                        </div>
+                        <div class="flex items-center gap-2 bg-white dark:bg-[#111] px-3 py-1.5 rounded-lg border border-gray-100 dark:border-white/10 shrink-0 shadow-sm">
+                          <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">تكرار:</span>
+                          <span class="font-black text-sm text-red-500 dark:text-red-400"><%= r.count %></span>
+                        </div>
+                      </div>
+                    <% }) %>
+                  </div>
+                <% } %>
+              </div>
+            </div>
+          </div>
+
         </div>
+
       </div>
     </div>
-
-  </div>
-
+  </main>
 </div>
 
+<aside id="mobileNavDrawer" class="fixed top-0 right-0 h-full w-[320px] max-w-[85vw] bg-card-light dark:bg-card-dark glass-panel border-l border-border-light dark:border-border-dark z-[90] flex flex-col">
+  <div class="h-1.5 w-full bg-primary"></div>
+  <div class="flex items-center justify-between p-6 border-b border-border-light dark:border-border-dark shrink-0">
+    <div>
+      <h1 class="font-display font-bold text-xl leading-none text-primary dark:text-white">عائلة خاشقجي</h1>
+      <p class="text-[10px] font-bold text-gray-500 dark:text-accent uppercase tracking-widest mt-1.5">نظام الإدارة</p>
+    </div>
+    <button id="mobileNavClose" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center text-gray-500 hover:text-primary dark:hover:text-accent transition-colors" type="button">
+      <span class="material-symbols-outlined text-[24px]">close</span>
+    </button>
+  </div>
+
+  <nav class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-3 text-sm font-bold text-gray-700 dark:text-gray-300">
+    <a href="/admin" class="flex items-center gap-3 px-4 py-4 rounded-2xl bg-primary/10 dark:bg-accent/10 text-primary dark:text-accent transition-colors border border-primary/20 dark:border-accent/20"><span class="material-symbols-outlined">group</span> إدارة الأفراد</a>
+    <a href="/admin/pages" class="flex items-center gap-3 px-4 py-4 rounded-2xl border border-transparent hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-gray-400">history_edu</span> إدارة الصفحات</a>
+    <a href="/admin/honor" class="flex items-center gap-3 px-4 py-4 rounded-2xl border border-transparent hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-gray-400">workspace_premium</span> السير الذاتية</a>
+    <a href="/admin/news" class="flex items-center gap-3 px-4 py-4 rounded-2xl border border-transparent hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-gray-400">newspaper</span> الأخبار</a>
+    <a href="/admin/support-messages" class="flex items-center gap-3 px-4 py-4 rounded-2xl border border-transparent hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-gray-400">mail</span> رسائل الدعم</a>
+    <div class="my-4 border-t border-border-light dark:border-border-dark"></div>
+    <a href="/" class="flex items-center gap-3 px-4 py-4 rounded-2xl border border-transparent hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-gray-400">account_tree</span> العودة للموقع</a>
+    
+    <form method="post" action="/admin/logout" class="m-0 mt-4">
+      <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-4 rounded-2xl border border-red-200 dark:border-red-900/30 text-red-600 dark:text-red-400 bg-red-50/50 dark:bg-red-500/10 hover:bg-red-50 transition-colors">
+        <span class="material-symbols-outlined">logout</span> تسجيل خروج
+      </button>
+    </form>
+  </nav>
+</aside>
+
+<div id="mobileNavOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[80] hidden" aria-hidden="true"></div>
+
 <script>
+  // بيانات الإحصائيات لـ Chart.js
   const statsData = {
     alive: <%= personStats.alive || 0 %>,
     deceased: <%= personStats.deceased || 0 %>,
@@ -318,8 +470,9 @@
 
   function initCharts() {
     const isDark = document.documentElement.classList.contains('dark');
-    const textColor = isDark ? '#9ca3af' : '#4b5563';
-    const gridColor = isDark ? '#1f2937' : '#f3f4f6';
+    // ألوان النصوص والخطوط حسب الهوية المعتمدة
+    const textColor = isDark ? '#E5B869' : '#005A2B';
+    const gridColor = isDark ? 'rgba(229, 184, 105, 0.1)' : 'rgba(0, 90, 43, 0.1)';
 
     const ctxStatus = document.getElementById('statusChart').getContext('2d');
     if(statusChart) statusChart.destroy();
@@ -340,8 +493,8 @@
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          y: { grid: { color: gridColor }, ticks: { color: textColor, font: { family: 'Cairo' } } },
-          x: { grid: { display: false }, ticks: { color: textColor, font: { family: 'Cairo', weight: 'bold' } } }
+          y: { grid: { color: gridColor }, ticks: { color: textColor, font: { family: 'Tajawal', weight: 'bold' } } },
+          x: { grid: { display: false }, ticks: { color: textColor, font: { family: 'Tajawal', weight: 'bold' } } }
         }
       }
     });
@@ -364,31 +517,154 @@
         maintainAspectRatio: false,
         cutout: '75%',
         plugins: {
-          legend: { position: 'bottom', labels: { color: textColor, font: { family: 'Cairo', weight: 'bold' }, padding: 20 } }
+          legend: { position: 'bottom', labels: { color: textColor, font: { family: 'Tajawal', weight: 'bold' }, padding: 20 } }
         }
       }
     });
   }
 
-  function toggleTheme() {
-    const htmlEl = document.documentElement;
-    const themeIcon = document.getElementById('themeIcon');
-    
-    htmlEl.classList.toggle('dark');
-    
-    if (htmlEl.classList.contains('dark')) {
-      themeIcon.textContent = 'dark_mode';
-    } else {
-      themeIcon.textContent = 'light_mode';
+  // Theme Toggle (Instant & Chart Update)
+  (function () {
+    const btn = document.getElementById("themeBtn");
+    function setTheme(next) {
+      document.documentElement.setAttribute("data-theme", next);
+      document.documentElement.classList.toggle("dark", next === "dark");
+      localStorage.setItem("theme", next);
+      if(window.initNexus) window.initNexus();
+      initCharts(); // تحديث ألوان الرسم البياني مع تبديل المظهر
+    }
+    btn?.addEventListener("click", () => {
+      const cur = document.documentElement.getAttribute("data-theme") || "dark";
+      setTheme(cur === "dark" ? "light" : "dark");
+    });
+
+    // تهيئة أولية للرسوم البيانية
+    initCharts();
+  })();
+
+  // Mobile Drawer
+  (function mobileNavInit(){
+    const btn = document.getElementById("mobileNavBtn");
+    const navDrawer = document.getElementById("mobileNavDrawer");
+    const overlay = document.getElementById("mobileNavOverlay");
+    const closeBtn = document.getElementById("mobileNavClose");
+
+    function toggleNav() {
+      navDrawer?.classList.toggle("isOpen");
+      overlay?.classList.toggle("hidden");
     }
     
-    initCharts();
-  }
+    btn?.addEventListener("click", toggleNav);
+    closeBtn?.addEventListener("click", toggleNav);
+    overlay?.addEventListener("click", toggleNav);
+  })();
 
-  document.addEventListener('DOMContentLoaded', () => {
-    initCharts();
-  });
+  // ==========================================
+  // شبكة العائلة التفاعلية
+  // ==========================================
+  (function() {
+    const canvas = document.getElementById('nexusCanvas');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    let width, height;
+    let particles = [];
+    const numParticles = window.innerWidth > 1024 ? 130 : 70; 
+    
+    let mouseX = -1000;
+    let mouseY = -1000;
+
+    let dotColor, lineColor, connectionColor;
+
+    window.initNexus = function() {
+      const isDark = document.documentElement.classList.contains('dark');
+      dotColor = isDark ? 'rgba(229, 184, 105, 0.55)' : 'rgba(0, 90, 43, 0.32)'; 
+      lineColor = isDark ? 'rgba(229, 184, 105, 0.16)' : 'rgba(0, 90, 43, 0.09)';
+      connectionColor = isDark ? '229, 184, 105' : '58, 46, 124'; 
+    };
+
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < numParticles; i++) {
+        particles.push({
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight,
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: (Math.random() - 0.5) * 0.5,
+          radius: Math.random() * 2.8 + 1.2
+        });
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, width, height);
+
+      for (let i = 0; i < numParticles; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = dotColor;
+        ctx.fill();
+
+        const dxMouse = mouseX - p.x;
+        const dyMouse = mouseY - p.y;
+        const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+
+        if (distMouse < 230) {
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(mouseX, mouseY);
+          const opacity = 0.6 * (1 - distMouse / 230);
+          ctx.strokeStyle = `rgba(${connectionColor}, ${opacity})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+          
+          p.x += dxMouse * 0.014;
+          p.y += dyMouse * 0.014;
+        }
+
+        for (let j = i + 1; j < numParticles; j++) {
+          const p2 = particles[j];
+          const dx = p.x - p2.x;
+          const dy = p.y - p2.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < 165) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = lineColor;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('resize', () => { resize(); initParticles(); });
+    window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+    window.addEventListener('mouseout', () => { mouseX = -1000; mouseY = -1000; });
+
+    window.initNexus();
+    resize();
+    initParticles();
+    draw();
+  })();
 </script>
-
 </body>
 </html>

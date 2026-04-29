@@ -618,4 +618,415 @@ html.dark #details span.font-bold,
 /* تنسيق شريط التمرير داخل التبويبة الجانبية لتكون ذهبية */
 #details::-webkit-scrollbar { width: 6px !important; }
 #details::-webkit-scrollbar-track { background: transparent !important; }
-#details::-webkit-scrollbar-thumb { background: #C7A24B !important; border-radius: 10px !important; }
+#details::-webkit-scrollbar-thumb { background: #C7A24B !important; border-radius: 8px !important; }
+
+
+.node-portrait {
+  width: 132px !important;
+  height: 132px !important;
+  min-width: 132px !important;
+  min-height: 132px !important;
+  max-width: 132px !important;
+  max-height: 132px !important;
+  overflow: hidden !important;
+  border-radius: 8px !important;
+}
+
+/* الصورة تظهر منتظمة بشكل رائع (Cover مع التركيز على أعلى الصورة للوجوه) */
+.node-portrait img,
+#details img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center top !important; /* لضمان عدم قص الرأس */
+  padding: 0 !important; /* إزالة المسافات لتملأ البرواز */
+  margin: 0 !important;
+  transform: none !important;
+  background-color: transparent !important;
+}
+
+/* منع hover القديم من تكبير الصورة نفسها وقصها */
+.person-node-group:hover .node-portrait img {
+  transform: none !important;
+}
+
+/* ===== 2) ألوان الأزرار ===== */
+
+/* الوضع الداكن: زر ذهبي ونص أسود */
+html.dark .primaryBtn,
+html.dark button.primaryBtn,
+html.dark a.primaryBtn,
+html.dark .navLink.active,
+html.dark .adminBtn.active,
+html.dark #resetView,
+html.dark #toggleDetails,
+html.dark #fit.active,
+html.dark #focusMode.active,
+html.dark .bg-primary,
+html.dark button.bg-primary,
+html.dark a.bg-primary,
+[data-theme="dark"] .primaryBtn,
+[data-theme="dark"] button.primaryBtn,
+[data-theme="dark"] a.primaryBtn,
+[data-theme="dark"] .bg-primary,
+[data-theme="dark"] button.bg-primary,
+[data-theme="dark"] a.bg-primary,
+[data-theme="dark"] #resetView,
+[data-theme="dark"] #toggleDetails {
+  background: #E5B869 !important;
+  background-color:  #E5B869 !important;
+  background-image: none !important;
+  color: #050505 !important;
+  border-color: #E5B869 !important;
+}
+
+/* ضمان تلوين الأيقونات داخل الزر باللون الأسود في الوضع الداكن */
+html.dark #resetView *,
+html.dark #toggleDetails *,
+html.dark .bg-primary *,
+[data-theme="dark"] #resetView *,
+[data-theme="dark"] #toggleDetails *,
+[data-theme="dark"] .bg-primary * {
+  color: #050505 !important;
+}
+
+/* الوضع الفاتح: زر أخضر ملكي ونص أبيض */
+html[data-theme="light"] .primaryBtn,
+html[data-theme="light"] button.primaryBtn,
+html[data-theme="light"] a.primaryBtn,
+html[data-theme="light"] .bg-primary,
+html[data-theme="light"] button.bg-primary,
+html[data-theme="light"] a.bg-primary,
+html[data-theme="light"] #resetView,
+html[data-theme="light"] #toggleDetails,
+html:not(.dark) .primaryBtn,
+html:not(.dark) button.primaryBtn,
+html:not(.dark) a.primaryBtn,
+html:not(.dark) .bg-primary,
+html:not(.dark) button.bg-primary,
+html:not(.dark) a.bg-primary,
+html:not(.dark) #resetView,
+html:not(.dark) #toggleDetails {
+  background: #005A2B !important;
+  background-color: #005A2B !important;
+  background-image: none !important;
+  color: #FFFFFF !important;
+  border-color: #005A2B !important;
+}
+
+/* ضمان تلوين الأيقونات باللون الأبيض في الوضع الفاتح */
+html:not(.dark) #resetView *,
+html:not(.dark) #toggleDetails *,
+html:not(.dark) .bg-primary *,
+html[data-theme="light"] #resetView *,
+html[data-theme="light"] #toggleDetails *,
+html[data-theme="light"] .bg-primary * {
+  color: #FFFFFF !important;
+}
+
+/* أزرار التحكم الثانوية (تكبير/تصغير) في الداكن */
+html.dark .ghostBtn,
+html.dark .iconBtn,
+html.dark #zoomIn,
+html.dark #zoomOut,
+html.dark #fit,
+html.dark #focusMode,
+[data-theme="dark"] #zoomIn,
+[data-theme="dark"] #zoomOut,
+[data-theme="dark"] #fit,
+[data-theme="dark"] #focusMode {
+  color: #E5B869 !important;
+  border-color: rgba(229,184,105,.45) !important;
+  background: rgba(229,184,105,.08) !important;
+}
+
+html.dark #zoomIn *,
+html.dark #zoomOut *,
+html.dark #fit *,
+html.dark #focusMode * {
+    color: #E5B869 !important;
+}
+
+/* عند hover في الداكن */
+html.dark #zoomIn:hover,
+html.dark #zoomOut:hover,
+html.dark #fit:hover,
+html.dark #focusMode:hover {
+  background: #E5B869 !important;
+  color: #050505 !important;
+  border-color: #E5B869 !important;
+}
+html.dark #zoomIn:hover *,
+html.dark #zoomOut:hover *,
+html.dark #fit:hover *,
+html.dark #focusMode:hover * {
+  color: #050505 !important;
+}
+
+
+/* ===== FINAL FIX (BADGES + FULL DRAWER) ===== */
+
+/* ذكر */
+#details .male,
+#details span[title="ذكر"] {
+  background: rgba(0,90,43,.12) !important;
+  color: #005A2B !important;
+  border: 1px solid rgba(0,90,43,.25) !important;
+}
+
+html.dark #details .male,
+html.dark #details span[title="ذكر"] {
+  background: #E5B869 !important;
+  color: #050505 !important;
+  border: 1px solid #E5B869 !important;
+}
+
+/* متوفى */
+#details .deceased,
+#details span[title="متوفى"] {
+  background: rgba(120,120,120,.15) !important;
+  color: #444 !important;
+  border: 1px solid rgba(120,120,120,.3) !important;
+}
+
+html.dark #details .deceased,
+html.dark #details span[title="متوفى"] {
+  background: rgba(229,184,105,.15) !important;
+  color: #E5B869 !important;
+  border: 1px solid rgba(229,184,105,.35) !important;
+}
+
+/* إصلاح التبويبة */
+#drawer {
+  height: calc(100vh - 80px) !important;
+  overflow: hidden !important;
+}
+
+#details {
+  height: 100% !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  padding-bottom: 100px !important;
+}
+
+#details::after {
+  content: "";
+  display: block;
+  height: 80px;
+}
+/* =====================================================
+   ✅ FINAL FIX (BADGES + FULL SCROLL DETAILS)
+   ===================================================== */
+
+/* =========================
+   🎯 1. BADGES (ذكر / متوفى)
+   ========================= */
+
+#details .badge,
+#details span[title="ذكر"],
+#details span[title="متوفى"] {
+  background: #E5B869 !important;
+  color: #050505 !important;
+  border: 1px solid #E5B869 !important;
+  padding: 6px 12px !important;
+  border-radius: 999px !important;
+  font-weight: 900 !important;
+  font-size: 12px !important;
+}
+
+/* Hover */
+#details .badge:hover {
+  background: #d4a94f !important;
+  color: #000 !important;
+}
+
+/* =========================
+   🎯 2. إصلاح Scroll التبويبة
+   ========================= */
+
+/* التبويبة نفسها */
+#drawer {
+  height: calc(100vh - 60px) !important;
+  max-height: calc(100vh - 60px) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* المحتوى الداخلي */
+#details {
+  flex: 1 !important;
+  height: 100% !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+
+  padding-bottom: 120px !important;
+  scroll-behavior: smooth !important;
+}
+
+/* يمنع قطع آخر عنصر */
+#details::after {
+  content: "";
+  display: block;
+  height: 100px;
+}
+
+/* Scrollbar أنعم */
+#details::-webkit-scrollbar {
+  width: 6px;
+}
+#details::-webkit-scrollbar-thumb {
+  background: #C7A24B;
+  border-radius: 999px;
+}
+
+/* =========================
+   🎯 3. منع اللون الأبيض نهائيًا
+   ========================= */
+
+#details .badge,
+#details span {
+  background-color: #E5B869 !important;
+  color: #050505 !important;
+}
+
+/* =========================
+   🎯 4. Fix إضافي للصورة (اختياري لكن مهم)
+   ========================= */
+
+#details img {
+  width: 140px !important;
+  height: 140px !important;
+  object-fit: cover !important;
+  object-position: center top !important;
+  border-radius: 12px !important;
+}
+
+
+
+/* =================================================================================
+   ✅ FIX DETAILS DECEASED DIAGONAL RIBBON
+   يعيد الشريط الأسود القطري على صورة تبويبة التفاصيل عند وجود بادج "متوفى"
+   ================================================================================= */
+
+/* الحالة العامة: لو تفاصيل الشخص تحتوي على متوفى */
+#details:has(span[title="متوفى"]) > div:first-child,
+#details:has(span[aria-label="متوفى"]) > div:first-child,
+#details:has(.deceased) > div:first-child,
+#details:has(.is-deceased) > div:first-child,
+#details:has(.person-status) > div:first-child {
+  position: relative !important;
+}
+
+/* اجعل أي حاوية مباشرة للصورة قابلة لاستقبال الشريط */
+#details:has(span[title="متوفى"]) div:has(> img),
+#details:has(span[aria-label="متوفى"]) div:has(> img),
+#details:has(.deceased) div:has(> img),
+#details:has(.is-deceased) div:has(> img),
+#details:has(.person-status) div:has(> img) {
+  position: relative !important;
+  display: inline-block !important;
+  overflow: hidden !important;
+  border-radius: 14px !important;
+}
+
+/* الشريط القطري الأسود مثل الموجود في الشجرة */
+#details:has(span[title="متوفى"]) div:has(> img)::after,
+#details:has(span[aria-label="متوفى"]) div:has(> img)::after,
+#details:has(.deceased) div:has(> img)::after,
+#details:has(.is-deceased) div:has(> img)::after,
+#details:has(.person-status) div:has(> img)::after {
+  content: "" !important;
+  position: absolute !important;
+
+  top: 0 !important;
+  right: 0 !important;
+
+  width: 54px !important;
+  height: 54px !important;
+
+  background: linear-gradient(
+    135deg,
+    rgba(0,0,0,0.92) 0%,
+    rgba(0,0,0,0.92) 50%,
+    transparent 51%,
+    transparent 100%
+  ) !important;
+
+  z-index: 50 !important;
+  pointer-events: none !important;
+}
+
+/* لو الصورة نفسها داخل أول كارت بدون wrapper واضح */
+#details:has(span[title="متوفى"]) > div:first-child::after,
+#details:has(span[aria-label="متوفى"]) > div:first-child::after,
+#details:has(.deceased) > div:first-child::after,
+#details:has(.is-deceased) > div:first-child::after,
+#details:has(.person-status) > div:first-child::after {
+  content: "" !important;
+  position: absolute !important;
+
+  top: 14px !important;
+  right: 14px !important;
+
+  width: 54px !important;
+  height: 54px !important;
+
+  background: linear-gradient(
+    135deg,
+    rgba(0,0,0,0.92) 0%,
+    rgba(0,0,0,0.92) 50%,
+    transparent 51%,
+    transparent 100%
+  ) !important;
+
+  border-top-right-radius: 14px !important;
+  z-index: 60 !important;
+  pointer-events: none !important;
+}
+
+/* لا تجعل صورة التفاصيل تقص الشريط */
+#details img {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* ضمان لون بادج متوفى نفسه لا يبقى أبيض */
+#details span[title="متوفى"],
+#details span[aria-label="متوفى"],
+#details .deceased,
+#details .is-deceased,
+#details .person-status {
+  background: #E5B869 !important;
+  color: #050505 !important;
+  border: 1px solid #E5B869 !important;
+}
+
+/* التبويبة تقرأ للنهاية */
+#drawer {
+  height: calc(100vh - 60px) !important;
+  max-height: calc(100vh - 60px) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+#details,
+.drawerBody {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  padding-bottom: 130px !important;
+  scroll-padding-bottom: 130px !important;
+}
+
+#details::before {
+  display: none !important;
+}
+
+#details::after {
+  content: "" !important;
+  display: block !important;
+  height: 120px !important;
+}

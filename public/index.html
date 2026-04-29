@@ -11,7 +11,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500;700;900&family=Amiri:wght@400;700&family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500;700;900&family=Amiri:wght@400;700&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries,line-clamp"></script>
 
@@ -70,109 +70,87 @@
     .tree-container { position: relative; width: 100%; height: 100%; margin: 0 auto; }
     .branch-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
 
-    /* ========================================================
-       تصميم كروت الشخصيات البريميوم (داخل الشجرة)
-       ======================================================== */
-    .premium-node-card {
-      width: 130px;
-      height: 160px;
-      border-radius: 20px;
+    .node-portrait {
+      width: 100px;
+      height: 100px;
+      border-radius: 10px;
+      border: 2px solid #7A542F;
       background: white;
-      position: relative;
       overflow: hidden;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-      border: 1px solid rgba(229,184,105,0.1);
-    }
-    .premium-node-card.male {
-      box-shadow: 0 10px 30px rgba(0, 90, 43, 0.05), 0 0 0 2px rgba(0, 90, 43, 0.03);
-    }
-    .premium-node-card.female {
-      box-shadow: 0 10px 30px rgba(229, 184, 105, 0.05), 0 0 0 2px rgba(229, 184, 105, 0.03);
-    }
-    .person-node-group:hover .premium-node-card {
-      transform: translateY(-5px) scale(1.03);
-    }
-    .person-node-group:hover .premium-node-card.male {
-      box-shadow: 0 15px 40px rgba(0, 90, 43, 0.15), 0 0 0 3px rgba(0, 90, 43, 0.1);
-    }
-    .person-node-group:hover .premium-node-card.female {
-      box-shadow: 0 15px 40px rgba(229, 184, 105, 0.15), 0 0 0 3px rgba(229, 184, 105, 0.1);
-    }
-    .node-photo-area {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-    }
-    .node-photo-area img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.6s ease;
-    }
-    .person-node-group:hover .node-photo-area img {
-      transform: scale(1.1);
-    }
-    .node-name-overlay {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      padding: 12px 8px;
-      background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
-      backdrop-filter: blur(2px);
-      z-index: 2;
-      text-align: center;
-    }
-    .node-label-text {
-      font-family: 'Cairo', sans-serif;
-      color: white;
-      font-weight: 700;
-      font-size: 13px;
-      line-height: 1.2;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-    }
-    .deceased-ribbon {
-      position: absolute;
-      top: 0;
-      left: 0;
-      background: linear-gradient(135deg, #C7A24B, #E3C46A);
-      color: #030406;
-      font-family: 'Tajawal', sans-serif;
-      font-weight: 800;
-      font-size: 10px;
-      padding: 4px 8px;
-      border-bottom-right-radius: 12px;
-      z-index: 3;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-      display: flex;
-      align-items: center;
-      gap: 3px;
+      position: relative;
+      z-index: 10;
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+      box-shadow: 0 10px 24px rgba(0,0,0,.10);
     }
 
-    html.dark .premium-node-card {
-      background: #0A0B0E;
-      border-color: rgba(255,255,255,0.05);
+    .node-portrait:hover {
+      transform: scale(1.025);
+      box-shadow: 0 12px 26px rgba(0,0,0,.16);
     }
-    html.dark .premium-node-card.male {
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 90, 43, 0.2);
+
+    .node-portrait.male { border-color: #005A2B; }
+    .node-portrait.female { border-color: #E5B869; }
+
+    .node-portrait img { width: 100%; height: 100%; object-fit: cover; }
+
+    .name-box {
+      background-color: #ffffff;
+      border: 1.5px solid rgba(229,184,105,.45);
+      padding: 5px 16px;
+      border-radius: 10px;
+      box-shadow: 0 8px 18px rgba(0,0,0,.08);
+      margin-top: -12px;
+      position: relative;
+      z-index: 20;
+      min-width: 120px;
+      text-align: center;
+      transition: all .25s ease;
     }
-    html.dark .premium-node-card.female {
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(229, 184, 105, 0.2);
+
+    .name-box:hover {
+      border-color: #E5B869;
+      box-shadow: 0 12px 26px rgba(229,184,105,.18);
     }
-    html.dark .person-node-group:hover .premium-node-card.male {
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(0, 90, 43, 0.4);
-    }
-    html.dark .person-node-group:hover .premium-node-card.female {
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(229, 184, 105, 0.4);
-    }
-    html.dark .node-name-overlay {
-      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 70%, transparent 100%);
+
+    .node-label-text {
+      font-family: 'Amiri', serif;
+      color: #111827;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .leaf { fill: #4CAF50; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.1)); }
+
+    html.dark .node-portrait {
+      width: 90px;
+      height: 90px;
+      border-radius: 8px;
+      border: 2px solid rgba(229,184,105,.75);
+      background: #0A0A0A;
+      box-shadow: 0 0 18px rgba(229,184,105,.13);
+    }
+
+    html.dark .node-portrait.male { border-color: #005A2B; }
+    html.dark .node-portrait.female { border-color: #E5B869; }
+
+    html.dark .name-box {
+      margin-top: 4px;
+      background-color: rgba(10,10,10,.95);
+      border: 1px solid rgba(229,184,105,.60);
+      padding: 6px 16px;
+      min-width: 140px;
+      border-radius: 8px;
+      box-shadow: 0 8px 18px rgba(0,0,0,.35);
+    }
+
+    html.dark .name-box:hover {
+      border-color: #E5B869;
+      box-shadow: 0 0 18px rgba(229,184,105,.26);
+    }
+
+    html.dark .node-label-text { color: #FAFAFA; }
     html.dark .leaf { fill: #E5B869; opacity: .6; filter: none; }
     html.dark .glowing-branch {
       stroke: #E5B869;
@@ -192,7 +170,8 @@
       align-items: center;
       justify-content: center;
     }
-    foreignObject .premium-node-card { all: revert; }
+    foreignObject .node-portrait,
+    foreignObject .name-box { all: revert; }
 
     @supports (height: 100dvh) {
       .tree-viewport { height: clamp(620px, 78dvh, 940px); }
@@ -393,251 +372,52 @@
   </script>
 
   <style id="family-tree-final-fixes">
-    /* ===== Final fixes: stats, details drawer, theme consistency ===== */
-    html, body {
-      background-color: var(--bg, #050505);
-    }
+    html, body { background-color: var(--bg, #050505); }
+    html.dark body, html[data-theme="dark"] body { color: #FAFAFA; background: radial-gradient(1200px 600px at 70% 0%, rgba(229,184,105,.10), transparent 55%), radial-gradient(900px 600px at 15% 25%, rgba(0,90,43,.10), transparent 55%), #050505; }
+    html:not(.dark) body, html[data-theme="light"] body { color: #111827; background: radial-gradient(1200px 600px at 70% 0%, rgba(229,184,105,.12), transparent 55%), radial-gradient(900px 600px at 15% 25%, rgba(0,90,43,.06), transparent 55%), #F8F8F6; }
 
-    html.dark body,
-    html[data-theme="dark"] body {
-      color: #FAFAFA;
-      background:
-        radial-gradient(1200px 600px at 70% 0%, rgba(229,184,105,.10), transparent 55%),
-        radial-gradient(900px 600px at 15% 25%, rgba(0,90,43,.10), transparent 55%),
-        #050505;
-    }
+    #publicStats { margin: 0 auto 44px !important; width: calc(100% - 2rem) !important; max-width: 100rem !important; padding: 26px !important; border-radius: 30px !important; border: 1px solid rgba(229,184,105,.22) !important; box-shadow: 0 30px 90px rgba(0,0,0,.12) !important; clear: both !important; position: relative !important; overflow: hidden !important; font-family: "Tajawal", sans-serif !important; }
+    html[data-theme="light"] #publicStats, html:not(.dark) #publicStats { background: radial-gradient(circle at 15% 20%, rgba(229,184,105,.13), transparent 36%), rgba(255,255,255,.82) !important; color: #111827 !important; border-color: rgba(229,184,105,.22) !important; }
+    html[data-theme="dark"] #publicStats, html.dark #publicStats { background: radial-gradient(circle at 15% 20%, rgba(229,184,105,.10), transparent 36%), rgba(5,5,5,.76) !important; color: #FAFAFA !important; border-color: rgba(255,255,255,.10) !important; box-shadow: 0 30px 100px rgba(0,0,0,.70) !important; }
+    #publicStats::before { content: ""; position: absolute; inset: 14px; border-radius: 24px; border: 1px solid rgba(229,184,105,.16); pointer-events: none; }
+    #publicStats .stats-title-row { position: relative; z-index: 2; display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px !important; flex-wrap: wrap !important; margin-bottom: 18px !important; }
+    #publicStats .stats-heading { font-family: "Aref Ruqaa", serif !important; font-weight: 700 !important; font-size: clamp(28px, 3vw, 40px) !important; color: #005A2B !important; line-height: 1.1 !important; }
+    html.dark #publicStats .stats-heading, html[data-theme="dark"] #publicStats .stats-heading { color: #E5B869 !important; }
+    #publicStats .stats-subtitle { font-size: 13px !important; font-weight: 800 !important; color: #71717A !important; }
+    #publicStats .stats-grid { position: relative; z-index: 2; display: grid !important; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important; gap: 14px !important; }
+    #publicStats .stats-card { padding: 18px !important; border-radius: 18px !important; border: 1px solid rgba(229,184,105,.18) !important; background: rgba(255,255,255,.72) !important; box-shadow: 0 12px 30px rgba(0,0,0,.055) !important; }
+    html.dark #publicStats .stats-card, html[data-theme="dark"] #publicStats .stats-card { background: rgba(255,255,255,.045) !important; border-color: rgba(255,255,255,.10) !important; box-shadow: none !important; }
+    #publicStats .stats-card-label { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 13px !important; font-weight: 900 !important; color: #71717A !important; margin-bottom: 10px !important; }
+    #publicStats .stats-card-value { font-size: 30px !important; font-weight: 900 !important; color: #111827 !important; line-height: 1 !important; }
+    html.dark #publicStats .stats-card-value, html[data-theme="dark"] #publicStats .stats-card-value { color: #FAFAFA !important; }
 
-    html:not(.dark) body,
-    html[data-theme="light"] body {
-      color: #111827;
-      background:
-        radial-gradient(1200px 600px at 70% 0%, rgba(229,184,105,.12), transparent 55%),
-        radial-gradient(900px 600px at 15% 25%, rgba(0,90,43,.06), transparent 55%),
-        #F8F8F6;
-    }
+    #toggleDetails { background: rgba(255,255,255,.86) !important; color: #005A2B !important; border: 1px solid rgba(229,184,105,.45) !important; border-radius: 999px !important; font-weight: 900 !important; box-shadow: 0 10px 28px rgba(0,0,0,.06) !important; }
+    html.dark #toggleDetails, html[data-theme="dark"] #toggleDetails { background: rgba(255,255,255,.055) !important; color: #E5B869 !important; border-color: rgba(229,184,105,.35) !important; box-shadow: none !important; }
+    #toggleDetails:hover { transform: translateY(-2px); background: rgba(229,184,105,.12) !important; }
 
-    /* One generated stats section only */
-    #publicStats {
-      margin: 0 auto 44px !important;
-      width: calc(100% - 2rem) !important;
-      max-width: 100rem !important;
-      padding: 26px !important;
-      border-radius: 30px !important;
-      border: 1px solid rgba(229,184,105,.22) !important;
-      box-shadow: 0 30px 90px rgba(0,0,0,.12) !important;
-      clear: both !important;
-      position: relative !important;
-      overflow: hidden !important;
-      font-family: "Tajawal", sans-serif !important;
-    }
+    #drawer { top: 0 !important; right: 0 !important; height: 100vh !important; max-height: 100vh !important; width: min(440px, 92vw) !important; border-left: 1px solid rgba(229,184,105,.24) !important; box-shadow: -34px 0 90px rgba(0,0,0,.28) !important; border-radius: 0 !important; overflow: hidden !important; z-index: 90 !important; }
+    html[data-theme="light"] #drawer, html:not(.dark) #drawer { background: radial-gradient(circle at 20% 0%, rgba(229,184,105,.14), transparent 35%), rgba(255,255,255,.97) !important; color: #111827 !important; }
+    html[data-theme="dark"] #drawer, html.dark #drawer { background: radial-gradient(circle at 20% 0%, rgba(229,184,105,.10), transparent 35%), rgba(5,5,5,.98) !important; color: #FAFAFA !important; border-left-color: rgba(255,255,255,.10) !important; box-shadow: -34px 0 100px rgba(0,0,0,.74) !important; }
+    #drawer > div:first-child, #drawer .drawerHeader { background: transparent !important; border-bottom: 1px solid rgba(229,184,105,.18) !important; padding: 22px !important; }
+    #drawer .font-black, #drawer .drawerTitle { font-family: "Aref Ruqaa", serif !important; font-size: 28px !important; color: #005A2B !important; }
+    html.dark #drawer .font-black, html[data-theme="dark"] #drawer .font-black, html.dark #drawer .drawerTitle, html[data-theme="dark"] #drawer .drawerTitle { color: #E5B869 !important; }
 
-    html[data-theme="light"] #publicStats,
-    html:not(.dark) #publicStats {
-      background:
-        radial-gradient(circle at 15% 20%, rgba(229,184,105,.13), transparent 36%),
-        rgba(255,255,255,.82) !important;
-      color: #111827 !important;
-      border-color: rgba(229,184,105,.22) !important;
-    }
-
-    html[data-theme="dark"] #publicStats,
-    html.dark #publicStats {
-      background:
-        radial-gradient(circle at 15% 20%, rgba(229,184,105,.10), transparent 36%),
-        rgba(5,5,5,.76) !important;
-      color: #FAFAFA !important;
-      border-color: rgba(255,255,255,.10) !important;
-      box-shadow: 0 30px 100px rgba(0,0,0,.70) !important;
-    }
-
-    #publicStats::before {
-      content: "";
-      position: absolute;
-      inset: 14px;
-      border-radius: 24px;
-      border: 1px solid rgba(229,184,105,.16);
-      pointer-events: none;
-    }
-
-    #publicStats .stats-title-row {
-      position: relative;
-      z-index: 2;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: space-between !important;
-      gap: 12px !important;
-      flex-wrap: wrap !important;
-      margin-bottom: 18px !important;
-    }
-
-    #publicStats .stats-heading {
-      font-family: "Aref Ruqaa", serif !important;
-      font-weight: 700 !important;
-      font-size: clamp(28px, 3vw, 40px) !important;
-      color: #005A2B !important;
-      line-height: 1.1 !important;
-    }
-
-    html.dark #publicStats .stats-heading,
-    html[data-theme="dark"] #publicStats .stats-heading {
-      color: #E5B869 !important;
-    }
-
-    #publicStats .stats-subtitle {
-      font-size: 13px !important;
-      font-weight: 800 !important;
-      color: #71717A !important;
-    }
-
-    #publicStats .stats-grid {
-      position: relative;
-      z-index: 2;
-      display: grid !important;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important;
-      gap: 14px !important;
-    }
-
-    #publicStats .stats-card {
-      padding: 18px !important;
-      border-radius: 18px !important;
-      border: 1px solid rgba(229,184,105,.18) !important;
-      background: rgba(255,255,255,.72) !important;
-      box-shadow: 0 12px 30px rgba(0,0,0,.055) !important;
-    }
-
-    html.dark #publicStats .stats-card,
-    html[data-theme="dark"] #publicStats .stats-card {
-      background: rgba(255,255,255,.045) !important;
-      border-color: rgba(255,255,255,.10) !important;
-      box-shadow: none !important;
-    }
-
-    #publicStats .stats-card-label {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      font-size: 13px !important;
-      font-weight: 900 !important;
-      color: #71717A !important;
-      margin-bottom: 10px !important;
-    }
-
-    #publicStats .stats-card-value {
-      font-size: 30px !important;
-      font-weight: 900 !important;
-      color: #111827 !important;
-      line-height: 1 !important;
-    }
-
-    html.dark #publicStats .stats-card-value,
-    html[data-theme="dark"] #publicStats .stats-card-value {
-      color: #FAFAFA !important;
-    }
-
-    /* Details button redesigned */
-    #toggleDetails {
-      background: rgba(255,255,255,.86) !important;
-      color: #005A2B !important;
-      border: 1px solid rgba(229,184,105,.45) !important;
-      border-radius: 999px !important;
-      font-weight: 900 !important;
-      box-shadow: 0 10px 28px rgba(0,0,0,.06) !important;
-    }
-
-    html.dark #toggleDetails,
-    html[data-theme="dark"] #toggleDetails {
-      background: rgba(255,255,255,.055) !important;
-      color: #E5B869 !important;
-      border-color: rgba(229,184,105,.35) !important;
-      box-shadow: none !important;
-    }
-
-    #toggleDetails:hover {
-      transform: translateY(-2px);
-      background: rgba(229,184,105,.12) !important;
-    }
-
-    /* Details drawer redesign */
-    #drawer {
-      top: 0 !important;
-      right: 0 !important;
-      height: 100vh !important;
-      max-height: 100vh !important;
-      width: min(440px, 92vw) !important;
-      border-left: 1px solid rgba(229,184,105,.24) !important;
-      box-shadow: -34px 0 90px rgba(0,0,0,.28) !important;
-      border-radius: 0 !important;
-      overflow: hidden !important;
-      z-index: 90 !important;
-    }
-
-    html[data-theme="light"] #drawer,
-    html:not(.dark) #drawer {
-      background:
-        radial-gradient(circle at 20% 0%, rgba(229,184,105,.14), transparent 35%),
-        rgba(255,255,255,.97) !important;
-      color: #111827 !important;
-    }
-
-    html[data-theme="dark"] #drawer,
-    html.dark #drawer {
-      background:
-        radial-gradient(circle at 20% 0%, rgba(229,184,105,.10), transparent 35%),
-        rgba(5,5,5,.98) !important;
-      color: #FAFAFA !important;
-      border-left-color: rgba(255,255,255,.10) !important;
-      box-shadow: -34px 0 100px rgba(0,0,0,.74) !important;
-    }
-
-    #drawer > div:first-child,
-    #drawer .drawerHeader {
-      background: transparent !important;
-      border-bottom: 1px solid rgba(229,184,105,.18) !important;
-      padding: 22px !important;
-    }
-
-    #drawer .font-black,
-    #drawer .drawerTitle {
-      font-family: "Aref Ruqaa", serif !important;
-      font-size: 28px !important;
-      color: #005A2B !important;
-    }
-
-    html.dark #drawer .font-black,
-    html[data-theme="dark"] #drawer .font-black,
-    html.dark #drawer .drawerTitle,
-    html[data-theme="dark"] #drawer .drawerTitle {
-      color: #E5B869 !important;
-    }
-
-    #details {
-      padding: 22px !important;
-      max-height: calc(100vh - 95px) !important;
-      overflow-y: auto !important;
-      font-family: "Tajawal", sans-serif !important;
-      color: inherit !important;
-    }
-
-    #closeDrawer {
-      border: 1px solid rgba(229,184,105,.25) !important;
-      background: rgba(255,255,255,.65) !important;
-    }
-
-    html.dark #closeDrawer,
-    html[data-theme="dark"] #closeDrawer {
-      background: rgba(255,255,255,.055) !important;
-      color: #E5B869 !important;
-      border-color: rgba(255,255,255,.10) !important;
-    }
-
-    #uiThemeBtn {
-      cursor: pointer !important;
-    }
+    #details { padding: 22px !important; max-height: calc(100vh - 95px) !important; overflow-y: auto !important; font-family: "Tajawal", sans-serif !important; color: inherit !important; }
+    #details > div { gap: 18px !important; }
+    #details img { border-radius: 18px !important; filter: saturate(.95) contrast(1.04); }
+    #details .kvs { display: grid !important; gap: 10px !important; border: 0 !important; background: transparent !important; }
+    #details .kvs > div, #details div[style*="line-height:1.9"] > div { border: 1px solid rgba(229,184,105,.18) !important; border-radius: 16px !important; padding: 13px 14px !important; background: rgba(255,255,255,.72) !important; color: #111827 !important; }
+    html.dark #details .kvs > div, html[data-theme="dark"] #details .kvs > div, html.dark #details div[style*="line-height:1.9"] > div, html[data-theme="dark"] #details div[style*="line-height:1.9"] > div { background: rgba(255,255,255,.045) !important; color: #FAFAFA !important; border-color: rgba(255,255,255,.10) !important; }
+    #details b { color: #005A2B !important; font-weight: 900 !important; }
+    html.dark #details b, html[data-theme="dark"] #details b { color: #E5B869 !important; }
+    #details .person-nav-btn, #details a[href^="/honor"] { background: #005A2B !important; color: #fff !important; border-radius: 999px !important; border: 1px solid rgba(229,184,105,.28) !important; box-shadow: 0 8px 20px rgba(0,90,43,.14) !important; font-weight: 900 !important; text-decoration: none !important; }
+    html.dark #details .person-nav-btn, html[data-theme="dark"] #details .person-nav-btn, html.dark #details a[href^="/honor"], html[data-theme="dark"] #details a[href^="/honor"] { background: #E5B869 !important; color: #050505 !important; box-shadow: 0 8px 20px rgba(229,184,105,.10) !important; }
+    #closeDrawer { border: 1px solid rgba(229,184,105,.25) !important; background: rgba(255,255,255,.65) !important; }
+    html.dark #closeDrawer, html[data-theme="dark"] #closeDrawer { background: rgba(255,255,255,.055) !important; color: #E5B869 !important; border-color: rgba(255,255,255,.10) !important; }
+    #uiThemeBtn { cursor: pointer !important; }
   </style>
 
 </head>
-
 
 <body class="bg-background-light dark:bg-bg-charcoal text-gray-900 dark:text-text-cream font-sans min-h-screen flex flex-col relative overflow-x-hidden selection:bg-accent-gold selection:text-bg-charcoal transition-colors duration-300">
 
@@ -884,8 +664,8 @@
             container: '#tree',
             data: familyData,
             options: {
-              nodeWidth: 130, // Updated node width for premium card
-              nodeHeight: 160, // Updated node height for premium card
+              nodeWidth: 100,
+              nodeHeight: 100,
               rtl: true,
               orientation: 'horizontal',
               generationsGap: 150,
@@ -897,40 +677,34 @@
             },
             card: {
               darkMode: isDark,
-              template: (person) => {
-                const isMale = person.gender === 'M';
-                const isDeceased = !!person.deathDate;
-                const getYear = (d) => d ? d.split('-')[0] : '?';
-                
-                return `
-                  <g transform="translate(0,0)" class="person-node-group" data-id="${person.id}">
-                    <foreignObject width="130" height="160">
-                      <div xmlns="http://www.w3.org/1999/xhtml" class="premium-node-card ${isMale ? 'male' : 'female'}">
-                        
-                        ${isDeceased ? `
-                          <div class="deceased-ribbon">
-                            <span class="material-symbols-outlined" style="font-size:12px;">psychiatry</span>
-                            <span>${getYear(person.birthDate)} - ${getYear(person.deathDate)}</span>
-                          </div>
-                        ` : ''}
-
-                        <div class="node-photo-area">
-                          ${person.image 
-                            ? `<img src="${person.image}">`
-                            : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:${isMale ? 'rgba(0,90,43,0.05)' : 'rgba(229,184,105,0.05)'}; color:${isMale ? '#005A2B' : '#E5B869'};">
-                                 <span class="material-symbols-outlined" style="font-size:60px;">person</span>
-                               </div>`
-                          }
-                        </div>
-
-                        <div class="node-name-overlay">
-                          <div class="node-label-text">${person.firstName} ${person.lastName}</div>
-                        </div>
+              template: (person) => `
+                <g transform="translate(0,0)" class="person-node-group" data-id="${person.id}">
+                  <foreignObject width="100" height="100">
+                    <div xmlns="http://www.w3.org/1999/xhtml" 
+                         class="node-portrait ${person.gender === 'M' ? 'male' : 'female'} person-node"
+                         data-id="${person.id}"
+                         style="width:100px; height:100px; overflow:hidden;">
+                      ${person.image 
+                        ? `<img src="${person.image}" style="width:100%; height:100%; object-fit:cover;">`
+                        : `<div style="width:100%; height:100%; background:${person.gender === 'M' ? '#1f637a20' : '#E3C56F20'}; display:flex; align-items:center; justify-content:center;">
+                             <span class="material-symbols-outlined" style="font-size:40px; color:${person.gender === 'M' ? '#1f637a' : '#E3C56F'}">person</span>
+                           </div>`
+                      }
+                    </div>
+                  </foreignObject>
+                  
+                  <foreignObject y="90" width="100" height="50">
+                    <div xmlns="http://www.w3.org/1999/xhtml" 
+                         class="name-box person-node"
+                         data-id="${person.id}"
+                         style="width:100%;">
+                      <div class="node-label-text" style="font-family:'Amiri',serif;">
+                        ${person.firstName} ${person.lastName}
                       </div>
-                    </foreignObject>
-                  </g>
-                `;
-              },
+                    </div>
+                  </foreignObject>
+                </g>
+              `,
               onClick: (person) => {
                 openPersonDrawer(person.originalData);
               }
@@ -1072,36 +846,34 @@
               window.familyChart.updateOptions({
                 card: {
                   darkMode: isDark,
-                  template: (person) => {
-                    const isMale = person.gender === 'M';
-                    const isDeceased = !!person.deathDate;
-                    const getYear = (d) => d ? d.split('-')[0] : '?';
-                    return `
-                      <g transform="translate(0,0)" class="person-node-group" data-id="${person.id}">
-                        <foreignObject width="130" height="160">
-                          <div xmlns="http://www.w3.org/1999/xhtml" class="premium-node-card ${isMale ? 'male' : 'female'}">
-                            ${isDeceased ? `
-                              <div class="deceased-ribbon">
-                                <span class="material-symbols-outlined" style="font-size:12px;">psychiatry</span>
-                                <span>${getYear(person.birthDate)} - ${getYear(person.deathDate)}</span>
-                              </div>
-                            ` : ''}
-                            <div class="node-photo-area">
-                              ${person.image 
-                                ? `<img src="${person.image}">`
-                                : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:${isMale ? 'rgba(0,90,43,0.05)' : 'rgba(229,184,105,0.05)'}; color:${isMale ? '#005A2B' : '#E5B869'};">
-                                     <span class="material-symbols-outlined" style="font-size:60px;">person</span>
-                                   </div>`
-                              }
-                            </div>
-                            <div class="node-name-overlay">
-                              <div class="node-label-text">${person.firstName} ${person.lastName}</div>
-                            </div>
+                  template: (person) => `
+                    <g transform="translate(0,0)" class="person-node-group" data-id="${person.id}">
+                      <foreignObject width="100" height="100">
+                        <div xmlns="http://www.w3.org/1999/xhtml" 
+                             class="node-portrait ${person.gender === 'M' ? 'male' : 'female'} person-node"
+                             data-id="${person.id}"
+                             style="width:100px; height:100px; overflow:hidden;">
+                          ${person.image 
+                            ? `<img src="${person.image}" style="width:100%; height:100%; object-fit:cover;">`
+                            : `<div style="width:100%; height:100%; background:${person.gender === 'M' ? '#1f637a20' : '#E3C56F20'}; display:flex; align-items:center; justify-content:center;">
+                                 <span class="material-symbols-outlined" style="font-size:40px; color:${person.gender === 'M' ? '#1f637a' : '#E3C56F'}">person</span>
+                               </div>`
+                          }
+                        </div>
+                      </foreignObject>
+                      
+                      <foreignObject y="90" width="100" height="50">
+                        <div xmlns="http://www.w3.org/1999/xhtml" 
+                             class="name-box person-node"
+                             data-id="${person.id}"
+                             style="width:100%;">
+                          <div class="node-label-text" style="font-family:'Amiri',serif;">
+                            ${person.firstName} ${person.lastName}
                           </div>
-                        </foreignObject>
-                      </g>
-                    `;
-                  }
+                        </div>
+                      </foreignObject>
+                    </g>
+                  `
                 }
               });
             }
@@ -1109,7 +881,7 @@
         });
       }
       
-      // Drawer functions (Updated for Premium Details)
+      // Drawer functions
       window.openPersonDrawer = function(personData) {
         const drawer = document.getElementById('drawer');
         const detailsDiv = document.getElementById('details');
@@ -1117,47 +889,39 @@
         // Store selected person ID for focus mode
         window.selectedPersonId = personData.id;
         
-        function createDataBlock(icon, label, value, extraClass = "") {
-          return `
-            <div class="bg-white dark:bg-background-dark p-4 rounded-xl border border-gray-100 dark:border-white/5 shadow-sm flex items-start gap-3 ${extraClass}">
-              <span class="material-symbols-outlined text-accent-gold mt-0.5">${icon}</span>
-              <div>
-                <div class="text-xs text-gray-400 font-bold mb-1">${label}</div>
-                <div class="text-base font-bold text-gray-900 dark:text-white leading-snug">${value}</div>
-              </div>
-            </div>
-          `;
-        }
-
         // Populate drawer
         detailsDiv.innerHTML = `
-          <div class="space-y-8 flex flex-col items-center">
-            <div class="text-center w-full flex flex-col items-center">
-              ${personData.photo_url ? `
-                <img src="${personData.photo_url}" alt="${personData.name}" class="w-40 h-40 rounded-3xl object-cover shadow-lg border-4 border-white dark:border-card-dark mb-5"/>
-              ` : `
-                <div class="w-40 h-40 rounded-3xl bg-gray-100 dark:bg-background-dark/50 flex items-center justify-center text-gray-300 dark:text-white/10 mb-5 border border-gray-200 dark:border-white/5">
-                  <span class="material-symbols-outlined text-[80px]">person</span>
-                </div>
-              `}
-              <h3 class="text-3xl font-display text-primary dark:text-accent-gold font-bold leading-tight">${personData.name}</h3>
-              ${personData.job ? `<p class="text-sm font-bold text-gray-500 mt-2 px-4 py-1 bg-gray-100 dark:bg-white/5 rounded-full inline-block">${personData.job}</p>` : ''}
-            </div>
-            <div class="w-full h-px bg-gray-100 dark:bg-white/5"></div>
-            <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm" style="direction: rtl;">
-              ${createDataBlock("monitoring", "الحالة", personData.death_date ? "متوفى (رحمه الله)" : "حي (حفظه الله)", "col-span-1 sm:col-span-2")}
-              ${createDataBlock("cake", "تاريخ الميلاد", personData.birth_date || "غير مسجل")}
-              ${personData.death_date ? createDataBlock("psychiatry", "تاريخ الوفاة", personData.death_date) : ''}
-              ${createDataBlock("account_tree", "النسب", personData.lineage || "غير مسجل", "col-span-1 sm:col-span-2")}
-            </div>
-            ${personData.notes ? `
-              <div class="w-full bg-gray-50 dark:bg-background-dark/50 p-5 rounded-2xl border border-gray-100 dark:border-white/5 shadow-inner">
-                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                  <span class="material-symbols-outlined text-[16px]">history_edu</span> نبذة تاريخية
-                </h4>
-                <p class="text-base text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">${personData.notes}</p>
+          <div class="space-y-4">
+            ${personData.photo_url ? `
+              <div class="flex justify-center">
+                <img src="${personData.photo_url}" 
+                     class="w-32 h-32 object-cover rounded-lg border-2 border-accent-gold">
               </div>
             ` : ''}
+            
+            <div class="text-center">
+              <h2 class="text-xl font-extrabold text-primary dark:text-accent-gold-dark">
+                ${personData.name}
+              </h2>
+              ${personData.job ? `
+                <p class="text-sm text-text-muted dark:text-muted-slate">${personData.job}</p>
+              ` : ''}
+            </div>
+            
+            <div class="border-t border-gray-200 dark:border-accent-gold/20 pt-4">
+              ${personData.birth_date ? `
+                <p><span class="font-bold">الميلاد:</span> ${personData.birth_date}</p>
+              ` : ''}
+              ${personData.death_date ? `
+                <p><span class="font-bold">الوفاة:</span> ${personData.death_date}</p>
+              ` : ''}
+              ${personData.lineage ? `
+                <p><span class="font-bold">النسب:</span> ${personData.lineage}</p>
+              ` : ''}
+              ${personData.notes ? `
+                <p class="mt-2 text-sm">${personData.notes}</p>
+              ` : ''}
+            </div>
           </div>
         `;
         
